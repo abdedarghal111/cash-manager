@@ -1,0 +1,49 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "module": "ES2022",
+        "target": "ES2022",
+        // "moduleResolution": "node",
+        "outDir": "./deleteThisDir",
+        "rootDir": ".",
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        //"skipLibCheck": true,
+        "resolveJsonModule": true,
+        "noUncheckedIndexedAccess": true,
+        "allowSyntheticDefaultImports": true,
+        "allowImportingTsExtensions": true,
+        "verbatimModuleSyntax": false, // para eliminar imports vacíos
+        // "paths": {
+        //     "_shared/*": ["src/*"]
+        // }
+
+        "useDefineForClassFields": true,
+
+        "allowJs": true,
+        "checkJs": true,
+
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+        "lib": ["ES2023", "DOM"],
+        //"module": "ESNext",
+
+        /* Bundler mode */
+        "moduleResolution": "bundler",
+        "isolatedModules": true,
+        "moduleDetection": "force",
+
+        /* Linting */
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedSideEffectImports": true,
+        "noEmit": true,
+
+        "composite": true
+    },
+
+    "include": ["src", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/lib/primus.jsx", "../shared/src/**/*.mts"],
+    "exclude": ["node_modules", "dist", ".vite"],
+}
