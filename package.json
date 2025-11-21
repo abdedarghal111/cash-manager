@@ -18,7 +18,8 @@
     "dev": "concurrently \"pnpm run server:dev\" \"pnpm run client:dev\"",
     "deploy:build": "pnpm run server:build && pnpm run client:build",
     "deploy:start": "pm2 start dist/app.mjs --name jvw --log serverData/app.log",
-    "deploy:stop": "pm2 stop jvw"
+    "deploy:stop": "pm2 stop jvw",
+    "build:android": "cap add android; pnpm run client:build && cap sync && cd android && gradlew assembleRelease && cd .."
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
@@ -63,7 +64,11 @@
     "@capacitor/android": "^7.4.4",
     "@capacitor/camera": "latest",
     "@capacitor/core": "latest",
-    "@capacitor/splash-screen": "latest"
+    "@capacitor/splash-screen": "latest",
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "bootstrap": "^5.3.8",
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
@@ -77,6 +82,18 @@
     "typescript": "~5.7.2",
     "yarn": "^1.22.22",
     "@capacitor/cli": "latest",
-    "vite": "^5.4.2"
+    "@electron-toolkit/eslint-config-prettier": "^3.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.1.0",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@types/node": "^22.18.6",
+    "electron": "^38.1.2",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^4.0.1",
+    "eslint": "^9.36.0",
+    "eslint-plugin-solid": "^0.14.5",
+    "prettier": "^3.6.2",
+    "solid-js": "^1.9.9",
+    "vite": "^7.1.6",
+    "vite-plugin-solid": "^2.11.8"
   }
 }

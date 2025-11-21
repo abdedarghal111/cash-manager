@@ -4,6 +4,7 @@ package-lock.json
 pnpm-lock.yaml
 pnpm-workspace.yaml
 .vite
+android
 
 # Logs
 logs

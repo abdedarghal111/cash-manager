@@ -1,5 +1,21 @@
 {
     "compilerOptions": {
+        // Paths
+        "paths": {
+            "@shared/*": [
+                "src/shared/*"
+            ],
+            "@frontend/*": [
+                "src/frontend/*"
+            ],
+            "@components/*": [
+                "src/frontend/components/*"
+            ],
+            "@assets/*": [
+                "assets/*"
+            ]
+        },
+
         "sourceMap": true,
         "module": "ES2022",
         "target": "ES2022",
@@ -15,9 +31,6 @@
         "allowSyntheticDefaultImports": true,
         "allowImportingTsExtensions": true,
         "verbatimModuleSyntax": false, // para eliminar imports vacíos
-        // "paths": {
-        //     "_shared/*": ["src/*"]
-        // }
 
         "useDefineForClassFields": true,
 
