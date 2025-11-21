@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename)
 const __root = path.join(__dirname, '..')
 const __dist = path.join(__root, 'dist', 'backend', 'src')
 const __src = path.join(__root, 'src')
-const __entry = path.join(__src, 'index.server.mts')
+const __entry = path.join(__src, 'main.server.mts')
 
 let checkParam = par => process.argv.find(val => val === par)
 
