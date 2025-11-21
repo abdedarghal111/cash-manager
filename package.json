@@ -2,8 +2,10 @@
   "author": {
     "name": "Abderrahim Darghal Belkacemi",
     "email": "abdedarghal111@gmail.com",
+    "github": "https://github.com/abdedarghal111",
     "url": "https://github.com/abdedarghal111"
   },
+  "license": "MIT",
   "scripts": {
     "server:build": "node buildFiles/backend.mjs --dev",
     "server:build:watch": "node buildFiles/backend.mjs --dev --watch",
@@ -57,7 +59,11 @@
     "tailwindcss": "^4.1.5",
     "tsconfig": "^7.0.0",
     "ws": "^8.18.2",
-    "yarn": "^1.22.22"
+    "vite": "^6.3.4",
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/camera": "latest",
+    "@capacitor/core": "latest",
+    "@capacitor/splash-screen": "latest"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
@@ -69,6 +75,8 @@
     "svelte": "^5.28.2",
     "svelte-check": "^4.1.5",
     "typescript": "~5.7.2",
-    "vite": "^6.3.4"
+    "yarn": "^1.22.22",
+    "@capacitor/cli": "latest",
+    "vite": "^5.4.2"
   }
 }

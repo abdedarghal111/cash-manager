@@ -1,0 +1,7 @@
+{
+  "appId": "es.abderra.app",
+  "appName": "Capacitor Kitchen Sink",
+  "webDir": "dist/frontend/src",
+  "bundledWebRuntime": false,
+  "hideLogs": false
+}
