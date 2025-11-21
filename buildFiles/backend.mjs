@@ -2,10 +2,9 @@ import { existsSync, readdirSync, rmSync, symlinkSync } from 'fs'
 import esbuild from 'esbuild'
 import { replace } from 'esbuild-plugin-replace'
 import { copy } from 'esbuild-plugin-copy'
-import path from 'path'
 import { fileURLToPath } from 'url'
+import { dirname, join } from 'path';
 import c from 'colors'
-
 /*
 Parámetros disponibles:
 --dev  => compilar para desarrollo
@@ -14,11 +13,11 @@ Parámetros disponibles:
 */
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const __root = path.join(__dirname, '..')
-const __dist = path.join(__root, 'dist', 'backend', 'src')
-const __src = path.join(__root, 'src')
-const __entry = path.join(__src, 'main.server.mts')
+const __dirname = dirname(__filename)
+const __root = join(__dirname, '..')
+const __dist = join(__root, 'dist', 'backend', 'src')
+const __src = join(__root, 'src')
+const __entry = join(__src, 'main.server.mts')
 
 let checkParam = par => process.argv.find(val => val === par)
 
@@ -31,7 +30,7 @@ if (existsSync(__dist) && !checkParam('--no-clean')) {
     // si es node_modules y no se pasa el parámetro --clean, se salta
     if(file === 'node_modules' && !checkParam('--clean')) continue
     // borrar todos los archivos (excepto node_modules)
-    const filePath = path.join(__dist, file)
+    const filePath = join(__dist, file)
     rmSync(filePath, { recursive: true, force: true })
     console.log(`  -> ${file} borrado`.cyan)
   }
@@ -74,8 +73,8 @@ if (checkParam('--dev')) {
   })
 
   // Crear enlace simbólico para node_modules
-  const nodeModulesSrc = path.join(__root, 'node_modules')
-  const nodeModulesDest = path.join(__dist, 'node_modules')
+  const nodeModulesSrc = join(__root, 'node_modules')
+  const nodeModulesDest = join(__dist, 'node_modules')
 
   if (!existsSync(nodeModulesDest)) {
     console.log('\n==> Creando symlink para node_modules...'.yellow)

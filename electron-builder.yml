@@ -1,0 +1,41 @@
+appId: es.abderra.icsviewer
+productName: ICS Viewer
+
+#output: "dist/electron"
+#compression: store # para que el ejecutable tenga la mínima compresión (apertura rápida)
+
+files:
+  - "dist/electron/**/*"
+
+directories:
+  buildResources: buildFiles/assets
+
+win:
+  target:
+    - portable
+    - zip
+  publish:
+    - provider: github
+      releaseType: release
+  icon: buildFiles/assets/icons/icon.ico
+  artifactName: "${productName}-${version}-win.${ext}"
+
+mac:
+  target:
+    - dmg
+    - zip
+  publish:
+    - provider: github
+      releaseType: release
+  icon: buildFiles/assets/icons/icon.icns
+  artifactName: "${productName}-${version}-mac.${ext}"
+
+linux:
+  target:
+    - AppImage
+    - zip
+  publish:
+    - provider: github
+      releaseType: release
+  icon: buildFiles/assets/icons/icon.png
+  artifactName: "${productName}-${version}-linux.${ext}"

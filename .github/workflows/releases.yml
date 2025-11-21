@@ -1,0 +1,87 @@
+# Credits to https://github.com/marktext/marktext
+# This workflow is based on the one from marktext/marktext
+name: Release new version
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  unix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          check-latest: true
+
+      - name: Install build dependencies (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update && sudo apt install -y icnsutils graphicsmagick
+
+      - name: Install dependencies
+        run: yarn install --check-files --frozen-lockfile
+
+      - name: Build and release
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            yarn run build:linux --publish always
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            yarn run build:mac --publish always
+          fi
+
+  windows:
+    runs-on: windows-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          check-latest: true
+
+      - name: Install dependencies
+        run: yarn install --check-files --frozen-lockfile
+
+      - name: Build and release
+        run: yarn run build:win --publish always
+  
+  create-release-publication:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - name: Set release title
+        uses: joutvhu/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: 'ICS file viewer ${{ github.ref_name }}'
+          body: 'Auto-generated release for ${{ github.ref_name }}'
+          draft: false
+          prerelease: false
