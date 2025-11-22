@@ -1,5 +1,5 @@
-appId: es.abderra.icsviewer
-productName: ICS Viewer
+appId: es.abderra.cash-manager-server
+productName: "Cash Manager Server"
 
 #output: "dist/electron"
 #compression: store # para que el ejecutable tenga la mínima compresión (apertura rápida)

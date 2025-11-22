@@ -1,6 +1,6 @@
 {
-  "appId": "es.abderra.app",
-  "appName": "Capacitor Kitchen Sink",
+  "appId": "es.abderra.cash-manager-server",
+  "appName": "Cash Manager Server",
   "webDir": "dist/frontend/src",
   "bundledWebRuntime": false,
   "hideLogs": false
