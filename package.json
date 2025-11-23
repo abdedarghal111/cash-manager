@@ -14,7 +14,7 @@
     "server:build:watch": "node buildFiles/backend.mjs --dev --watch",
     "server:run:watch": "nodemon --watch dist/backend/src/ dist/backend/src/main.server.mjs --dev",
     "server:dev": "pnpm run server:build && concurrently \"pnpm run server:build:watch\" \"pnpm run server:run:watch\"",
-    "client:dev": "vite preview --mode development --config buildFiles/frontend.dev.mjs",
+    "client:dev": "vite --mode development --config buildFiles/frontend.dev.mjs",
     "client:build": "vite build --config buildFiles/frontend.prod.mjs",
     "client:build:watch": "vite build --config buildFiles/frontend.prod.mjs --watch",
     "client:check": "svelte-check --tsconfig tsconfig.json && tsc -p tsconfig.json",

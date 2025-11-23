@@ -8,7 +8,6 @@ const __dirname = dirname(__filename)
 const __electronMain = resolve(__dirname, 'electronMain.mjs')
 const __electronPreload = resolve(__dirname, 'electronPreload.mjs')
 const __root = resolve(__dirname, '..')
-console.log(__root)
 const __out = resolve(__root, 'dist', 'electron')
 const __src = resolve(__root, 'src')
 const __index = resolve(__src, 'index.html')
@@ -40,6 +39,16 @@ export default defineConfig({
       rollupOptions: {
         input: __index
       }
+    },
+    resolve: {
+    'alias': {
+      "@src": resolve(__src),
+      "@components": resolve(__src, 'components'),
+      "@single": resolve(__src, 'single'),
+      "@class": resolve(__src, 'class'),
+      "@assets": resolve(__src, 'assets'),
+      "@routes": resolve(__src, 'routes'),
     }
+  },
   }
 })

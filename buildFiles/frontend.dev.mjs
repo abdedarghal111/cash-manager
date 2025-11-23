@@ -20,16 +20,23 @@ export default defineConfig({
       css: 'external'
     }}),
   ],
-  // resolve: {
-  //   'alias': {
-  //     "@src": resolve(__root, 'src', 'svelte')
-  //   }
-  // },
+  resolve: {
+    'alias': {
+      "@src": resolve(__src),
+      "@components": resolve(__src, 'components'),
+      "@single": resolve(__src, 'single'),
+      "@class": resolve(__src, 'class'),
+      "@assets": resolve(__src, 'assets'),
+      "@routes": resolve(__src, 'routes'),
+    }
+  },
   server: {
-    port: 8000,
     open: false,
-    strictPort: true,
-    hmr: false
+    watch: {
+      additionalPaths: (watcher) => {
+        watcher.add(__src);
+      }
+    }
   },
   cacheDir: '/.vite-cache',
   root: __src,
@@ -41,7 +48,6 @@ export default defineConfig({
     minify: false,
     cssMinify: false,
     emptyOutDir: false,
-    assetsInlineLimit: 0,
     reportCompressedSize: false,
     write: true
   }

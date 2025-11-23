@@ -2,17 +2,23 @@
     "compilerOptions": {
         // Paths
         "paths": {
-            "@shared/*": [
-                "src/shared/*"
-            ],
-            "@frontend/*": [
-                "src/frontend/*"
-            ],
             "@components/*": [
-                "src/frontend/components/*"
+                "src/components/*"
+            ],
+            "@single/*": [
+                "src/single/*"
+            ],
+            "@class/*": [
+                "src/class/*"
             ],
             "@assets/*": [
                 "assets/*"
+            ],
+            "@routes/*": [
+                "src/routes/*"
+            ],
+            "@src/*": [
+                "src/*"
             ]
         },
 

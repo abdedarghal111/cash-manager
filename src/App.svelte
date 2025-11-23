@@ -1,9 +1,17 @@
 <script lang='ts'>
-  document.body.style.height = `${window.innerHeight}px`
+  import { currentView, ViewsController } from '@single/ViewsController.mts';
+  import { Toaster } from 'svelte-french-toast';
+  import { onMount } from 'svelte';
+
+  onMount(() => {
+    // TODO: add restore preview
+  })
+
+  console.log($currentView)
 </script>
 
-<svelte:window on:resize={(e) => {
-  document.body.style.height = `${window.innerHeight}px`
-}}></svelte:window>
+<!-- The actual view -->
+<svelte:component this={$currentView} class="bg-sky-500"/>
 
-<h1>Okay it works</h1>
+<!-- The toast functionality -->
+<Toaster/>

@@ -9,7 +9,6 @@ const __dirname = dirname(__filename)
 const __root = resolve(__dirname, '..')
 const __src = resolve(__root, 'src')
 const __out = resolve(__root, 'dist', 'frontend', 'src')
-// const __outPublic = resolve(__out, 'public')
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,11 +16,16 @@ export default defineConfig({
     tailwindcss(), 
     svelte()
   ],
-  // resolve: {
-  //   'alias': {
-  //     "@src": resolve(__root, 'src', 'svelte')
-  //   }
-  // },
+  resolve: {
+      'alias': {
+        "@src": resolve(__src),
+        "@components": resolve(__src, 'components'),
+        "@single": resolve(__src, 'single'),
+        "@class": resolve(__src, 'class'),
+        "@assets": resolve(__src, 'assets'),
+        "@routes": resolve(__src, 'routes'),
+      }
+    },
   root: __src,
   build: {
     target: 'modules',
@@ -30,8 +34,7 @@ export default defineConfig({
     cssMinify: true,
     minify: true,
     emptyOutDir: true,
-    copyPublicDir: false,
+    copyPublicDir: true,
     cssCodeSplit: false,
-    assetsInlineLimit: 0
   }
 })
