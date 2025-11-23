@@ -15,7 +15,7 @@ Parámetros disponibles:
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const __root = join(__dirname, '..')
-const __dist = join(__root, 'dist', 'backend', 'src')
+const __dist = join(__root, 'dist', 'backend')
 const __src = join(__root, 'src')
 const __entry = join(__src, 'main.server.mts')
 

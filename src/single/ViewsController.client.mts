@@ -1,6 +1,4 @@
 /**
- * Client only
- * 
  * A singleton class that manages the views
  * 
  * exports the 'currentView' variable that is used in @src/App.svelte

@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const __root = resolve(__dirname, '..')
 const __src = resolve(__root, 'src')
-const __out = resolve(__root, 'dist', 'frontend', 'src')
+const __out = resolve(__root, 'dist', 'frontend')
 
 // https://vite.dev/config/
 export default defineConfig({

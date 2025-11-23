@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { currentView, ViewsController } from '@single/ViewsController.mts';
+  import { currentView, ViewsController } from '@single/ViewsController.client.mts';
   import { Toaster } from 'svelte-french-toast';
   import { onMount } from 'svelte';
 
