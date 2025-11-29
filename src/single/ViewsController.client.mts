@@ -8,10 +8,10 @@
 import { get, writable } from 'svelte/store';
 import { Parameters } from '@class/Parameters.mts';
 import { Component } from 'svelte';
-import LandingView from '@routes/landing.view.svelte';
+import SetupView from '@routes/setup.view.svelte';
 
 // expose the variable for use in @src/App.svelte and reactivity
-export let currentView = writable<Component>(LandingView)
+export let currentView = writable<Component>(SetupView)
 
 export const ViewsController = {
     // The current path to a view or view component

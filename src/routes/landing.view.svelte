@@ -1,32 +1,93 @@
 <!--
-Vista landing, vista inicial de la app
+Vista landing, la principal, desde aquí se accede a la mayoría de cosas
 
-Solo contiene el nombre de la aplicación y pone el texto de cargando.
+Se muestra siempre un boton para volver a configurar el servidor
+Si existe usuario registrado y el servidor ha confirmado el inicio de sesión,
+entonces se muestra el boton de cerrar sesion y acceder las funcionalidades.
+
+En caso contrario se muestra el botón para iniciar sesión o registrarse y se limpia el "registrado"
 -->
+<script module lang='ts'>
+    let status = $state("")
+    let showButtons = $state(false)
+    let logged = Credentials.getReactiveCredentials().logged
+    let colorStatus = $state("bg-blue-200")
+</script>
 <script lang='ts'>
-    import View from "@components/View.svelte";
+    import DefaultView from "@components/DefaultView.svelte"
+    import Themedbutton from "@components/Themedbutton.svelte"
+    import { ViewsController } from "@single/ViewsController.client.mjs"
+    import SetupView from "@routes/setup.view.svelte"
+    import LoginView from "@routes/public/login.view.svelte"
+    import RegisterView from "@routes/public/register.view.svelte"
+    import { Parameters } from "@class/Parameters.mjs"
+    import { GETamILogged } from "./private/amILogged.client.mts"
+    import { onMount } from "svelte";
+    import { Credentials } from "@single/Credentials.client.mjs"
 
+    onMount(async () => {
+        // desactivar botones antes de mostrar nada
+        status = "Comprobando credenciales..."
+        showButtons = false
+
+        // comprobar credenciales
+        let username = await GETamILogged()
+
+        // si no se ha podido conectar con el servidor
+        if(username === false) {
+            status = "Has configurado mal el servidor o está apagado, vuelve a intentarlo (redirección en 5 segundos)."
+            colorStatus = "bg-red-200"
+            setTimeout(() => {
+                let parameters = new Parameters()
+                parameters.set("forceInitialSetup", true)
+                ViewsController.setCurrentView(SetupView, parameters)
+            }, 5000)
+        } else if (username === "") {
+            // si es un usuario incorrecto
+            colorStatus = "bg-yellow-200"
+            status = "Conexión correcta, credenciales incorrectas, registrate o inicia sesión."
+            Credentials.setLogged(false)
+        } else if (username) {
+            // se ha conectado correctamente
+            colorStatus = "bg-green-200"
+            status = `Bienvenido ${username}, credenciales correctas.`
+            Credentials.setLogged(true)
+        }
+        showButtons = true
+    })
 </script>
 
-<View>
-    {#snippet header()}
-        <div class="text-center py-8 bg-blue-700 text-white">
-            <h1 class="text-4xl font-bold">Cash Manager</h1>
-        </div>
-    {/snippet}
-
+<DefaultView>
     {#snippet main()}
-        <div class="flex flex-col items-center justify-center text-center bg-blue-50 h-full">
-            <div class="max-w-2xl mx-auto">
-                <h2 class="text-3xl mb-4 text-blue-900">Bienvenido</h2>
-                <p class="text-lg text-gray-700">La forma más fácil de gestionar tu dinero.</p>
-            </div>
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl mb-4 text-blue-900">Bienvenido</h2>
+            <p class="text-lg text-gray-700">La forma más fácil de gestionar tu dinero.</p>
+            <p class={`my-3 p-2 ${colorStatus} rounded`}>{status}</p>
         </div>
-    {/snippet}
 
-    {#snippet footer()}
-        <footer class="text-center py-8 border-t bg-blue-500 text-white">
-            <p class="text-sm">&copy; 2025 Cash Manager</p>
-        </footer>
+        {#if showButtons}
+            <div class="flex flex-col gap-2 my-2">
+                {#if !$logged}
+                    <Themedbutton label="Registrarse" onclick={() => {
+                        ViewsController.setCurrentView(RegisterView)
+                    }} />
+                    <Themedbutton label="Iniciar sesion" onclick={() => {
+                        ViewsController.setCurrentView(LoginView)
+                    }} />
+                {:else}
+                    <Themedbutton label="Desconectarse" onclick={() => {
+                        Credentials.setLogged(false)
+                        status = "Sesión cerrada"
+                        colorStatus = "bg-blue-200"
+                    }} />
+                {/if}
+
+                <Themedbutton label="Configurar url" onclick={() => {
+                    let parameters = new Parameters()
+                    parameters.set("forceInitialSetup", true)
+                    ViewsController.setCurrentView(SetupView, parameters)
+                }} />
+            </div>
+        {/if}
     {/snippet}
-</View>
+</DefaultView>
