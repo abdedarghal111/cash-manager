@@ -17,6 +17,9 @@
             "@routes/*": [
                 "src/routes/*"
             ],
+            "@data/*": [
+                "src/data/*"
+            ],
             "@src/*": [
                 "src/*"
             ]
@@ -60,9 +63,9 @@
         "noUncheckedSideEffectImports": true,
         "noEmit": true,
 
-        "composite": true
+        "composite": false
     },
 
     "include": ["src", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/lib/primus.jsx", "../shared/src/**/*.mts"],
-    "exclude": ["node_modules", "dist", ".vite"],
+    "exclude": ["node_modules", "dist", ".vite", "src/**/*.css"],
 }

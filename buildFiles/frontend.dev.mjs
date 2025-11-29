@@ -27,6 +27,7 @@ export default defineConfig({
       "@class": resolve(__src, 'class'),
       "@assets": resolve(__src, 'assets'),
       "@routes": resolve(__src, 'routes'),
+      "@data": resolve(__src, 'data'),
     }
   },
   server: {

@@ -24,6 +24,7 @@
     "deploy:stop": "pm2 stop cashms",
     "build:android": "cap add android; pnpm run client:build && cap sync && cd android && gradlew assembleRelease && cd ..",
     "electron:preview": "electron-vite preview --config buildFiles/electron.vite.config.mjs --entry dist/electron/main/electronMain.js",
+    "electron:dev": "electron-vite --mode development --config buildFiles/electron.vite.config.mjs --entry dist/electron/main/electronMain.js",
     "electron:build": "pnpm run client:check && electron-vite build --config buildFiles/electron.vite.config.mjs --entry dist/electron/main/electronMain.js",
     "electron:build:unpack": "pnpm run electron:build && electron-builder --dir",
     "build:win": "pnpm run electron:build && electron-builder --win",

@@ -1,6 +1,7 @@
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import { dirname, join, resolve } from 'path';
+import tailwindcss from "@tailwindcss/vite";
+import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url)
@@ -19,7 +20,7 @@ export default defineConfig({
       lib: {
         entry: __electronMain
       },
-      outDir: join(__out, 'main')
+      outDir: resolve(__out, 'main')
     }
   },
   preload: {
@@ -28,16 +29,18 @@ export default defineConfig({
       lib: {
         entry: __electronPreload
       },
-      outDir: join(__out, 'preload')
+      outDir: resolve(__out, 'preload')
     }
   },
   renderer: {
-    plugins: [svelte()],
+    plugins: [svelte(), tailwindcss()],
     root: __src,
     build: {
-      outDir: join(__out, 'renderer'),
+      outDir: resolve(__out, 'renderer'),
       rollupOptions: {
-        input: __index
+        input: {
+          index: __index
+        }
       }
     },
     resolve: {
@@ -48,6 +51,7 @@ export default defineConfig({
       "@class": resolve(__src, 'class'),
       "@assets": resolve(__src, 'assets'),
       "@routes": resolve(__src, 'routes'),
+      "@data": resolve(__src, 'data')
     }
   },
   }
