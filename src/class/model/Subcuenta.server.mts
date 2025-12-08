@@ -11,6 +11,8 @@ export class Subcuenta extends Model {
     declare id: number
     declare name: string
     declare cuenta: number
+
+    // metálico
     declare cincuenta: number
     declare veinte: number
     declare diez: number

@@ -1,8 +1,9 @@
 import { STORAGE_DB_FILE_PATH } from "@data/paths.mts"
 import { Sequelize, DataTypes } from "sequelize"
-import { User } from "@class/model/User.server.mjs";
-import { Cuenta } from "@class/model/Cuenta.server.mjs";
-import { Subcuenta } from "@class/model/Subcuenta.server.mjs";
+import { User } from "@class/model/User.server.mjs"
+import { Cuenta } from "@class/model/Cuenta.server.mjs"
+import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
+import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({
@@ -34,6 +35,7 @@ User.init(
         sequelize: sequelize
     }
 )
+
 Cuenta.init(
     {
         id: {
@@ -57,6 +59,7 @@ Cuenta.init(
         sequelize: sequelize
     }
 )
+
 Subcuenta.init(
     {
         id: {
@@ -116,6 +119,36 @@ Subcuenta.init(
     }
 )
 
+Movimiento.init(
+    {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        cuentaId: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            references: {
+                model: Cuenta,
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
+        },
+        amount: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        type: {
+            type: DataTypes.ENUM(...Object.values(TipoMovimiento)),
+            allowNull: false
+        }
+    }, {
+        sequelize: sequelize,
+        tableName: 'movimientos',
+        timestamps: true
+    }
+)
 
 // relaciones entre tablas
 User.hasMany(Cuenta, { foreignKey: 'owner' })
@@ -123,6 +156,9 @@ Cuenta.belongsTo(User, { foreignKey: 'owner' })
 
 Cuenta.hasMany(Subcuenta, { foreignKey: 'cuenta' })
 Subcuenta.belongsTo(Cuenta, { foreignKey: 'cuenta' })
+
+Cuenta.hasMany(Movimiento, { foreignKey: 'cuentaId' })
+Movimiento.belongsTo(Cuenta, { foreignKey: 'cuentaId' })
 
 /**
  * Controlador de la base de datos
@@ -139,6 +175,7 @@ export let DatabaseController = {
         // await User.sync()
         // await Cuenta.sync()
         // await Subcuenta.sync()
+        // await Movimiento.sync()
         await sequelize.sync()
     }
 }
