@@ -12,4 +12,6 @@ export class Movimiento extends Model {
     declare cuentaId: number;
     declare amount: number;
     declare type: TipoMovimiento;
+    // el concepto del movimiento:
+    declare description: string;
 }

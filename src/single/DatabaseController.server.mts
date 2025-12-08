@@ -142,6 +142,11 @@ Movimiento.init(
         type: {
             type: DataTypes.ENUM(...Object.values(TipoMovimiento)),
             allowNull: false
+        },
+        // el concepto del movimiento:
+        description: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         sequelize: sequelize,
