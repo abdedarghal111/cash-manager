@@ -29,3 +29,4 @@ export const TEST_SERVER_KEY_FILE_PATH = resolve(__test, 'certificates', 'key.pe
 // export const SERVER_CSR_FILE_PATH = resolve(__local_data, 'server.csr')
 export const ENV_FILE_PATH = resolve(__local_data, '.env')
 export const STORAGE_DB_FILE_PATH = resolve(__local_data, 'storage.sqlite')
+export const SERVER_CONFIG_FILE_PATH = resolve(__local_data, 'server.config.json')
