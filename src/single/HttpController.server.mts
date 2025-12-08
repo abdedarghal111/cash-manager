@@ -52,7 +52,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Max-Age', '86400');
 
   if(req.method === 'OPTIONS') {
-    res.sendStatus(200)
+    return res.sendStatus(200)
   }
 
   next()
@@ -95,7 +95,7 @@ privateRouter.use(async (req, res, next) => {
   if (pass) {
     next()
   } else {
-    res.sendStatus(401)
+    return res.sendStatus(401)
   }
 })
 
