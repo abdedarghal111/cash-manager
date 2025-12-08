@@ -25,8 +25,8 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import { onMount } from "svelte";
     import { Credentials } from "@single/Credentials.client.mjs"
     import Popup from "@components/Popup.svelte"
-    import CuentasView from "@routes/cuentas/index.svelte"
-    import IngresarSalarioView from "@routes/acciones/ingresarSalario/index.svelte"
+    import CuentasView from "@routes/cuentas/index.view.svelte"
+    import IngresarSalarioView from "@routes/acciones/ingresarSalario/index.view.svelte"
 
     let showOperarPopup = $state(false)
 
