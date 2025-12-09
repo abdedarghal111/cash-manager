@@ -52,6 +52,12 @@ export default express.Router().post("/register", async (req, res) => {
         })
     }
 
+    if(body.username.length > 50) {
+        return res.status(400).json({
+            message: "El nombre de usuario no puede contener más de 50 caracteres"
+        })
+    }
+
     // crear un usuario si está todo correcto
     let user = await User.create({
         username: body.username,
