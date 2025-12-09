@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import https from 'https'
 import { SERVER_CRT_FILE_PATH, SERVER_KEY_FILE_PATH, TEST_SERVER_KEY_FILE_PATH, TEST_SERVER_CRT_FILE_PATH } from '@data/paths.mjs'
 import { readFileSync, existsSync } from 'fs'
@@ -61,6 +61,13 @@ app.use((req, res, next) => {
 // habilitar parsear json
 // CUIDADO: esto solo funciona si le llega un header Content-Type: application/json
 app.use(express.json())
+
+// manejo de errores
+// si algo sale mal devolver error e imprimirlo también
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err)
+  return res.status(500).json({ message: 'Error interno del servidor' })
+})
 
 // los dos posibles routers
 let publicRouter = express.Router()

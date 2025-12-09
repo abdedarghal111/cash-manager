@@ -70,6 +70,14 @@ User.init(
                 name: {
                     type: DataTypes.STRING(50)
                 },
+                total: {
+                    type: DataTypes.FLOAT,
+                    allowNull: false
+                },
+                cashPending: {
+                    type: DataTypes.FLOAT,
+                    allowNull: false
+                },
                 cuenta: {
                     type: DataTypes.INTEGER.UNSIGNED,
                     references: {
