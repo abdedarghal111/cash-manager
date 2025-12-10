@@ -5,6 +5,7 @@ import { storable } from "@class/Storable.client.mjs"
 import axios, { AxiosInstance } from "axios"
 import { Credentials } from "./Credentials.client.mts"
 import { get, Writable } from "svelte/store"
+import toast from "svelte-french-toast"
 
 let serverUrl = storable("serverUrl", "localhost")
 let serverPort = storable("serverPort", "5432")
@@ -77,6 +78,43 @@ export let RequestsManager = {
      */
     getReactiveServerAndPort: () => {
         return [serverUrl, serverPort] as [Writable<string>, Writable<string>]
-    }
+    },
 
+    /**
+     * Realiza una petición genérica a la API y maneja las respuestas y errores.
+     * @template RequestType Un tipo que debe contener las propiedades `client` (opcional) y `server` para los tipos de la petición y respuesta.
+     * @param {'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'} method - El método HTTP.
+     * @param {string} url - La URL del endpoint.
+     * @param {ClientRequestType} [data] - Los datos opcionales para enviar en el cuerpo de la petición.
+     * @returns {Promise<ServerRequestType | false>} La data de la respuesta del servidor o `false` si ocurre un error.
+     */
+    makeRequest: async <ServerRequestType, ClientRequestType>(
+        method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+        url: string,
+        data?: ClientRequestType
+    ): Promise<ServerRequestType | false> => {
+        const requester = RequestsManager.getRequester()
+        try {
+            const response = await requester<ClientRequestType>({
+                method: method,
+                url: url,
+                data: data
+            })
+
+            return response.data as unknown as ServerRequestType
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response && error.response.data) {
+                    toast.error(error.response.data.message)
+                } else {
+                    toast.error('No se ha podido conectar con el servidor.')
+                    console.error(error)
+                }
+            } else {
+                toast.error('Ha ocurrido un error inesperado.')
+                console.error(error)
+            }
+            return false
+        }
+    }
 }
