@@ -9,10 +9,11 @@
  */
 import dotenv from 'dotenv'
 import { ENV_FILE_PATH } from '@data/paths.mts'
-import { DatabaseController } from '@single/DatabaseController.server.mjs'
-import HttpsController from '@single/HttpController.server.mjs'
-import amILoggedRouter from '@routes/private/amILogged.server.mjs'
-import registerRouter from '@routes/public/register.server.mjs'
+import { DatabaseController } from '@single/DatabaseController.server.mts'
+import HttpsController from '@single/HttpController.server.mts'
+import amILoggedRouter from '@routes/private/amILogged.server.mts'
+import registerRouter from '@routes/public/register.server.mts'
+import cuentasRouter from '@routes/private/cuentas/index.server.mts'
 
 // cargando variables de entorno
 dotenv.config({ path: ENV_FILE_PATH })
@@ -23,6 +24,7 @@ await DatabaseController.sync()
 // cargar routers del servidor (los privados tienen middleware de login)
 HttpsController.addPrivateRouter(amILoggedRouter)
 HttpsController.addPublicRouter(registerRouter)
+HttpsController.addPrivateRouter(cuentasRouter)
 
 // iniciar el servidor https
 HttpsController.startServer()
