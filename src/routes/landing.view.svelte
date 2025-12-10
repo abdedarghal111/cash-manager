@@ -24,11 +24,12 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import { GETamILogged } from "./private/amILogged.client.mts"
     import { onMount } from "svelte";
     import { Credentials } from "@single/Credentials.client.mjs"
-    import Popup from "@components/Popup.svelte"
-    import CuentasView from "@routes/cuentas/index.view.svelte"
+    import Modal from "@components/Modal.svelte"
+    import CuentasView from "@routes/private/cuentas/index.view.svelte"
     import IngresarSalarioView from "@routes/acciones/ingresarSalario/index.view.svelte"
 
     let showOperarPopup = $state(false)
+    let showConfigurarModal = $state(false)
 
     onMount(async () => {
         // desactivar botones antes de mostrar nada
@@ -83,6 +84,9 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
                     <Themedbutton label="Operar" onclick={() => {
                         showOperarPopup = true
                     }} />
+                    <Themedbutton label="Configurar" onclick={() => {
+                        showConfigurarModal = true
+                    }} />
                     <Themedbutton label="Desconectarse" onclick={() => {
                         Credentials.setLogged(false)
                         status = "Sesión cerrada"
@@ -98,7 +102,8 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
             </div>
         {/if}
 
-        <Popup bind:show={showOperarPopup} children={operarPopupContent} />
+        <Modal bind:show={showOperarPopup} children={operarPopupContent} />
+        <Modal bind:show={showConfigurarModal} children={configurarModalContent} />
     {/snippet}
 </DefaultView>
 
@@ -107,14 +112,26 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     <div class="text-center bg-white p-8 rounded-lg shadow-lg">
         <h3 class="text-2xl mb-6">Opciones de Operación</h3>
         <div class="flex flex-col gap-2">
-            <Themedbutton label="Cuentas" onclick={() => {
-                ViewsController.setCurrentView(CuentasView);
-            }} />
             <Themedbutton label="Ingresar Salario" onclick={() => {
                 ViewsController.setCurrentView(IngresarSalarioView);
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showOperarPopup = false
+            }} />
+        </div>
+    </div>
+{/snippet}
+
+<!-- El panel de configuración genérico -->
+{#snippet configurarModalContent()}
+    <div class="text-center bg-white p-8 rounded-lg shadow-lg">
+        <h3 class="text-2xl mb-6">Configuración</h3>
+        <div class="flex flex-col gap-2">
+            <Themedbutton label="Cuentas" onclick={() => {
+                ViewsController.setCurrentView(CuentasView);
+            }} />
+            <Themedbutton label="Cerrar" onclick={() => {
+                showConfigurarModal = false
             }} />
         </div>
     </div>
