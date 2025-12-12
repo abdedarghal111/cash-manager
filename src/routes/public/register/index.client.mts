@@ -2,7 +2,7 @@
  * Encargado del endpoint amILogged en la parte del cliente
  */
 import { RequestsManager } from "@single/Requests.client.mjs"
-import type { POSTregisterType } from "./register.server.mjs"
+import type { POSTregisterType } from "../register/index.server.mjs"
 import axios from "axios"
 import { Credentials } from "@single/Credentials.client.mjs"
 

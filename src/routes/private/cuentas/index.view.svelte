@@ -5,14 +5,14 @@ y también donde se ve un resumen del historial como subidas o bajadas en porcen
 <script lang="ts">
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
-    import { ViewsController } from "@single/ViewsController.client.mts"
+    import { ViewsController } from "@single/ViewsController.client.mjs"
     import LandingView from "@routes/landing.view.svelte"
     import { onMount } from "svelte"
-    import { RequestsManager } from "@single/Requests.client.mts"
-    import type { GETCuentasType } from "@routes/private/cuentas/index.server.mts"
+    import { RequestsManager } from "@single/Requests.client.mjs"
+    import type { GETCuentasType } from "@routes/private/cuentas/index.server.mjs"
     import CrearCuentaView from "@routes/private/cuentas/crear.view.svelte"
     import VerCuentaView from "@routes/private/cuentas/ver.view.svelte"
-    import { Parameters } from '@class/Parameters.mts'
+    import { Parameters } from '@class/Parameters.mjs'
 
 
     let cuentas: GETCuentasType.server = $state([])

@@ -5,10 +5,10 @@ Vista para crear una nueva cuenta.
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
     import ThemedTextInput from "@components/ThemedTextInput.svelte"
-    import { ViewsController } from "@single/ViewsController.client.mts"
+    import { ViewsController } from "@single/ViewsController.client.mjs"
     import CuentasIndexView from "@routes/private/cuentas/index.view.svelte"
-    import { RequestsManager } from "@single/Requests.client.mts"
-    import type { POSTCuentasType } from "@routes/private/cuentas/index.server.mts"
+    import { RequestsManager } from "@single/Requests.client.mjs"
+    import type { POSTCuentasType } from "@routes/private/cuentas/index.server.mjs"
     import toast from "svelte-french-toast"
     import { Parameters } from "@class/Parameters.mjs";
 

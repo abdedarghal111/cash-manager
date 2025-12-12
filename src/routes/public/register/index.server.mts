@@ -3,8 +3,8 @@
  */
 import express from 'express'
 import bcrypt from 'bcrypt'
-import { User } from '@class/model/User.server.mts'
-import { asyncErrorHandler } from '@single/HttpController.server.mts'
+import { User } from '@class/model/User.server.mjs'
+import { asyncErrorHandler } from '@single/HttpController.server.mjs'
 
 // tipos que acepta y devuelve el servidor
 export namespace POSTregisterType {

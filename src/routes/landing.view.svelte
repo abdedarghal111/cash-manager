@@ -18,15 +18,15 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import Themedbutton from "@components/Themedbutton.svelte"
     import { ViewsController } from "@single/ViewsController.client.mjs"
     import SetupView from "@routes/setup.view.svelte"
-    import LoginView from "@routes/public/login.view.svelte"
-    import RegisterView from "@routes/public/register.view.svelte"
+    import LoginView from "@routes/public/login/login.view.svelte"
+    import RegisterView from "@routes/public/register/index.view.svelte"
     import { Parameters } from "@class/Parameters.mjs"
-    import { GETamILogged } from "./private/amILogged.client.mts"
+    import { GETamILogged } from "@routes/private/amILogged/index.client.mjs"
     import { onMount } from "svelte";
     import { Credentials } from "@single/Credentials.client.mjs"
     import Modal from "@components/Modal.svelte"
     import CuentasView from "@routes/private/cuentas/index.view.svelte"
-    import IngresarSalarioView from "@routes/acciones/ingresarSalario/index.view.svelte"
+    import IngresarSalarioView from "@routes/private/ingresarSalario/index.view.svelte"
 
     let showOperarPopup = $state(false)
     let showConfigurarModal = $state(false)

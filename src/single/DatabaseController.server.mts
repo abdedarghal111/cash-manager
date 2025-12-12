@@ -1,4 +1,4 @@
-import { STORAGE_DB_FILE_PATH } from "@data/paths.mts"
+import { STORAGE_DB_FILE_PATH } from "@data/paths.mjs"
 import { Sequelize, DataTypes } from "sequelize"
 import { User } from "@class/model/User.server.mjs"
 import { Cuenta } from "@class/model/Cuenta.server.mjs"

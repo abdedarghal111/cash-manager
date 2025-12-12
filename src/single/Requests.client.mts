@@ -3,7 +3,7 @@
  */
 import { storable } from "@class/Storable.client.mjs"
 import axios, { AxiosInstance } from "axios"
-import { Credentials } from "./Credentials.client.mts"
+import { Credentials } from "./Credentials.client.mjs"
 import { get, Writable } from "svelte/store"
 import toast from "svelte-french-toast"
 

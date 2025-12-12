@@ -5,7 +5,7 @@ También te permite modificar la tabla de gastos a aplicar.
 <script lang="ts">
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
-    import { ViewsController } from "@single/ViewsController.client.mts"
+    import { ViewsController } from "@single/ViewsController.client.mjs"
     import LandingView from "@routes/landing.view.svelte"
 </script>
 

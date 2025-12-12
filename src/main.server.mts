@@ -8,12 +8,12 @@
  * A partir de public routers y routers privados
  */
 import dotenv from 'dotenv'
-import { ENV_FILE_PATH } from '@data/paths.mts'
-import { DatabaseController } from '@single/DatabaseController.server.mts'
-import HttpsController from '@single/HttpController.server.mts'
-import amILoggedRouter from '@routes/private/amILogged.server.mts'
-import registerRouter from '@routes/public/register.server.mts'
-import cuentasRouter from '@routes/private/cuentas/index.server.mts'
+import { ENV_FILE_PATH } from '@data/paths.mjs'
+import { DatabaseController } from '@single/DatabaseController.server.mjs'
+import HttpsController from '@single/HttpController.server.mjs'
+import amILoggedRouter from '@routes/private/amILogged/index.server.mjs'
+import registerRouter from '@routes/public/register/index.server.mjs'
+import cuentasRouter from '@routes/private/cuentas/index.server.mjs'
 
 // cargando variables de entorno
 dotenv.config({ path: ENV_FILE_PATH })

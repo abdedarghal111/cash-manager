@@ -2,7 +2,7 @@
  * Encargado del endpoint amILogged en la parte del cliente
  */
 import { RequestsManager } from "@single/Requests.client.mjs"
-import type { GETamILoggedType } from "./amILogged.server.mjs"
+import type { GETamILoggedType } from "./index.server.mjs"
 import axios from "axios"
 
 /**

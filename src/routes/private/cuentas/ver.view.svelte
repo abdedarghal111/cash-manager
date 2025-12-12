@@ -6,11 +6,11 @@ Vista para ver y editar los detalles de una cuenta específica.
     import Themedbutton from "@components/Themedbutton.svelte"
     import ThemedTextInput from "@components/ThemedTextInput.svelte"
     import Modal from "@components/Modal.svelte"
-    import { ViewsController } from "@single/ViewsController.client.mts"
+    import { ViewsController } from "@single/ViewsController.client.mjs"
     import CuentasIndexView from "@routes/private/cuentas/index.view.svelte"
     import { onMount } from "svelte"
-    import { RequestsManager } from "@single/Requests.client.mts"
-    import type { GETCuentaByIdType, DELETECuentaType, PUTCuentasType } from "@routes/private/cuentas/index.server.mts"
+    import { RequestsManager } from "@single/Requests.client.mjs"
+    import type { GETCuentaByIdType, DELETECuentaType, PUTCuentasType } from "@routes/private/cuentas/index.server.mjs"
     import toast from "svelte-french-toast"
 
     const params = ViewsController.getParameters()

@@ -25,7 +25,7 @@ Vista de registro, para registrar una cuenta
     import ThemedTextInput from "@components/ThemedTextInput.svelte"
     import { get } from "svelte/store"
     import { Credentials } from "@single/Credentials.client.mjs"
-    import { POSTregister } from "./register.client.mts"
+    import { POSTregister } from "@routes/public/register/index.client.mjs"
     import { ViewsController } from "@single/ViewsController.client.mjs"
     import LandingView from "@routes/landing.view.svelte"
 

@@ -6,7 +6,7 @@
  */
 
 import { get, writable } from 'svelte/store';
-import { Parameters } from '@class/Parameters.mts';
+import { Parameters } from '@class/Parameters.mjs';
 import { Component } from 'svelte';
 import SetupView from '@routes/setup.view.svelte';
 
