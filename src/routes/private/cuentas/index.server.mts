@@ -4,6 +4,7 @@
 import express from 'express'
 import { Cuenta } from '@class/model/Cuenta.server.mjs'
 import { User } from '@class/model/User.server.mjs'
+import { asyncErrorHandler } from '@single/HttpController.server.mjs'
 
 export namespace POSTCuentasType {
     export interface client {
@@ -60,7 +61,7 @@ export namespace PUTCuentasType {
 const router = express.Router()
 
 // GET /cuentas - Obtener todas las cuentas del usuario
-router.get('/cuentas', async (req, res) => {
+router.get('/cuentas', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
 
@@ -78,10 +79,10 @@ router.get('/cuentas', async (req, res) => {
         }
     })
     return res.status(200).json(filteredAccounts as GETCuentasType.server)
-})
+}))
 
 // POST /cuentas - Crear una nueva cuenta
-router.post('/cuentas', async (req, res) => {
+router.post('/cuentas', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
     const body = req.body as POSTCuentasType.client
@@ -119,13 +120,17 @@ router.post('/cuentas', async (req, res) => {
         cuenta: newAccount.name,
         id: newAccount.id
     } as POSTCuentasType.server)
-})
+}))
 
 // GET /cuentas/:id - Obtener una cuenta específica
-router.get('/cuentas/:id', async (req, res) => {
+router.get('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
+
     // recoger el parametro de la url
+    if (!req.params.id) {
+        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
+    }
     const accountId = parseInt(req.params.id, 10)
 
     if (isNaN(accountId)) {
@@ -150,19 +155,26 @@ router.get('/cuentas/:id', async (req, res) => {
     }
 
     return res.status(200).json(filteredAccount as GETCuentaByIdType.server)
-})
+}))
 
 // PUT /cuentas/:id - Actualizar una cuenta
-router.put('/cuentas/:id', async (req, res) => {
+router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
-    const accountId = parseInt(req.params.id, 10)
-    const body = req.body as PUTCuentasType.client
 
+    // recoger el parametro de la url
+    if (!req.params.id) {
+        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
+    }
+    const accountId = parseInt(req.params.id, 10)
+
+    
     if (isNaN(accountId)) {
         return res.status(400).json({ message: 'El ID de la cuenta debe ser un número' })
     }
-
+    
+    // Validar y sanear los datos
+    const body = req.body as PUTCuentasType.client
     if (!body || typeof body.name !== 'string' || body.name.trim().length === 0) {
         return res.status(400).json({ message: 'El nombre de la cuenta es inválido' })
     }
@@ -205,12 +217,17 @@ router.put('/cuentas/:id', async (req, res) => {
             name: account.name
         }
     } as PUTCuentasType.server)
-})
+}))
 
 // DELETE /cuentas/:id - Eliminar una cuenta
-router.delete('/cuentas/:id', async (req, res) => {
+router.delete('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
+
+    // revisar que esté el id
+    if(!req.params.id) {
+        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
+    }
     const accountId = parseInt(req.params.id, 10)
 
     if (isNaN(accountId)) {
@@ -248,6 +265,6 @@ router.delete('/cuentas/:id', async (req, res) => {
     }
 
     return res.status(200).json({ message: 'Cuenta eliminada correctamente' } as DELETECuentaType.server)
-})
+}))
 
 export default router

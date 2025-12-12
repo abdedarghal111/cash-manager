@@ -1,10 +1,15 @@
 import express, { NextFunction, Request, Response } from 'express'
 import https from 'https'
-import { SERVER_CRT_FILE_PATH, SERVER_KEY_FILE_PATH, TEST_SERVER_KEY_FILE_PATH, TEST_SERVER_CRT_FILE_PATH } from '@data/paths.mjs'
 import { readFileSync, existsSync } from 'fs'
 import helmet from 'helmet'
 import bcrypt from "bcrypt"
 import { User } from '@class/model/User.server.mjs'
+import { 
+  SERVER_CRT_FILE_PATH,
+  SERVER_KEY_FILE_PATH,
+  TEST_SERVER_KEY_FILE_PATH,
+  TEST_SERVER_CRT_FILE_PATH
+} from '@data/paths.mjs'
 
 // variables
 let httpsEnabled = true
@@ -62,12 +67,44 @@ app.use((req, res, next) => {
 // CUIDADO: esto solo funciona si le llega un header Content-Type: application/json
 app.use(express.json())
 
-// manejo de errores
+// manejo de errores sincronos (por ahora todavía ni me ha tocado un error ni ha funcionado)
 // si algo sale mal devolver error e imprimirlo también
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err)
-  return res.status(500).json({ message: 'Error interno del servidor' })
+  // si no es un error entonces pasar al siguiente
+  if(!(err instanceof Error)) {
+    return next(err)
+  }
+
+  console.error("-------------- SYNC ERROR --------------")
+  console.error(
+    `- Name: ${err.name}\n` +
+    `- Message: ${err.message}\n` +
+    `- Cause: ${err.cause}\n` +
+    `- Stack: ${err.stack}\n`
+  )
+  console.error("-------------- END ERROR --------------")
+  // añadir cabecera 500 y pasar al siguiente
+  res.status(500).json({ message: 'Error interno del servidor' })
+  return next(err)
 })
+
+// manejo de errores asincronos:
+// actua como un wrapper en cada endpoint de cada middleware
+export const asyncErrorHandler = (func: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
+  func(req, res, next).catch((err: Error) => {
+    console.error("-------------- ASYNC ERROR --------------")
+    console.error(
+      `- Name: ${err.name}\n` +
+      `- Message: ${err.message}\n` +
+      `- Cause: ${err.cause}\n` +
+      `- Stack: ${err.stack}\n`
+    )
+    console.error("-------------- END ERROR --------------")
+    // añadir cabecera 500 y pasar al siguiente
+    res.status(500).json({ message: 'Error interno del servidor' })
+    next()
+  })
+}
 
 // los dos posibles routers
 let publicRouter = express.Router()
@@ -75,7 +112,7 @@ let privateRouter = express.Router()
 
 // middleware para el router privado
 // recibe las credenciales vía header y verifica que sean credenciales correctas
-privateRouter.use(async (req, res, next) => {
+privateRouter.use(asyncErrorHandler(async (req, res, next) => {
   // recoger variables
   let username = req.headers['username']
   let password = req.headers['password']
@@ -104,7 +141,7 @@ privateRouter.use(async (req, res, next) => {
   } else {
     return res.sendStatus(401)
   }
-})
+}))
 
 // clase controladora
 let HttpsController = {

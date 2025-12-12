@@ -1,9 +1,10 @@
 /**
  * endpoint para saber si estas logueado.
  */
-import { User } from '@class/model/User.server.mjs'
 import express from 'express'
 import bcrypt from 'bcrypt'
+import { User } from '@class/model/User.server.mts'
+import { asyncErrorHandler } from '@single/HttpController.server.mts'
 
 // tipos que acepta y devuelve el servidor
 export namespace POSTregisterType {
@@ -16,7 +17,7 @@ export namespace POSTregisterType {
     }
 }
 
-export default express.Router().post("/register", async (req, res) => {
+export default express.Router().post("/register", asyncErrorHandler(async (req, res, next) => {
     let body = req.body as POSTregisterType.client
 
     // si existe un usuario creado entonces negarse a registrar
@@ -67,4 +68,4 @@ export default express.Router().post("/register", async (req, res) => {
     res.status(201).json({
         message: "Usuario creado correctamente"
     })
-})
+}))
