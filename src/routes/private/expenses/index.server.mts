@@ -146,9 +146,12 @@ router.post('/expenses', asyncErrorHandler(async (req, res, next) => {
     if (Validator.isNotValid(validatedName)) {
         return res.status(400).json({ message: 'El nombre del gasto es inválido' })
     }
+    if (validatedName.length > 50) {
+        return res.status(400).json({ message: 'El nombre del gasto no puede contener más de 50 caracteres' })
+    }
     
     let validatedAmount = Validator.number(req.body.amount)
-    if (Validator.isNotValid(validatedAmount) || validatedAmount <= 0) {
+    if (Validator.isNotValid(validatedAmount) || validatedAmount < 0) {
         return res.status(400).json({ message: 'El monto del gasto debe ser un número positivo' })
     }
     
@@ -196,9 +199,12 @@ router.put('/expenses/:id', asyncErrorHandler(async (req, res, next) => {
     if (Validator.isNotValid(validatedName)) {
         return res.status(400).json({ message: 'El nombre del gasto es inválido' })
     }
+    if (validatedName.length > 50) {
+        return res.status(400).json({ message: 'El nombre del gasto no puede contener más de 50 caracteres' })
+    }
     
     let validatedAmount = Validator.number(req.body.amount)
-    if (Validator.isNotValid(validatedAmount) || validatedAmount <= 0) {
+    if (Validator.isNotValid(validatedAmount) || validatedAmount < 0) {
         return res.status(400).json({ message: 'El monto del gasto debe ser un número positivo' })
     }
     
