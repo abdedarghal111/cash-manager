@@ -37,7 +37,7 @@ Vista para crear una nueva cuenta.
             // preparar la vista y enviarla
             let parameters = new Parameters()
             parameters.set('id', result.id)
-            ViewsController.setCurrentView(CuentasIndexView, parameters)
+            ViewsController.setDefaultCurrentView(CuentasIndexView, parameters)
         }
         loading = false
     }
@@ -80,7 +80,7 @@ Vista para crear una nueva cuenta.
 
             <div class="mt-4">
                 <Themedbutton label="Volver" onclick={() => {
-                    ViewsController.setCurrentView(CuentasIndexView)
+                    ViewsController.setDefaultCurrentView(CuentasIndexView)
                 }}/>
             </div>
         </div>

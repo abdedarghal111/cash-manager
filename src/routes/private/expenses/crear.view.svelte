@@ -43,7 +43,7 @@ Vista para crear un gasto
 
         if (result) {
             toast.success('Gasto creado correctamente.')
-            ViewsController.setCurrentView(ExpensesIndexView)
+            ViewsController.setDefaultCurrentView(ExpensesIndexView)
         }
         loading = false
     }
@@ -82,7 +82,7 @@ Vista para crear un gasto
 
             <div class="mt-4">
                 <Themedbutton label="Volver" onclick={() => {
-                    ViewsController.setCurrentView(ExpensesIndexView)
+                    ViewsController.setDefaultCurrentView(ExpensesIndexView)
                 }}/>
             </div>
         </div>

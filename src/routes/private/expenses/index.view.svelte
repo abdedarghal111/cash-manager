@@ -65,7 +65,7 @@ Vista para listar y ver los gastos
 
         <div class="max-w-2xl mx-auto mt-6 flex flex-col gap-2">
             <Themedbutton label="Crear Gasto" onclick={() => ViewsController.setCurrentView(CrearExpenseView)} />
-            <Themedbutton label="Volver" onclick={() => ViewsController.setCurrentView(LandingView)} />
+            <Themedbutton label="Volver" onclick={() => ViewsController.setDefaultCurrentView(LandingView)} />
         </div>
     {/snippet}
 </DefaultView>

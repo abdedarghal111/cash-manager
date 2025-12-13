@@ -123,11 +123,6 @@ Vista para ver y editar los detalles de un gasto específico.
                 </div>
             {:else if expense}
                 <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 relative">
-                    {#if requesting}
-                        <div class="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
-                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
-                        </div>
-                    {/if}
                     <h2 class="text-2xl font-semibold text-slate-800 mb-6">Detalles del Gasto</h2>
                     <div class="space-y-4">
                         <ThemedTextInput label="Nombre:" bind:value={editedName} disabled={requesting} />
@@ -157,7 +152,7 @@ Vista para ver y editar los detalles de un gasto específico.
             {/if}
 
             <div class="mt-4">
-                <Themedbutton label="Volver a Gastos" onclick={() => ViewsController.setCurrentView(ExpensesIndexView)} />
+                <Themedbutton label="Volver a Gastos" onclick={() => ViewsController.setDefaultCurrentView(ExpensesIndexView)} />
             </div>
         </div>
 

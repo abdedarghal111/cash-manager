@@ -129,7 +129,7 @@ Vista para ver y editar los detalles de una cuenta específica.
             {/if}
 
             <div class="mt-4">
-                <Themedbutton label="Volver a Cuentas" onclick={() => ViewsController.setCurrentView(CuentasIndexView)} />
+                <Themedbutton label="Volver" onclick={() => ViewsController.setDefaultCurrentView(CuentasIndexView)} />
             </div>
         </div>
 

@@ -74,7 +74,7 @@ y también donde se ve un resumen del historial como subidas o bajadas en porcen
 
         <div class="max-w-2xl mx-auto mt-6 flex flex-col gap-2">
             <Themedbutton label="Crear Cuenta" onclick={() => ViewsController.setCurrentView(CrearCuentaView)} />
-            <Themedbutton label="Volver" onclick={() => ViewsController.setCurrentView(LandingView)} />
+            <Themedbutton label="Volver" onclick={() => ViewsController.setDefaultCurrentView(LandingView)} />
         </div>
     {/snippet}
 </DefaultView>
