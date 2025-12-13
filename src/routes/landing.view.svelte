@@ -28,6 +28,7 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import CuentasView from "@routes/private/cuentas/index.view.svelte"
     import IngresarSalarioView from "@routes/private/ingresarSalario/index.view.svelte"
     import EstadisticasView from "@routes/private/estadisticas/index.view.svelte"
+    import ExpensesIndexView from "@routes/private/expenses/index.view.svelte"
 
     let showOperarPopup = $state(false)
     let showConfigurarModal = $state(false)
@@ -133,6 +134,9 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
         <div class="flex flex-col gap-2">
             <Themedbutton label="Cuentas" onclick={() => {
                 ViewsController.setCurrentView(CuentasView)
+            }} />
+            <Themedbutton label="Gastos" onclick={() => {
+                ViewsController.setCurrentView(ExpensesIndexView)
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showConfigurarModal = false

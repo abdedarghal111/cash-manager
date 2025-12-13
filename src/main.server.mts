@@ -14,7 +14,9 @@ import HttpsController from '@single/HttpController.server.mjs'
 import amILoggedRouter from '@routes/private/amILogged/index.server.mjs'
 import registerRouter from '@routes/public/register/index.server.mjs'
 import cuentasRouter from '@routes/private/cuentas/index.server.mjs'
+import expensesRouter from '@routes/private/expenses/index.server.mjs'
 import estadisticasRouter from '@routes/private/estadisticas/index.server.mjs'
+import ingresarSalarioRouter from '@routes/private/ingresarSalario/index.server.mjs'
 
 // cargando variables de entorno
 dotenv.config({ path: ENV_FILE_PATH })
@@ -26,7 +28,9 @@ await DatabaseController.sync()
 HttpsController.addPrivateRouter(amILoggedRouter)
 HttpsController.addPublicRouter(registerRouter)
 HttpsController.addPrivateRouter(cuentasRouter)
+HttpsController.addPrivateRouter(expensesRouter)
 HttpsController.addPrivateRouter(estadisticasRouter)
+HttpsController.addPrivateRouter(ingresarSalarioRouter)
 
 // iniciar el servidor https
 HttpsController.startServer()

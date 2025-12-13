@@ -5,7 +5,8 @@ import { Cuenta } from "@class/model/Cuenta.server.mjs"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
 import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mjs"
-import { Expense, TipoGasto } from "@class/model/Expense.server.mjs"
+import { Expense } from "@class/model/Expense.server.mjs"
+import { TipoGasto } from "@data/ExpenseType.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({
@@ -219,6 +220,9 @@ Expense.init({
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING(50)
     },
     owner: {
         type: DataTypes.INTEGER.UNSIGNED,
