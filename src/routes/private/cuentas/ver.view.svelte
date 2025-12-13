@@ -5,6 +5,7 @@ Vista para ver y editar los detalles de una cuenta específica.
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
     import ThemedTextInput from "@components/ThemedTextInput.svelte"
+    import ThemedListInput from "@components/ThemedListInput.svelte"
     import Modal from "@components/Modal.svelte"
     import { ViewsController } from "@single/ViewsController.client.mjs"
     import CuentasIndexView from "@routes/private/cuentas/index.view.svelte"
@@ -24,6 +25,8 @@ Vista para ver y editar los detalles de una cuenta específica.
     let requesting = $state(true)
     let showDeleteModal = $state(false)
     let editedName = $state('')
+    let editedPercentage = $state(0)
+    let editedIsRemainder = $state(false)
 
     onMount(async () => {
         requesting = true
@@ -31,6 +34,8 @@ Vista para ver y editar los detalles de una cuenta específica.
         if (result) {
             cuenta = result
             editedName = result.name
+            editedPercentage = result.percentage
+            editedIsRemainder = result.isRemainder
         } else {
             toast.error('No se pudo cargar la información de la cuenta.')
             ViewsController.setCurrentView(CuentasIndexView)
@@ -39,18 +44,23 @@ Vista para ver y editar los detalles de una cuenta específica.
     })
 
     async function saveChanges() {
-        if (!cuenta || editedName.trim() === '' || editedName.trim() === cuenta.name) {
+        if (!cuenta) {
             return
         }
 
         requesting = true
-        const body: PUTCuentasType.client = { name: editedName.trim() }
-        const result = await RequestsManager.makeRequest<PUTCuentasType.server, PUTCuentasType.client>('PUT', `/cuentas/${cuentaId}`, body)
+        const result = await RequestsManager.makeRequest<PUTCuentasType.server, PUTCuentasType.client>('PUT', `/cuentas/${cuentaId}`, {
+            name: editedName.trim(),
+            percentage: editedPercentage,
+            isRemainder: editedIsRemainder
+        })
 
-        if (result && result.cuenta && cuenta) {
+        if (result) {
             toast.success(result.message || 'Cuenta actualizada.')
-            cuenta.name = result.cuenta.name
-            editedName = result.cuenta.name
+            // Update local state directly
+            cuenta.name = editedName.trim()
+            cuenta.percentage = editedPercentage
+            cuenta.isRemainder = editedIsRemainder
         }
         requesting = false
     }
@@ -64,7 +74,6 @@ Vista para ver y editar los detalles de una cuenta específica.
             toast.success(result.message || 'Cuenta eliminada correctamente.')
             ViewsController.setCurrentView(CuentasIndexView)
         }
-        // Si hay error, el toast lo maneja el RequestsManager y el requesting se pone a false
         requesting = false
     }
 
@@ -78,6 +87,8 @@ Vista para ver y editar los detalles de una cuenta específica.
                 <div class="animate-pulse space-y-4 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
                     <div class="h-8 w-40 rounded bg-slate-200"></div>
                     <div class="h-10 w-full rounded bg-slate-200"></div>
+                    <div class="h-10 w-full rounded bg-slate-200"></div>
+                    <div class="h-10 w-full rounded bg-slate-200"></div>
                     <div class="flex gap-2">
                          <div class="h-9 w-24 rounded bg-slate-200"></div>
                          <div class="h-9 w-24 rounded bg-slate-200"></div>
@@ -85,21 +96,27 @@ Vista para ver y editar los detalles de una cuenta específica.
                 </div>
             {:else if cuenta}
                 <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 relative">
-                    {#if requesting}
-                        <div class="flex animate-pulse justify-between items-center">
-                            <div class="h-8 w-50 rounded bg-slate-200"></div>
-                        </div>
-                    {/if}
                     <h2 class="text-2xl font-semibold text-slate-800 mb-6">Detalles de la Cuenta</h2>
                     <div class="space-y-4">
                         <ThemedTextInput label="Nombre:" bind:value={editedName} disabled={requesting} />
-                         <!-- Otros campos no editables irían aquí -->
+                        {#if !editedIsRemainder}
+                            <ThemedTextInput label="Porcentaje:" type="number" bind:value={editedPercentage} disabled={requesting} />
+                        {/if}
+                        <ThemedListInput 
+                            label="Recibe Restante:"
+                            bind:value={editedIsRemainder}
+                            options={[
+                                { label: 'No', value: false },
+                                { label: 'Sí', value: true }
+                            ]}
+                            disabled={requesting}
+                        />
                     </div>
                     <div class="mt-6 flex justify-center flex-wrap gap-2">
                         <Themedbutton 
                             label="Guardar Cambios" 
                             onclick={saveChanges}
-                            enabled={!requesting && cuenta.name !== editedName && editedName.trim() !== ''}
+                            enabled={!requesting}
                         />
                         <Themedbutton 
                             label="Eliminar" 

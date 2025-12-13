@@ -48,7 +48,14 @@ y también donde se ve un resumen del historial como subidas o bajadas en porcen
                     {:else if cuentas.length > 0}
                         {#each cuentas as cuenta}
                             <li class="p-4 flex justify-between items-center gap-3">
-                                <span class="text-slate-700">{cuenta.name}</span>
+                                <span class="text-slate-700">
+                                    {cuenta.name}
+                                    {#if cuenta.isRemainder}
+                                        - Restante
+                                    {:else}
+                                        - {cuenta.percentage}%
+                                    {/if}
+                                </span>
                                 <Themedbutton label="Ver" onclick={() => {
                                     let params = new Parameters()
                                     params.set('id', cuenta.id)

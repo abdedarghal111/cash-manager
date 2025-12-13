@@ -5,6 +5,7 @@ Vista para crear una nueva cuenta.
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
     import ThemedTextInput from "@components/ThemedTextInput.svelte"
+    import ThemedListInput from "@components/ThemedListInput.svelte"
     import { ViewsController } from "@single/ViewsController.client.mjs"
     import CuentasIndexView from "@routes/private/cuentas/index.view.svelte"
     import { RequestsManager } from "@single/Requests.client.mjs"
@@ -13,6 +14,8 @@ Vista para crear una nueva cuenta.
     import { Parameters } from "@class/Parameters.mjs"
 
     let cuentaName = $state('')
+    let percentage = $state(0)
+    let isRemainder = $state(false)
     let loading = $state(false)
 
     async function crearCuenta() {
@@ -24,7 +27,9 @@ Vista para crear una nueva cuenta.
         
         loading = true
         const result = await RequestsManager.makeRequest<POSTCuentasType.server, POSTCuentasType.client>('POST', '/cuentas', {
-            name: cuentaName
+            name: cuentaName,
+            percentage: percentage,
+            isRemainder: isRemainder
         })
 
         if (result) {
@@ -48,6 +53,21 @@ Vista para crear una nueva cuenta.
                     <ThemedTextInput
                         label="Nombre:" 
                         bind:value={cuentaName}
+                    />
+                    {#if !isRemainder}
+                        <ThemedTextInput
+                            label="Porcentaje:" 
+                            type="number"
+                            bind:value={percentage}
+                        />
+                    {/if}
+                    <ThemedListInput
+                        label="Recibe Restante:"
+                        bind:value={isRemainder}
+                        options={[
+                            { label: 'No', value: false },
+                            { label: 'Sí', value: true }
+                        ]}
                     />
 
                     <Themedbutton 

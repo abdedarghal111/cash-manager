@@ -11,6 +11,8 @@ export class Cuenta extends Model {
     declare id: number
     declare name: string
     declare owner: number
+    declare percentage: number
+    declare isRemainder: boolean
 
     /**
      * Calcula el balance total de la cuenta sumando los montos de sus subcuentas.

@@ -5,10 +5,13 @@ import express from 'express'
 import { Cuenta } from '@class/model/Cuenta.server.mjs'
 import { User } from '@class/model/User.server.mjs'
 import { asyncErrorHandler } from '@single/HttpController.server.mjs'
+import { Validator } from '@single/Validator.mjs'
 
 export namespace POSTCuentasType {
     export interface client {
-        name: string
+        name: string,
+        percentage: number,
+        isRemainder: boolean
     }
     export interface server {
         message: string
@@ -23,6 +26,8 @@ export namespace GETCuentasType {
         id: number
         name: string
         ownerId: number
+        percentage: number
+        isRemainder: boolean
     }[]
 }
 
@@ -33,6 +38,8 @@ export namespace GETCuentaByIdType {
         id: number
         name: string
         ownerId: number
+        percentage: number
+        isRemainder: boolean
     }
 }
 
@@ -48,6 +55,8 @@ export namespace DELETECuentaType {
 export namespace PUTCuentasType {
     export interface client {
         name: string
+        percentage: number
+        isRemainder: boolean
     }
     export interface server {
         message: string
@@ -75,7 +84,9 @@ router.get('/cuentas', asyncErrorHandler(async (req, res, next) => {
         return {
             id: account.id,
             name: account.name,
-            ownerId: account.owner
+            ownerId: account.owner,
+            percentage: account.percentage,
+            isRemainder: account.isRemainder
         }
     })
     return res.status(200).json(filteredAccounts as GETCuentasType.server)
@@ -88,13 +99,26 @@ router.post('/cuentas', asyncErrorHandler(async (req, res, next) => {
     const body = req.body as POSTCuentasType.client
 
     // Validar y sanear los datos
-    if (!body || typeof body.name !== 'string' || body.name.trim().length === 0) {
+    if (!body) {
+        return res.status(400).json({ message: 'Los datos de la cuenta son obligatorios' })
+    }
+
+    const accountName = Validator.string(body.name)
+    if (Validator.isNotValid(accountName)) {
         return res.status(400).json({ message: 'El nombre de la cuenta es inválido' })
     }
-    const accountName = body.name.trim()
-
     if (accountName.length > 50) {
         return res.status(400).json({ message: 'El nombre de la cuenta no puede contener más de 50 caracteres' })
+    }
+
+    const percentage = Validator.number(body.percentage)
+    if (Validator.isNotValid(percentage) || percentage < 0 || percentage > 100) {
+        return res.status(400).json({ message: 'El porcentaje debe ser un número entre 0 y 100' })
+    }
+
+    const isRemainder = Validator.boolean(body.isRemainder)
+    if (Validator.isNotValid(isRemainder)) {
+        return res.status(400).json({ message: 'El campo isRemainder debe ser un booleano' })
     }
 
     // Comprobar si ya existe una cuenta con ese nombre para el usuario
@@ -112,7 +136,9 @@ router.post('/cuentas', asyncErrorHandler(async (req, res, next) => {
     // Crear la cuenta
     const newAccount = await Cuenta.create({
         name: accountName,
-        owner: user.id
+        owner: user.id,
+        percentage: percentage,
+        isRemainder: isRemainder
     })
 
     return res.status(201).json({
@@ -128,13 +154,9 @@ router.get('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     const user = req.locals.user as User
 
     // recoger el parametro de la url
-    if (!req.params.id) {
-        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
-    }
-    const accountId = parseInt(req.params.id, 10)
-
-    if (isNaN(accountId)) {
-        return res.status(400).json({ message: 'El ID de la cuenta debe ser un número' })
+    const accountId = Validator.parseInt(req.params.id)
+    if (Validator.isNotValid(accountId)) {
+        return res.status(400).json({ message: 'El ID de la cuenta no es valido' })
     }
 
     const account = await Cuenta.findOne({
@@ -151,7 +173,9 @@ router.get('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     const filteredAccount: GETCuentaByIdType.server = {
         id: account.id,
         name: account.name,
-        ownerId: account.owner
+        ownerId: account.owner,
+        percentage: account.percentage,
+        isRemainder: account.isRemainder
     }
 
     return res.status(200).json(filteredAccount as GETCuentaByIdType.server)
@@ -163,27 +187,32 @@ router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     const user = req.locals.user as User
 
     // recoger el parametro de la url
-    if (!req.params.id) {
-        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
-    }
-    const accountId = parseInt(req.params.id, 10)
-
-    
-    if (isNaN(accountId)) {
-        return res.status(400).json({ message: 'El ID de la cuenta debe ser un número' })
+    const accountId = Validator.parseInt(req.params.id)
+    if (Validator.isNotValid(accountId)) {
+        return res.status(400).json({ message: 'El ID de la cuenta no es valido' })
     }
     
     // Validar y sanear los datos
     const body = req.body as PUTCuentasType.client
-    if (!body || typeof body.name !== 'string' || body.name.trim().length === 0) {
+
+    let validatedName = Validator.string(body.name)
+    if (Validator.isNotValid(validatedName)) {
         return res.status(400).json({ message: 'El nombre de la cuenta es inválido' })
     }
-    const newName = body.name.trim()
-
-    if (newName.length > 50) {
-        return res.status(400).json({ message: 'El nombre no puede contener más de 50 caracteres' })
+    if (validatedName.length > 50) {
+        return res.status(400).json({ message: 'El nombre de la cuenta no puede contener más de 50 caracteres' })
     }
-    
+
+    let percentage = Validator.number(body.percentage)
+    if (Validator.isNotValid(percentage) || percentage < 0 || percentage > 100) {
+        return res.status(400).json({ message: 'El porcentaje debe ser un número entre 0 y 100' })
+    }
+
+    let isRemainder = Validator.boolean(body.isRemainder)
+    if (Validator.isNotValid(isRemainder)) {
+        return res.status(400).json({ message: 'El campo isRemainder debe ser un booleano' })
+    }
+
     // Verificar que la cuenta existe y pertenece al usuario
     const account = await Cuenta.findOne({
         where: {
@@ -198,7 +227,7 @@ router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // Verificar si ya existe otra cuenta con el nuevo nombre
     const existingAccount = await Cuenta.findOne({
         where: {
-            name: newName,
+            name: validatedName,
             owner: user.id
         }
     })
@@ -208,7 +237,11 @@ router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     }
     
     // Actualizar la cuenta
-    await account.update({ name: newName })
+    await account.update({
+        name: validatedName,
+        percentage: percentage,
+        isRemainder: isRemainder
+    })
 
     return res.status(200).json({
         message: 'Cuenta actualizada correctamente',
@@ -225,13 +258,9 @@ router.delete('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     const user = req.locals.user as User
 
     // revisar que esté el id
-    if(!req.params.id) {
-        return res.status(400).json({ message: 'El ID de la cuenta es obligatorio' })
-    }
-    const accountId = parseInt(req.params.id, 10)
-
-    if (isNaN(accountId)) {
-        return res.status(400).json({ message: 'El ID de la cuenta debe ser un número' })
+    const accountId = Validator.parseInt(req.params.id)
+    if (Validator.isNotValid(accountId)) {
+        return res.status(400).json({ message: 'El ID de la cuenta no es valido' })
     }
 
     // Find the account first to check balance
