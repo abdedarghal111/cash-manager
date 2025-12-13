@@ -3,6 +3,9 @@
  * 
  * Tiene las cuentas de los billetes y el dinero pendiente, el dinero pendiente está en una cuenta especial.
  * Son billetes que han sobrado pero que sus dividendos pertenecen a las diferentes subcuentas.
+ * 
+ * Es importante considerar que en este contexto subcuenta se refiere literalmente a un monto de dinero
+ * que tendrá un límite máximo especificado en la configuración.
  */
 
 import { Model } from "sequelize"

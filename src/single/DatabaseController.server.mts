@@ -4,6 +4,7 @@ import { User } from "@class/model/User.server.mjs"
 import { Cuenta } from "@class/model/Cuenta.server.mjs"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
+import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({
@@ -17,12 +18,67 @@ const sequelize = new Sequelize({
     }
 })
 
+
+SaldoPendiente.init({
+    id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true
+    },
+     // metalico
+    cincuenta: {
+        type: DataTypes.INTEGER
+    },
+    veinte: {
+        type: DataTypes.INTEGER
+    },
+    diez: {
+        type: DataTypes.INTEGER
+    },
+    cinco: {
+        type: DataTypes.INTEGER
+    },
+    uno: {
+        type: DataTypes.INTEGER
+    },
+    cerocincuenta: {
+        type: DataTypes.INTEGER
+    },
+    ceroveinte: {
+        type: DataTypes.INTEGER
+    },
+    cerodiez: {
+        type: DataTypes.INTEGER
+    },
+    cerocinco: {
+        type: DataTypes.INTEGER
+    },
+    cerodos: {
+        type: DataTypes.INTEGER
+    },
+    cerouno: {
+        type: DataTypes.INTEGER
+    }
+    // end metalico
+}, {
+    sequelize: sequelize
+})
+
 // crear tablas
 User.init({
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
+    },
+    pendingTotalSubaccount: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+            model: SaldoPendiente,
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
     },
     username: {
         type: DataTypes.STRING(50)
@@ -160,6 +216,9 @@ Movimiento.init(
 // relaciones entre tablas
 User.hasMany(Cuenta, { foreignKey: 'owner' })
 Cuenta.belongsTo(User, { foreignKey: 'owner' })
+
+User.hasOne(SaldoPendiente, { foreignKey: 'pendingTotalSubaccount' })
+SaldoPendiente.belongsTo(User, { foreignKey: 'pendingTotalSubaccount' })
 
 Cuenta.hasMany(Subcuenta, { foreignKey: 'cuenta' })
 Subcuenta.belongsTo(Cuenta, { foreignKey: 'cuenta' })

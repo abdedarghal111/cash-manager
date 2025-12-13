@@ -1,4 +1,4 @@
-import { Model } from "sequelize";
+import { Model } from "sequelize"
 
 export enum TipoMovimiento {
     INGRESO = 'ingreso',
@@ -8,10 +8,10 @@ export enum TipoMovimiento {
 }
 
 export class Movimiento extends Model {
-    declare id: number;
-    declare cuentaId: number;
-    declare amount: number;
-    declare type: TipoMovimiento;
+    declare id: number
+    declare cuentaId: number
+    declare amount: number
+    declare type: TipoMovimiento
     // el concepto del movimiento:
-    declare description: string;
+    declare description: string
 }
