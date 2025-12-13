@@ -101,6 +101,14 @@ Cuenta.init({
     name: {
         type: DataTypes.STRING(50)
     },
+    percentage: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
+    },
+    isRemainder: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     owner: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
