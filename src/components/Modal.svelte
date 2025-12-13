@@ -8,7 +8,7 @@ poder usarlo desde fuera y modificarlo y que reaccione a placer.
 Constra de un div centrado por lo que solo hay que crear la parte interior.
 -->
 <script lang="ts">
-    let { show = $bindable(false), children } = $props();
+    let { show = $bindable(false), children } = $props()
 
     function close() {
         show = false

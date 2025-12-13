@@ -10,7 +10,7 @@ Vista para crear una nueva cuenta.
     import { RequestsManager } from "@single/Requests.client.mjs"
     import type { POSTCuentasType } from "@routes/private/cuentas/index.server.mjs"
     import toast from "svelte-french-toast"
-    import { Parameters } from "@class/Parameters.mjs";
+    import { Parameters } from "@class/Parameters.mjs"
 
     let cuentaName = $state('')
     let loading = $state(false)

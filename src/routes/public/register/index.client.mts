@@ -44,6 +44,6 @@ export async function POSTregister() {
         }
         // Otro error extraño
         // no debería pasar
-        throw new Error('Fallo crítico', { cause: error });
+        throw new Error('Fallo crítico', { cause: error })
     }
 }

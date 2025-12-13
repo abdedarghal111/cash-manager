@@ -5,10 +5,10 @@
  * and manages it for setting the current view
  */
 
-import { get, writable } from 'svelte/store';
-import { Parameters } from '@class/Parameters.mjs';
-import { Component } from 'svelte';
-import SetupView from '@routes/setup.view.svelte';
+import { get, writable } from 'svelte/store'
+import { Parameters } from '@class/Parameters.mjs'
+import { Component } from 'svelte'
+import SetupView from '@routes/setup.view.svelte'
 
 // expose the variable for use in @src/App.svelte and reactivity
 export let currentView = writable<Component>(SetupView)

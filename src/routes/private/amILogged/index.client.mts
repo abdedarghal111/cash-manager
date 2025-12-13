@@ -34,14 +34,14 @@ export async function GETamILogged() {
                 // otra respuesta, te has equivocado de servidor otra vez
                 return false
             } else if (error.request) {
-                // La petición fue hecha pero no se recibió respuesta console.log(error.request);
+                // La petición fue hecha pero no se recibió respuesta console.log(error.request)
                 // servidor apagado o ruta incorrecta
                 return false
             }
         } else {
             // Otro error extraño
             // no debería pasar
-            console.error('Algo ocurrió mal:', error);
+            console.error('Algo ocurrió mal:', error)
         }
     }
 }

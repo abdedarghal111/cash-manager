@@ -37,7 +37,7 @@ export let RequestsManager = {
                 timeout: 5000,
                 method: "POST",
                 allowAbsoluteUrls: false, // para que siempre url sea baseURL+url
-                transformRequest: [function (data: { [x: string]: any; }, headers) {
+                transformRequest: [function (data: { [x: string]: any }, headers) {
                     // añadir las credenciales y empaquetar
                     let credentials = Credentials.getCredentials()
                     headers.set("username", credentials.username)

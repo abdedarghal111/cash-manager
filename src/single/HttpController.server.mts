@@ -19,7 +19,7 @@ if(process.argv.find(val => val === '--dev')){
 }
 
 // Montar el servidor
-let existsRealCerts = existsSync(SERVER_CRT_FILE_PATH) && existsSync(SERVER_KEY_FILE_PATH);
+let existsRealCerts = existsSync(SERVER_CRT_FILE_PATH) && existsSync(SERVER_KEY_FILE_PATH)
 
 let app = express()
 let httpsServer = https.createServer({
@@ -45,16 +45,16 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
 
   // headers permitidos
-  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, username, password');
+  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, username, password')
   
   // métodos permitidos
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
   
   // 4. Permitir cookies/credenciales (IMPORTANTE para tu "amILogged")
-  // res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-  // res.header('Access-Control-Allow-Credentials', 'false');
+  // res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE')
+  // res.header('Access-Control-Allow-Credentials', 'false')
   // guardar la información de options 24h
-  res.header('Access-Control-Max-Age', '86400');
+  res.header('Access-Control-Max-Age', '86400')
 
   if(req.method === 'OPTIONS') {
     return res.sendStatus(200)
@@ -164,7 +164,7 @@ let HttpsController = {
 
         httpsServer.listen(PORT, () => {
           //listening in my ip
-          console.log(`Servidor corriendo en https://localhost:${PORT}`);
+          console.log(`Servidor corriendo en https://localhost:${PORT}`)
         })
     },
 

@@ -7,8 +7,8 @@
  * 
  * Por ejemplo __root apunta a / del proyecto.
  */
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 // cuando se ha compilado, la carpeta raiz del proyecto es esa
 const __filename = fileURLToPath(import.meta.url)

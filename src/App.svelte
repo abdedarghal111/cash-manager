@@ -1,6 +1,6 @@
 <script lang='ts'>
-  import { currentView } from '@single/ViewsController.client.mjs';
-  import { Toaster } from 'svelte-french-toast';
+  import { currentView } from '@single/ViewsController.client.mjs'
+  import { Toaster } from 'svelte-french-toast'
 </script>
 <svelte:boundary onerror={(e) => console.error(e)}><!-- Debug -->
   <!-- The actual view -->
