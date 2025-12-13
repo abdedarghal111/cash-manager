@@ -5,6 +5,7 @@ import { Cuenta } from "@class/model/Cuenta.server.mjs"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
 import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mjs"
+import { Expense, TipoGasto } from "@class/model/Expense.server.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({
@@ -213,9 +214,39 @@ Movimiento.init(
 }
 )
 
+Expense.init({
+    id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    owner: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+            model: User,
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+    },
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    type: {
+        type: DataTypes.ENUM(...Object.values(TipoGasto)),
+        allowNull: false
+    }
+}, {
+    sequelize: sequelize
+})
+
 // relaciones entre tablas
 User.hasMany(Cuenta, { foreignKey: 'owner' })
 Cuenta.belongsTo(User, { foreignKey: 'owner' })
+
+User.hasMany(Expense, { foreignKey: 'owner' })
+Expense.belongsTo(User, { foreignKey: 'owner' })
 
 User.hasOne(SaldoPendiente, { foreignKey: 'pendingTotalSubaccount' })
 SaldoPendiente.belongsTo(User, { foreignKey: 'pendingTotalSubaccount' })
