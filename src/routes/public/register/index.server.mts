@@ -22,7 +22,7 @@ export default express.Router().post("/register", asyncErrorHandler(async (req, 
 
     // si existe un usuario creado entonces negarse a registrar
     let allUsers = (await User.findAndCountAll()).count
-    if (allUsers > 1) {
+    if (allUsers >= 1) {
         return res.status(403).json({
             message: "Ya existe un usuario, logueate o informa al administrador."
         })
