@@ -22,11 +22,12 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import RegisterView from "@routes/public/register/index.view.svelte"
     import { Parameters } from "@class/Parameters.mjs"
     import { GETamILogged } from "@routes/private/amILogged/index.client.mjs"
-    import { onMount } from "svelte";
+    import { onMount } from "svelte"
     import { Credentials } from "@single/Credentials.client.mjs"
     import Modal from "@components/Modal.svelte"
     import CuentasView from "@routes/private/cuentas/index.view.svelte"
     import IngresarSalarioView from "@routes/private/ingresarSalario/index.view.svelte"
+    import EstadisticasView from "@routes/private/estadisticas/index.view.svelte"
 
     let showOperarPopup = $state(false)
     let showConfigurarModal = $state(false)
@@ -113,7 +114,10 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
         <h3 class="text-2xl mb-6">Opciones de Operación</h3>
         <div class="flex flex-col gap-2">
             <Themedbutton label="Ingresar Salario" onclick={() => {
-                ViewsController.setCurrentView(IngresarSalarioView);
+                ViewsController.setCurrentView(IngresarSalarioView)
+            }} />
+            <Themedbutton label="Estadísticas" onclick={() => {
+                ViewsController.setCurrentView(EstadisticasView)
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showOperarPopup = false
@@ -128,7 +132,7 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
         <h3 class="text-2xl mb-6">Configuración</h3>
         <div class="flex flex-col gap-2">
             <Themedbutton label="Cuentas" onclick={() => {
-                ViewsController.setCurrentView(CuentasView);
+                ViewsController.setCurrentView(CuentasView)
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showConfigurarModal = false

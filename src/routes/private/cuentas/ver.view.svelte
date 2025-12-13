@@ -17,7 +17,7 @@ Vista para ver y editar los detalles de una cuenta específica.
     const cuentaId = params.get('id')
 
     if (!cuentaId) {
-        throw new Error("FATAL: Se requiere un ID de cuenta para esta vista.");
+        throw new Error("FATAL: Se requiere un ID de cuenta para esta vista.")
     }
 
     let cuenta: GETCuentaByIdType.server | null = $state(null)
