@@ -26,8 +26,13 @@ export class Validator {
      * @param data Entrada a validar.
      * @returns `true` si es un booleano.
      */
-    public static boolean(data: any): data is boolean {
-        return typeof data === 'boolean'
+    public static boolean(data: any): ValidatorResult<boolean> {
+        // si es booleano devolver el booleano osino not valid
+        if (typeof data === 'boolean') {
+            return data
+        }
+        
+        return InvalidValidation
     }
 
     /**
