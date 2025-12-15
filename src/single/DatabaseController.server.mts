@@ -80,7 +80,7 @@ User.init({
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
     },
     username: {
         type: DataTypes.STRING(50)
@@ -116,7 +116,7 @@ Cuenta.init({
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
     },
 }, {
     sequelize: sequelize
@@ -146,7 +146,7 @@ Subcuenta.init({
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
     },
     // metalico
     cincuenta: {
@@ -201,7 +201,7 @@ Movimiento.init(
                 key: 'id'
             },
             onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onDelete: 'CASCADE'
         },
         amount: {
             type: DataTypes.FLOAT,
@@ -239,7 +239,7 @@ Expense.init({
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
     },
     amount: {
         type: DataTypes.FLOAT,
