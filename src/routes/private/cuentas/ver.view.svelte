@@ -21,8 +21,8 @@ Vista para ver y editar los detalles de una cuenta específica.
         throw new Error("FATAL: Se requiere un ID de cuenta para esta vista.")
     }
 
-    let cuenta: GETCuentaByIdType.server | null = $state(null)
     let requesting = $state(true)
+    let findedCuenta = $state(false)
     let showDeleteModal = $state(false)
     let editedName = $state('')
     let editedPercentage = $state(0)
@@ -32,11 +32,12 @@ Vista para ver y editar los detalles de una cuenta específica.
         requesting = true
         const result = await RequestsManager.makeRequest<GETCuentaByIdType.server, GETCuentaByIdType.client>('GET', `/cuentas/${cuentaId}`)
         if (result) {
-            cuenta = result
+            findedCuenta = true
             editedName = result.name
             editedPercentage = result.percentage
             editedIsRemainder = result.isRemainder
         } else {
+            findedCuenta = false
             toast.error('No se pudo cargar la información de la cuenta.')
             ViewsController.setCurrentView(CuentasIndexView)
         }
@@ -44,7 +45,10 @@ Vista para ver y editar los detalles de una cuenta específica.
     })
 
     async function saveChanges() {
-        if (!cuenta) {
+
+        // primero revisar el porcentaje
+        if (editedPercentage < 0 || editedPercentage > 100) {
+            toast.error('El porcentaje debe estar entre 0 y 100.')
             return
         }
 
@@ -58,9 +62,10 @@ Vista para ver y editar los detalles de una cuenta específica.
         if (result) {
             toast.success(result.message || 'Cuenta actualizada.')
             // Update local state directly
-            cuenta.name = editedName.trim()
-            cuenta.percentage = editedPercentage
-            cuenta.isRemainder = editedIsRemainder
+
+            editedName = result.name
+            editedPercentage = result.percentage
+            editedIsRemainder = result.isRemainder
         }
         requesting = false
     }
@@ -72,7 +77,7 @@ Vista para ver y editar los detalles de una cuenta específica.
         
         if (result) {
             toast.success(result.message || 'Cuenta eliminada correctamente.')
-            ViewsController.setCurrentView(CuentasIndexView)
+            ViewsController.setDefaultCurrentView(CuentasIndexView)
         }
         requesting = false
     }
@@ -82,7 +87,7 @@ Vista para ver y editar los detalles de una cuenta específica.
 <DefaultView>
     {#snippet main()}
         <div class="max-w-2xl mx-auto">
-            {#if requesting && !cuenta}
+            {#if requesting && !findedCuenta}
                 <!-- Esqueleto de carga inicial -->
                 <div class="animate-pulse space-y-4 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
                     <div class="h-8 w-40 rounded bg-slate-200"></div>
@@ -94,13 +99,19 @@ Vista para ver y editar los detalles de una cuenta específica.
                          <div class="h-9 w-24 rounded bg-slate-200"></div>
                     </div>
                 </div>
-            {:else if cuenta}
+            {:else if findedCuenta}
                 <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 relative">
                     <h2 class="text-2xl font-semibold text-slate-800 mb-6">Detalles de la Cuenta</h2>
                     <div class="space-y-4">
                         <ThemedTextInput label="Nombre:" bind:value={editedName} disabled={requesting} />
                         {#if !editedIsRemainder}
-                            <ThemedTextInput label="Porcentaje:" type="number" bind:value={editedPercentage} disabled={requesting} />
+                            <ThemedTextInput 
+                            label="Porcentaje:" 
+                            type="number" 
+                            bind:value={editedPercentage} 
+                            disabled={requesting} 
+                            placeholder="Entre 100 y 0"
+                            />
                         {/if}
                         <ThemedListInput 
                             label="Recibe Restante:"

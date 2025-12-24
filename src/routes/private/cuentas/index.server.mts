@@ -60,10 +60,10 @@ export namespace PUTCuentasType {
     }
     export interface server {
         message: string
-        cuenta?: {
-            id: number
-            name: string
-        }
+        id: number
+        name: string
+        percentage: number
+        isRemainder: boolean
     }
 }
 
@@ -111,7 +111,7 @@ router.post('/cuentas', asyncErrorHandler(async (req, res, next) => {
         return res.status(400).json({ message: 'El nombre de la cuenta no puede contener más de 50 caracteres' })
     }
 
-    const percentage = Validator.number(body.percentage)
+    let percentage = Validator.number(body.percentage)
     if (Validator.isNotValid(percentage) || percentage < 0 || percentage > 100) {
         return res.status(400).json({ message: 'El porcentaje debe ser un número entre 0 y 100' })
     }
@@ -133,7 +133,16 @@ router.post('/cuentas', asyncErrorHandler(async (req, res, next) => {
         return res.status(409).json({ message: 'Ya existe una cuenta con ese nombre' })
     }
 
-    // Crear la cuenta
+    // si se ha establecido como la que tiene el restante, remover las que tengan restante
+    if (isRemainder) {
+        await Cuenta.removeAllIsRemainderForUser(user.id)
+        percentage = 0
+    }
+
+    // restar el porcentaje a otras cuentas de mayor a menor
+    await Cuenta.removeExcessMarginFromUser(user.id, percentage)
+
+    // Crear la cuenta y asignarle el porcentaje y el isRemainder
     const newAccount = await Cuenta.create({
         name: accountName,
         owner: user.id,
@@ -235,8 +244,17 @@ router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     if (existingAccount && existingAccount.id !== accountId) {
         return res.status(409).json({ message: 'Ya existe una cuenta con ese nombre' })
     }
+
+    // si se ha establecido como la que tiene el restante, remover las que tengan restante
+    if (isRemainder) {
+        await Cuenta.removeAllIsRemainderForUser(user.id)
+        percentage = 0
+    }
+
+    // restar el porcentaje a otras cuentas de mayor a menor
+    await Cuenta.removeExcessMarginFromUser(user.id, percentage)
     
-    // Actualizar la cuenta
+    // Actualizar la cuenta y asignarle el porcentaje y el isRemainder
     await account.update({
         name: validatedName,
         percentage: percentage,
@@ -245,10 +263,10 @@ router.put('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
 
     return res.status(200).json({
         message: 'Cuenta actualizada correctamente',
-        cuenta: {
-            id: account.id,
-            name: account.name
-        }
+        id: account.id,
+        name: account.name,
+        percentage: account.percentage,
+        isRemainder: account.isRemainder    
     } as PUTCuentasType.server)
 }))
 

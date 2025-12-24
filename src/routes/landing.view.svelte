@@ -26,7 +26,7 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import { Credentials } from "@single/Credentials.client.mjs"
     import Modal from "@components/Modal.svelte"
     import CuentasView from "@routes/private/cuentas/index.view.svelte"
-    import IngresarSalarioView from "@routes/private/ingresarSalario/index.view.svelte"
+    import IngresarMontoView from "@routes/private/ingresarMonto/index.view.svelte"
     import EstadisticasView from "@routes/private/estadisticas/index.view.svelte"
     import ExpensesIndexView from "@routes/private/expenses/index.view.svelte"
 
@@ -114,8 +114,8 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     <div class="text-center bg-white p-8 rounded-lg shadow-lg">
         <h3 class="text-2xl mb-6">Opciones de Operación</h3>
         <div class="flex flex-col gap-2">
-            <Themedbutton label="Ingresar Salario" onclick={() => {
-                ViewsController.setCurrentView(IngresarSalarioView)
+            <Themedbutton label="Ingresar Monto" onclick={() => {
+                ViewsController.setCurrentView(IngresarMontoView)
             }} />
             <Themedbutton label="Estadísticas" onclick={() => {
                 ViewsController.setCurrentView(EstadisticasView)

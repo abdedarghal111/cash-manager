@@ -6,7 +6,7 @@ import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
 import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mjs"
 import { Expense } from "@class/model/Expense.server.mjs"
-import { TipoGasto } from "@data/ExpenseType.mjs"
+import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({

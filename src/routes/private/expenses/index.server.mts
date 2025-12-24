@@ -5,7 +5,7 @@ import express from 'express'
 import { asyncErrorHandler } from '@single/HttpController.server.mjs'
 import { User } from '@class/model/User.server.mjs'
 import { Expense } from '@class/model/Expense.server.mjs'
-import { TipoGasto } from "@data/ExpenseType.mjs"
+import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 import { Validator } from '@single/Validator.mjs'
 
 // Tipos para GET /expenses

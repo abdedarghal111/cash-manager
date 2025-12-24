@@ -8,7 +8,9 @@ Responsive:
     - Si la pantalla es grande, se muestran en una sola fila.
 -->
 <script lang="ts">
-    let { label, value = $bindable(), type = "text", disabled = false } = $props()
+    import ThemedInput from "./ThemedInput.svelte"
+
+    let { label, value = $bindable(), type = "text", placeholder = "", disabled = false } = $props()
 </script>
 
 <div class="md:flex md:items-center">
@@ -18,12 +20,12 @@ Responsive:
         </label>
     </div>
     <div class="md:w-2/3">
-        <input 
-            class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            id="inline-full-name" 
+        <ThemedInput
             type={type}
             bind:value={value}
-            {disabled}
+            placeholder={placeholder}
+            disabled={disabled}
+            extraClass="w-max"
         />
     </div>
 </div>

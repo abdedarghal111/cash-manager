@@ -16,7 +16,7 @@ Vista para crear un gasto
     import { RequestsManager } from "@single/Requests.client.mjs"
     import type { POSTExpenseType } from "@routes/private/expenses/index.server.mts"
     import toast from "svelte-french-toast"
-    import { TipoGasto } from "@data/ExpenseType.mjs"
+    import { TipoGasto } from "@data/enums/ExpenseType.mjs"
     import ThemedListInput from "@components/ThemedListInput.svelte"
 
     let expenseName = $state('')

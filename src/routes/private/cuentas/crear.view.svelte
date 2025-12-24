@@ -24,7 +24,13 @@ Vista para crear una nueva cuenta.
             toast.error('El nombre de la cuenta no puede estar vacío.')
             return
         }
-        
+
+        // validar porcentaje
+        if(percentage < 0 || percentage > 100) {
+            toast.error('El porcentaje debe estar entre 0 y 100.')
+            return
+        }
+
         loading = true
         const result = await RequestsManager.makeRequest<POSTCuentasType.server, POSTCuentasType.client>('POST', '/cuentas', {
             name: cuentaName,
@@ -59,6 +65,7 @@ Vista para crear una nueva cuenta.
                             label="Porcentaje:" 
                             type="number"
                             bind:value={percentage}
+                            placeholder="Entre 100 y 0"
                         />
                     {/if}
                     <ThemedListInput

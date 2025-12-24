@@ -14,7 +14,6 @@ y también donde se ve un resumen del historial como subidas o bajadas en porcen
     import VerCuentaView from "@routes/private/cuentas/ver.view.svelte"
     import { Parameters } from '@class/Parameters.mjs'
 
-
     let cuentas: GETCuentasType.server = $state([])
     let loading = $state(true)
 

@@ -18,7 +18,7 @@ Vista para ver y editar los detalles de un gasto específico.
     import { RequestsManager } from "@single/Requests.client.mjs"
     import type { GETExpenseByIdType, DELETEExpenseType, PUTExpenseType } from "@routes/private/expenses/index.server.mts"
     import toast from "svelte-french-toast"
-    import { TipoGasto } from "@data/ExpenseType.mjs"
+    import { TipoGasto } from "@data/enums/ExpenseType.mjs"
     import ThemedListInput from "@components/ThemedListInput.svelte"
 
     const params = ViewsController.getParameters()
@@ -99,7 +99,7 @@ Vista para ver y editar los detalles de un gasto específico.
         
         if (result) {
             toast.success(result.message || 'Gasto eliminado correctamente.')
-            ViewsController.setCurrentView(ExpensesIndexView)
+            ViewsController.setDefaultCurrentView(ExpensesIndexView)
         }
         requesting = false
     }
