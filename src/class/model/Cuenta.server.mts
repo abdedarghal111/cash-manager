@@ -4,7 +4,15 @@
 
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
-import { Subcuenta } from "./Subcuenta.server.mjs"
+import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
+import { User } from "@class/model/User.server.mts"
+
+export type PercentageFormattedCuentas = {
+    id: number, 
+    name: string, 
+    percentage: number,
+    currentTotal: number
+}[]
 
 @Table({ tableName: 'cuentas' })
 export class Cuenta extends Model {
@@ -94,5 +102,49 @@ export class Cuenta extends Model {
             // guardar la cuenta
             await acc.save()
         }
+    }
+
+    /**
+     * Devuelve las cuentas dado su porcentaje, id y nombre para un usuario
+     * La cuenta remainder la deja para el final con un porcentaje -1
+     */
+    static async getAllPercentageFormatted(user: User): Promise<PercentageFormattedCuentas> {
+        const userAccounts = await Cuenta.findAll({
+            where: {
+                owner: user.id
+            },
+            order: [['percentage', 'DESC']]
+        })
+
+        // recoger todas las subcuentas
+        let cleanAccounts: PercentageFormattedCuentas = []
+        let remainderAccount: false|Cuenta = false
+        for (let account of userAccounts) {
+            if (account.isRemainder) {
+                // si es restante entonces guardarla para el final
+                remainderAccount = account
+            } else {
+                // guardar cuenta en la lista
+                cleanAccounts.push({
+                    id: account.id,
+                    name: account.name,
+                    percentage: account.percentage,
+                    currentTotal: await account.getTotal()
+                })
+            }
+        }
+
+        // si existe cuenta con remainder entonces añadirla al final con -1 y devolverla
+        if (remainderAccount) {
+            remainderAccount = remainderAccount as Cuenta
+            cleanAccounts.unshift({
+                id: remainderAccount.id,
+                name: remainderAccount.name,
+                percentage: -1,
+                currentTotal: await remainderAccount.getTotal()
+            })
+        }
+
+        return cleanAccounts
     }
 }
