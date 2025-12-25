@@ -17,6 +17,7 @@ export class SaldoPendiente extends Model {
     declare veinte: number
     declare diez: number
     declare cinco: number
+    declare dos: number
     declare uno: number
     declare cerocincuenta: number
     declare ceroveinte: number
@@ -24,4 +25,22 @@ export class SaldoPendiente extends Model {
     declare cerocinco: number
     declare cerodos: number
     declare cerouno: number
+
+    /**
+     * pone a cero el dinero en metálico y los totales de la subcuenta
+     */
+    clearCash(): void {
+        this.cincuenta = 0
+        this.veinte = 0
+        this.diez = 0
+        this.cinco = 0
+        this.dos = 0
+        this.uno = 0
+        this.cerocincuenta = 0
+        this.ceroveinte = 0
+        this.cerodiez = 0
+        this.cerocinco = 0
+        this.cerodos = 0
+        this.cerouno = 0
+    }
 }

@@ -73,7 +73,7 @@ User.init({
         autoIncrement: true,
         primaryKey: true
     },
-    pendingTotalSubaccount: {
+    pendingCashKey: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
             model: SaldoPendiente,
@@ -159,6 +159,9 @@ Subcuenta.init({
         type: DataTypes.INTEGER
     },
     cinco: {
+        type: DataTypes.INTEGER
+    },
+    dos: {
         type: DataTypes.INTEGER
     },
     uno: {
@@ -260,8 +263,8 @@ Cuenta.belongsTo(User, { foreignKey: 'owner' })
 User.hasMany(Expense, { foreignKey: 'owner' })
 Expense.belongsTo(User, { foreignKey: 'owner' })
 
-User.hasOne(SaldoPendiente, { foreignKey: 'pendingTotalSubaccount' })
-SaldoPendiente.belongsTo(User, { foreignKey: 'pendingTotalSubaccount' })
+User.hasOne(SaldoPendiente, { foreignKey: 'pendingCashKey' })
+SaldoPendiente.belongsTo(User, { foreignKey: 'pendingCashKey' })
 
 Cuenta.hasMany(Subcuenta, { foreignKey: 'cuenta' })
 Subcuenta.belongsTo(Cuenta, { foreignKey: 'cuenta' })

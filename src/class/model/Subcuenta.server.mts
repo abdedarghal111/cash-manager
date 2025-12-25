@@ -11,6 +11,22 @@
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
 
+// tipos para el metálico aceptado por el servidor (establecer un standart)
+export interface AcceptedCashValues {
+    cincuenta: number
+    veinte: number
+    diez: number
+    cinco: number
+    dos: number
+    uno: number
+    cerocincuenta: number
+    ceroveinte: number
+    cerodiez: number
+    cerocinco: number
+    cerodos: number
+    cerouno: number
+}
+
 @Table({ tableName: 'subcuentas' })
 export class Subcuenta extends Model {
     declare id: number
@@ -26,6 +42,7 @@ export class Subcuenta extends Model {
     declare veinte: number
     declare diez: number
     declare cinco: number
+    declare dos: number
     declare uno: number
     declare cerocincuenta: number
     declare ceroveinte: number
@@ -33,4 +50,24 @@ export class Subcuenta extends Model {
     declare cerocinco: number
     declare cerodos: number
     declare cerouno: number
+
+    /**
+     * pone a cero el dinero en metálico y los totales de la subcuenta
+     */
+    clearCash(): void {
+        this.total = 0
+        this.cashPending = 0
+        this.cincuenta = 0
+        this.veinte = 0
+        this.diez = 0
+        this.cinco = 0
+        this.dos = 0
+        this.uno = 0
+        this.cerocincuenta = 0
+        this.ceroveinte = 0
+        this.cerodiez = 0
+        this.cerocinco = 0
+        this.cerodos = 0
+        this.cerouno = 0
+    }
 }
