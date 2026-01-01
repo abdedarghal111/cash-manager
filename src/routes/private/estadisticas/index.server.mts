@@ -36,7 +36,8 @@ router.get('/estadisticas', asyncErrorHandler(async (req, res, next) => {
 
     const cuentas = await Cuenta.findAll({
         where: {
-            owner: user.id
+            owner: user.id,
+            ignore: false
         }
     })
 

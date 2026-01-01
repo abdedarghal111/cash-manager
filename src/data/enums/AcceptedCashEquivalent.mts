@@ -3,7 +3,21 @@
  * @see AcceptedCashValues
  */
 
-import type { AcceptedCashValues } from "@class/model/Subcuenta.server.mjs";
+// tipos para el metálico aceptado por el servidor (establecer un standart)
+export interface AcceptedCashValues {
+    cincuenta: number
+    veinte: number
+    diez: number
+    cinco: number
+    dos: number
+    uno: number
+    cerocincuenta: number
+    ceroveinte: number
+    cerodiez: number
+    cerocinco: number
+    cerodos: number
+    cerouno: number
+}
 
 export const AcceptedCashEquivalent: AcceptedCashValues = {
     cincuenta: 50,
@@ -19,3 +33,7 @@ export const AcceptedCashEquivalent: AcceptedCashValues = {
     cerodos: 0.02,
     cerouno: 0.01,
 }
+
+// dos arrays diferentes pero en el mismo orden (keys por un lado y values por otro)
+export const validCashValues = Object.values(AcceptedCashEquivalent) as number[]
+export const validCashStrings = Object.keys(AcceptedCashEquivalent) as (keyof AcceptedCashValues)[]

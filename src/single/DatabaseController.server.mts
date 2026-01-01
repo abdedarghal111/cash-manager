@@ -4,7 +4,7 @@ import { User } from "@class/model/User.server.mjs"
 import { Cuenta } from "@class/model/Cuenta.server.mjs"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
-import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mjs"
+import { Monto } from "@class/model/Monto.server.mjs"
 import { Expense } from "@class/model/Expense.server.mjs"
 import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 
@@ -20,8 +20,8 @@ const sequelize = new Sequelize({
     }
 })
 
-
-SaldoPendiente.init({
+// crear tablas
+Monto.init({
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
@@ -29,54 +29,64 @@ SaldoPendiente.init({
     },
      // metalico
     cincuenta: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     veinte: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     diez: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cinco: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     uno: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cerocincuenta: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     ceroveinte: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cerodiez: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cerocinco: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cerodos: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     cerouno: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
     // end metalico
 }, {
     sequelize: sequelize
 })
 
-// crear tablas
 User.init({
     id: {
         type: DataTypes.INTEGER.UNSIGNED,
         autoIncrement: true,
         primaryKey: true
     },
-    pendingCashKey: {
+    pendingMonto: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
-            model: SaldoPendiente,
+            model: Monto,
             key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -99,13 +109,18 @@ Cuenta.init({
         primaryKey: true
     },
     name: {
-        type: DataTypes.STRING(50)
+        type: DataTypes.STRING(50),
+        defaultValue: ''
     },
     percentage: {
         type: DataTypes.FLOAT,
         defaultValue: 0
     },
     isRemainder: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    ignore: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
@@ -129,15 +144,18 @@ Subcuenta.init({
         primaryKey: true
     },
     name: {
-        type: DataTypes.STRING(50)
+        type: DataTypes.STRING(50),
+        defaultValue: ''
     },
     total: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     },
     cashPending: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     },
     cuenta: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -148,44 +166,15 @@ Subcuenta.init({
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-    // metalico
-    cincuenta: {
-        type: DataTypes.INTEGER
-    },
-    veinte: {
-        type: DataTypes.INTEGER
-    },
-    diez: {
-        type: DataTypes.INTEGER
-    },
-    cinco: {
-        type: DataTypes.INTEGER
-    },
-    dos: {
-        type: DataTypes.INTEGER
-    },
-    uno: {
-        type: DataTypes.INTEGER
-    },
-    cerocincuenta: {
-        type: DataTypes.INTEGER
-    },
-    ceroveinte: {
-        type: DataTypes.INTEGER
-    },
-    cerodiez: {
-        type: DataTypes.INTEGER
-    },
-    cerocinco: {
-        type: DataTypes.INTEGER
-    },
-    cerodos: {
-        type: DataTypes.INTEGER
-    },
-    cerouno: {
-        type: DataTypes.INTEGER
+    monto: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+            model: Monto,
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
-    // end metalico
 }, {
     sequelize: sequelize
 })
@@ -197,27 +186,53 @@ Movimiento.init(
             autoIncrement: true,
             primaryKey: true
         },
-        cuentaId: {
+        transactionGroupUid: {
+            type: DataTypes.STRING(36),
+            defaultValue: ''
+        },
+        transactionDate: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        },
+        fromCuenta: {
             type: DataTypes.INTEGER.UNSIGNED,
             references: {
                 model: Cuenta,
                 key: 'id'
             },
             onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
+            onDelete: 'CASCADE',
+            allowNull: true
         },
-        amount: {
-            type: DataTypes.FLOAT,
-            allowNull: false
+        toCuenta: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            references: {
+                model: Cuenta,
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
+            allowNull: true
+        },
+        monto: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            references: {
+                model: Monto,
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
         },
         type: {
             type: DataTypes.ENUM(...Object.values(TipoMovimiento)),
-            allowNull: false
+            allowNull: false,
+            defaultValue: TipoMovimiento.INGRESO
         },
         // el concepto del movimiento:
         description: {
             type: DataTypes.STRING(500),
-            allowNull: false
+            allowNull: false,
+            defaultValue: ''
         }
     }, {
     sequelize: sequelize,
@@ -233,7 +248,8 @@ Expense.init({
         primaryKey: true
     },
     name: {
-        type: DataTypes.STRING(50)
+        type: DataTypes.STRING(50),
+        defaultValue: ''
     },
     owner: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -246,11 +262,13 @@ Expense.init({
     },
     amount: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     },
     type: {
         type: DataTypes.ENUM(...Object.values(TipoGasto)),
-        allowNull: false
+        allowNull: false,
+        defaultValue: TipoGasto.MENSUAL
     }
 }, {
     sequelize: sequelize
@@ -263,14 +281,23 @@ Cuenta.belongsTo(User, { foreignKey: 'owner' })
 User.hasMany(Expense, { foreignKey: 'owner' })
 Expense.belongsTo(User, { foreignKey: 'owner' })
 
-User.hasOne(SaldoPendiente, { foreignKey: 'pendingCashKey' })
-SaldoPendiente.belongsTo(User, { foreignKey: 'pendingCashKey' })
+User.hasOne(Monto, { foreignKey: 'pendingMonto' })
+Monto.belongsTo(User, { foreignKey: 'pendingMonto' })
 
 Cuenta.hasMany(Subcuenta, { foreignKey: 'cuenta' })
 Subcuenta.belongsTo(Cuenta, { foreignKey: 'cuenta' })
 
-Cuenta.hasMany(Movimiento, { foreignKey: 'cuentaId' })
-Movimiento.belongsTo(Cuenta, { foreignKey: 'cuentaId' })
+Subcuenta.hasOne(Monto, { foreignKey: 'monto' })
+Monto.belongsTo(Subcuenta, { foreignKey: 'monto' })
+
+Cuenta.hasMany(Movimiento, { foreignKey: 'fromCuenta' })
+Movimiento.belongsTo(Cuenta, { foreignKey: 'fromCuenta' })
+
+Cuenta.hasMany(Movimiento, { foreignKey: 'toCuenta' })
+Movimiento.belongsTo(Cuenta, { foreignKey: 'toCuenta' })
+
+Movimiento.hasOne(Monto, { foreignKey: 'monto' })
+Monto.belongsTo(Movimiento, { foreignKey: 'monto' })
 
 /**
  * Controlador de la base de datos

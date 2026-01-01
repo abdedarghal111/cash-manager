@@ -5,6 +5,7 @@ import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
 import { User } from "@class/model/User.server.mts"
+import Decimal from "decimal.js"
 
 /**
  * Enumeración para los tipos de gastos.
@@ -22,18 +23,18 @@ export class Expense extends Model {
      * Devuelve el gasto a pagar según su tipo (se considera que vas a pagar una mensualidad)
      */
     getMontlyAmountToPay(): number {
-        let amountToPay = 0
+        let amountToPay = new Decimal(this.amount)
 
         switch(this.type) {
             case TipoGasto.ANUAL:
-                amountToPay = this.amount / 12
+                amountToPay.div(12)
             break
             case TipoGasto.MENSUAL:
-                amountToPay = this.amount
+                // no hacer nada
             break
         }
 
-        return amountToPay
+        return amountToPay.toNumber() 
     }
 
     /**
@@ -68,11 +69,13 @@ export class Expense extends Model {
         })
 
         // obtener gastos totales a pagar
-        let total = 0
+        let total: Decimal = new Decimal(0)
         expenses.forEach(expense => {
-            total += expense.getMontlyAmountToPay()
+            // sumar al total la cantidad mensual a pagar
+            total.add(expense.getMontlyAmountToPay())
         })
 
-        return Math.ceil(total * 100) / 100
+        // devolver el número redondeado con dos decimales a la alza
+        return total.mul(100).ceil().div(100).toNumber()
     }
 }

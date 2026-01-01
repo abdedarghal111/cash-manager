@@ -1,37 +1,70 @@
 /**
  * Clase usuario, contiene la descripción de un usuario sincronizado con la base de datos (DatabaseController).
  */
-
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
-import { SaldoPendiente } from "@class/model/SaldoPendiente.server.mts"
+import { Monto } from "@class/model/Monto.server.mts"
+import { Cuenta } from "@class/model/Cuenta.server.mts"
 
 @Table({ tableName: 'users' })
 export class User extends Model {
     declare id: number
     declare username: string
     declare password: string
-    declare pendingCashKey: number
+
+    /**
+     * SaldoPendiente, se encarga de tener la cuenta del saldo pendiente por falta de efectivo exacto.
+     * 
+     * Por ejemplo si solo existe un billete y hay que repartirlo, el billete queda en este monto hasta que exista
+     * suficiente efectivo para repartirlo sin dividirlo.
+     */
+    declare pendingMonto: number
+
+    // cuenta /dev/null (a donde van los gastos)
+    declare nullAccount: number
 
     /**
      * Crea la el metálico pendiente si no existe y lo devuelve
      * 
-     * @returns {Promise<SaldoPendiente>} El metálico pendiente
+     * @returns {Promise<Monto>} El metálico pendiente
      */
-    async getPendingCash(): Promise<SaldoPendiente> {
-        let saldoPendiente = await SaldoPendiente.findByPk(this.pendingCashKey)
+    async getPendingCash(): Promise<Monto> {
+        let montoPendiente = await Monto.findByPk(this.pendingMonto)
         // si no existe el metálico pendiente crearlo
-        if (!saldoPendiente) {
-            saldoPendiente = await SaldoPendiente.create()
-            saldoPendiente.clearCash()
-            await saldoPendiente.save()
+        if (!montoPendiente) {
+            montoPendiente = await Monto.create()
+            montoPendiente.clearCash()
+            await montoPendiente.save()
 
             // guardar el id del metálico pendiente en el usuario
-            this.pendingCashKey = saldoPendiente.id
+            this.pendingMonto = montoPendiente.id
             await this.save()
         }
         
-        return saldoPendiente
+        return montoPendiente
     }
 
+    /**
+     * Crea la cuenta a donde van los gastos (cuenta /dev/null)
+     * 
+     * @returns {Promise<Cuenta>} La cuenta correspondiente
+     */
+    async getExpensesAccount(): Promise<Cuenta> {
+        let cuentaGastos = await Cuenta.findByPk(this.nullAccount)
+        // si no existe la cuenta se crea
+        if (!cuentaGastos) {
+            cuentaGastos = await Cuenta.create()
+            cuentaGastos.name = "Cuenta de gastos"
+            cuentaGastos.ignore = true // para ser ignorada
+            cuentaGastos.percentage = 0
+            cuentaGastos.isRemainder = false
+            await cuentaGastos.save()
+
+            // guardar el id de la cuenta correspondiente en el usuario
+            this.nullAccount = cuentaGastos.id
+            await this.save()
+        }
+        
+        return cuentaGastos
+    }
 }

@@ -52,7 +52,8 @@ describe("Tests de la clase Cuenta", () => {
         // rescatar cuentas
         let cuentas = await Cuenta.findAll({
             where: {
-                owner: testUserId
+                owner: testUserId,
+                ignore: false
             }
         })
 

@@ -76,7 +76,8 @@ router.get('/cuentas', asyncErrorHandler(async (req, res, next) => {
 
     const accounts = await Cuenta.findAll({
         where: {
-            owner: user.id
+            owner: user.id,
+            ignore: false
         }
     })
 

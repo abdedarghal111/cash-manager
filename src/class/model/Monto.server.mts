@@ -1,15 +1,14 @@
 /**
- * Clase SaldoPendiente, se encarga de tener la cuenta del saldo pendiente por falta de efectivo exacto.
- * 
- * Por ejemplo si solo existe un billete y hay que repartirlo, el billete queda en esta subcuenta hasta que exista
- * suficiente efectivo para repartirlo sin dividirlo.
+ * Clase Monto, representa un monto o conjunto de dinero 
  */
-
+import { CashBundle } from "@class/CashBundle.mjs"
+import { AcceptedCashValues } from "@data/enums/AcceptedCashEquivalent.mjs"
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
 
-@Table({ tableName: 'saldospendientes' })
-export class SaldoPendiente extends Model {
+
+@Table({ tableName: 'montos' })
+export class Monto extends Model implements AcceptedCashValues {
     declare id: number
 
     // metálico
@@ -42,5 +41,23 @@ export class SaldoPendiente extends Model {
         this.cerocinco = 0
         this.cerodos = 0
         this.cerouno = 0
+    }
+
+    /**
+     * Establecer el monto de un cashBundle a este monto
+     */
+    setFromCashBundle(bundle: CashBundle): void {
+        this.cincuenta = bundle.cincuenta
+        this.veinte = bundle.veinte
+        this.diez = bundle.diez
+        this.cinco = bundle.cinco
+        this.dos = bundle.dos
+        this.uno = bundle.uno
+        this.cerocincuenta = bundle.cerocincuenta
+        this.ceroveinte = bundle.ceroveinte
+        this.cerodiez = bundle.cerodiez
+        this.cerocinco = bundle.cerocinco
+        this.cerodos = bundle.cerodos
+        this.cerouno = bundle.cerouno
     }
 }

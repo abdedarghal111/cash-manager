@@ -53,6 +53,7 @@
     "connect-session-sequelize": "^7.1.7",
     "cookie-parse": "^0.4.0",
     "cross-env": "^7.0.3",
+    "decimal.js": "^10.6.0",
     "dotenv": "^16.6.1",
     "electron-updater": "^6.6.2",
     "esbuild": "^0.25.12",

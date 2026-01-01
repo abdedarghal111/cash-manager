@@ -6,6 +6,7 @@ import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { User } from "@class/model/User.server.mts"
+import Decimal from "decimal.js"
 
 export type PercentageFormattedCuentas = {
     id: number, 
@@ -21,6 +22,8 @@ export class Cuenta extends Model {
     declare owner: number
     declare percentage: number
     declare isRemainder: boolean
+    // si está en true, la cuenta no será mostrada ni usada por defecto
+    declare ignore: boolean
 
     /**
      * Calcula el balance total de la cuenta sumando los montos de sus subcuentas.
@@ -35,12 +38,12 @@ export class Cuenta extends Model {
         })
 
         // calcular todos los totales
-        let total = 0
+        let total = new Decimal(0)
         for (const subcuenta of subcuentas) {
-            total += subcuenta.total || 0
+            total.add(subcuenta.total || 0)
         }
 
-        return total
+        return total.toNumber()
     }
 
     /**
@@ -71,7 +74,8 @@ export class Cuenta extends Model {
         // obtener todas las cuentas
         const userAccounts = await Cuenta.findAll({
             where: {
-                owner: userId
+                owner: userId,
+                ignore: false
             },
             order: [['percentage', 'DESC']]
         })
@@ -111,7 +115,8 @@ export class Cuenta extends Model {
     static async getAllPercentageFormatted(user: User): Promise<PercentageFormattedCuentas> {
         const userAccounts = await Cuenta.findAll({
             where: {
-                owner: user.id
+                owner: user.id,
+                ignore: false
             },
             order: [['percentage', 'DESC']]
         })

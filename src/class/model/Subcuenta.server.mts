@@ -7,25 +7,11 @@
  * Es importante considerar que en este contexto subcuenta se refiere literalmente a un monto de dinero
  * que tendrá un límite máximo especificado en la configuración.
  */
-
 import { Model } from "sequelize"
 import { Table } from "sequelize-typescript"
+import { Monto } from "@class/model/Monto.server.mts"
 
-// tipos para el metálico aceptado por el servidor (establecer un standart)
-export interface AcceptedCashValues {
-    cincuenta: number
-    veinte: number
-    diez: number
-    cinco: number
-    dos: number
-    uno: number
-    cerocincuenta: number
-    ceroveinte: number
-    cerodiez: number
-    cerocinco: number
-    cerodos: number
-    cerouno: number
-}
+
 
 @Table({ tableName: 'subcuentas' })
 export class Subcuenta extends Model {
@@ -36,38 +22,41 @@ export class Subcuenta extends Model {
     declare total: number
     // el dinero que está en la subcuenta pero no en metálico
     declare cashPending: number
-
-    // metálico
-    declare cincuenta: number
-    declare veinte: number
-    declare diez: number
-    declare cinco: number
-    declare dos: number
-    declare uno: number
-    declare cerocincuenta: number
-    declare ceroveinte: number
-    declare cerodiez: number
-    declare cerocinco: number
-    declare cerodos: number
-    declare cerouno: number
+    // el monto asociado
+    declare monto: number
 
     /**
-     * pone a cero el dinero en metálico y los totales de la subcuenta
+     * devuelve el monto o crea uno nuevo
      */
-    clearCash(): void {
+    async getMonto(): Promise<Monto> {
+        // obtener monto 
+        let monto = await Monto.findByPk(this.monto)
+        if (!monto) {
+            // si no existe crearlo y inicializarlo
+            monto = await Monto.create()
+            this.monto = monto.id
+            monto.clearCash()
+
+            // guardar monto y la subcuenta
+            await monto.save()
+            await this.save()
+        }
+
+        return monto
+    }
+    
+    /**
+     * pone a cero los totales de la subcuenta y guarda la subcuenta y el monto correspondiente
+     */
+    async clearCash(): Promise<void> {
         this.total = 0
         this.cashPending = 0
-        this.cincuenta = 0
-        this.veinte = 0
-        this.diez = 0
-        this.cinco = 0
-        this.dos = 0
-        this.uno = 0
-        this.cerocincuenta = 0
-        this.ceroveinte = 0
-        this.cerodiez = 0
-        this.cerocinco = 0
-        this.cerodos = 0
-        this.cerouno = 0
+
+        let monto = await this.getMonto()
+        monto.clearCash()
+
+        // guardar monto y subcuenta
+        await monto.save()
+        await this.save()
     }
 }
