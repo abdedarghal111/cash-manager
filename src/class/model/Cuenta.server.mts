@@ -1,21 +1,21 @@
 /**
  * Clase Cuenta, representa una cuenta que contendrá varias subcuentas y que pertenecerá a un usuario.
  */
-
-import { Model } from "sequelize"
-import { Table } from "sequelize-typescript"
+import { Model, Transaction } from "sequelize"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { User } from "@class/model/User.server.mts"
 import Decimal from "decimal.js"
+import { Movimiento } from "@class/model/Movimiento.server.mts"
+import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
+import { TransactionsGroup } from "@class/model/TransactionGroup.server.mts"
 
 export type PercentageFormattedCuentas = {
-    id: number, 
+    instance: Cuenta, 
     name: string, 
     percentage: number,
     currentTotal: number
 }[]
 
-@Table({ tableName: 'cuentas' })
 export class Cuenta extends Model {
     declare id: number
     declare name: string
@@ -40,10 +40,59 @@ export class Cuenta extends Model {
         // calcular todos los totales
         let total = new Decimal(0)
         for (const subcuenta of subcuentas) {
-            total.add(subcuenta.total || 0)
+            total = total.add(subcuenta.total || 0)
         }
 
         return total.toNumber()
+    }
+
+    /**
+     * Devuelve la primera subcuenta no llena de la cuenta o la crea
+     */
+    async getAvalibleSubcuenta(transaction?: Transaction): Promise<Subcuenta> {
+        let subcuentaLibre = await Subcuenta.findOne({
+            where: {
+                cuenta: this.id,
+                isFilled: false
+            },
+            transaction: transaction
+        })
+
+        // si no existe subcuenta libre entonces crearla
+        if (!subcuentaLibre) {
+            subcuentaLibre = await Subcuenta.create({}, { transaction: transaction })
+            subcuentaLibre.cuenta = this.id
+            subcuentaLibre.name = subcuentaLibre.getSubcuentacode()
+            subcuentaLibre.save({ transaction: transaction })
+        }
+
+        return subcuentaLibre
+    }
+
+    /**
+     * Deposita dinero en total pendiente en la cuenta
+     * 
+     * @throws {Error} si ocurre un error al depositar dinero en la subcuenta.
+     */
+    async depositMoney(amount: number, transaction?: Transaction): Promise<void> {
+        let remaining = new Decimal(amount)
+
+        // mientras exista remaining
+        do {
+            // obtener una subcuenta disponible
+            let subcuenta = await this.getAvalibleSubcuenta(transaction)
+            // obtener su máximo
+            let maxAcceptedDeposit = subcuenta.getMaxAcceptedDeposit()
+            // calcular el dinero que se puede instroducir
+            let canPut = Math.min(remaining.toNumber(), maxAcceptedDeposit)
+            // poner el put y restar a remaining
+            if (!subcuenta.depositPendiente(canPut)) {
+                throw new Error("Error al depositar dinero en la subcuenta.") // linea que no se debe ejecutar
+            }
+            remaining = remaining.sub(canPut)
+            // guardar subcuenta
+            subcuenta.save({ transaction: transaction })
+        } while(remaining.toNumber() !== 0);
     }
 
     /**
@@ -131,7 +180,7 @@ export class Cuenta extends Model {
             } else {
                 // guardar cuenta en la lista
                 cleanAccounts.push({
-                    id: account.id,
+                    instance: account,
                     name: account.name,
                     percentage: account.percentage,
                     currentTotal: await account.getTotal()
@@ -143,7 +192,7 @@ export class Cuenta extends Model {
         if (remainderAccount) {
             remainderAccount = remainderAccount as Cuenta
             cleanAccounts.unshift({
-                id: remainderAccount.id,
+                instance: remainderAccount,
                 name: remainderAccount.name,
                 percentage: -1,
                 currentTotal: await remainderAccount.getTotal()
