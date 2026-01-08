@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import tailwindcss from "@tailwindcss/vite";
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import tailwindcss from "@tailwindcss/vite"
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
+import { resolveAliases } from './shared/resolveAliases.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -20,21 +21,13 @@ export default defineConfig({
     }}),
   ],
   resolve: {
-    'alias': {
-      "@src": resolve(__src),
-      "@components": resolve(__src, 'components'),
-      "@single": resolve(__src, 'single'),
-      "@class": resolve(__src, 'class'),
-      "@assets": resolve(__src, 'assets'),
-      "@routes": resolve(__src, 'routes'),
-      "@data": resolve(__src, 'data'),
-    }
+    'alias': resolveAliases(__src)
   },
   server: {
     open: false,
     watch: {
       additionalPaths: (watcher) => {
-        watcher.add(__src);
+        watcher.add(__src)
       }
     }
   },

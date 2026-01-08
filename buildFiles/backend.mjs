@@ -3,8 +3,9 @@ import esbuild from 'esbuild'
 import { replace } from 'esbuild-plugin-replace'
 import { copy } from 'esbuild-plugin-copy'
 import { fileURLToPath } from 'url'
-import { dirname, join, relative, resolve } from 'path';
+import { dirname, join, relative } from 'path'
 import c from 'colors'
+import { resolveServerAliases } from './shared/resolveAliases.mjs'
 /*
 Parámetros disponibles:
 --dev  => compilar para desarrollo
@@ -40,27 +41,6 @@ if (existsSync(__dist) && !checkParam('--no-clean') && !checkParam('--watch')) {
   console.log('\n==> Carpeta de compilación limpia'.green)
 }
 
-// para devolver un path relativo y que sea escrito en el fichero
-let replaceRelative = function(fromPath, toPath) {
-  // si no son carpetas entonces que se conviertan en tales
-  let fromDirPath = fromPath
-  if(existsSync(fromPath) && !lstatSync(fromPath).isDirectory()) {
-    fromDirPath = dirname(fromDirPath)
-  }
-  let toDirPath = toPath
-  if(existsSync(toPath) && !lstatSync(toPath).isDirectory()) {
-    fromDirPath = dirname(toPath)
-  }
-
-  // si son la misma carpeta entonces devolver la misma carpeta
-  if (fromDirPath === toDirPath) {
-    return './'
-  }
-  // si no pues calcular el path relativo y devolverlo
-  let relat = relative(fromDirPath, toDirPath).replace(/\\/g, '/')
-  return `./${relat}/`
-}
-
 
 if (checkParam('--dev')) {
   let entryPoints = globSync(`${__relativeSrc}/**/*.mts`)
@@ -89,13 +69,7 @@ if (checkParam('--dev')) {
         delimiters: ['', ''], // tener esta opción para que no haga cosas raras y funcione de la manera más simple
         values: {
           '.mts': '.mjs',
-          '@src/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src)),
-          '@components/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'components')),
-          '@single/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'single')),
-          '@class/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'class')),
-          '@assets/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'assets')),
-          '@routes/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'routes')),
-          '@data/': (fileWhereFounded) => replaceRelative(fileWhereFounded, resolve(__src, 'data'))
+          ...resolveServerAliases(__src)
         }
       }),
       copy({

@@ -1,17 +1,19 @@
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
-import tailwindcss from "@tailwindcss/vite";
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import tailwindcss from "@tailwindcss/vite"
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
+import { resolveAliases } from '../shared/resolveAliases.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const __electronMain = resolve(__dirname, 'electronMain.mjs')
-const __electronPreload = resolve(__dirname, 'electronPreload.mjs')
-const __root = resolve(__dirname, '..')
+const __root = resolve(__dirname, '..', '..')
 const __out = resolve(__root, 'dist', 'electron')
 const __src = resolve(__root, 'src')
 const __index = resolve(__src, 'index.html')
+const __electronConfigFolder = resolve(__root, 'buildFiles', 'electron')
+const __electronMain = resolve(__electronConfigFolder, 'electronMain.mjs')
+const __electronPreload = resolve(__electronConfigFolder, 'electronPreload.mjs')
 
 export default defineConfig({
   main: {
@@ -44,15 +46,7 @@ export default defineConfig({
       }
     },
     resolve: {
-    'alias': {
-      "@src": resolve(__src),
-      "@components": resolve(__src, 'components'),
-      "@single": resolve(__src, 'single'),
-      "@class": resolve(__src, 'class'),
-      "@assets": resolve(__src, 'assets'),
-      "@routes": resolve(__src, 'routes'),
-      "@data": resolve(__src, 'data')
-    }
+    'alias': resolveAliases(__src)
   },
   }
 })
