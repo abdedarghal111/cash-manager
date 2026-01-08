@@ -1,7 +1,7 @@
 /**
  * Clase usuario, contiene la descripción de un usuario sincronizado con la base de datos (DatabaseController).
  */
-import { Model } from "sequelize"
+import { Model, Transaction } from "sequelize"
 import { Table } from "sequelize-typescript"
 import { Monto } from "@class/model/Monto.server.mts"
 import { Cuenta } from "@class/model/Cuenta.server.mts"
@@ -28,17 +28,17 @@ export class User extends Model {
      * 
      * @returns {Promise<Monto>} El metálico pendiente
      */
-    async getPendingCash(): Promise<Monto> {
-        let montoPendiente = await Monto.findByPk(this.pendingMonto)
+    async getPendingCash(transaction?: Transaction): Promise<Monto> {
+        let montoPendiente = await Monto.findByPk(this.pendingMonto, { transaction: transaction })
         // si no existe el metálico pendiente crearlo
         if (!montoPendiente) {
-            montoPendiente = await Monto.create()
+            montoPendiente = await Monto.create({}, { transaction: transaction })
             montoPendiente.clearCash()
-            await montoPendiente.save()
+            await montoPendiente.save({ transaction: transaction })
 
             // guardar el id del metálico pendiente en el usuario
             this.pendingMonto = montoPendiente.id
-            await this.save()
+            await this.save({ transaction: transaction })
         }
         
         return montoPendiente
@@ -49,20 +49,20 @@ export class User extends Model {
      * 
      * @returns {Promise<Cuenta>} La cuenta correspondiente
      */
-    async getExpensesAccount(): Promise<Cuenta> {
-        let cuentaGastos = await Cuenta.findByPk(this.nullAccount)
+    async getExpensesAccount(transaction?: Transaction): Promise<Cuenta> {
+        let cuentaGastos = await Cuenta.findByPk(this.nullAccount, { transaction: transaction })
         // si no existe la cuenta se crea
         if (!cuentaGastos) {
-            cuentaGastos = await Cuenta.create()
+            cuentaGastos = await Cuenta.create({}, { transaction: transaction })
             cuentaGastos.name = "Cuenta de gastos"
             cuentaGastos.ignore = true // para ser ignorada
             cuentaGastos.percentage = 0
             cuentaGastos.isRemainder = false
-            await cuentaGastos.save()
+            await cuentaGastos.save({ transaction: transaction })
 
             // guardar el id de la cuenta correspondiente en el usuario
             this.nullAccount = cuentaGastos.id
-            await this.save()
+            await this.save({ transaction: transaction })
         }
         
         return cuentaGastos
