@@ -1,12 +1,14 @@
 import { STORAGE_DB_FILE_PATH } from "@data/paths.mjs"
-import { Sequelize, DataTypes } from "sequelize"
+import { Sequelize, DataTypes, Transaction } from "sequelize"
 import { User } from "@class/model/User.server.mjs"
 import { Cuenta } from "@class/model/Cuenta.server.mjs"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
-import { Movimiento, TipoMovimiento } from "@class/model/Movimiento.server.mjs"
+import { Movimiento } from "@class/model/Movimiento.server.mjs"
 import { Monto } from "@class/model/Monto.server.mjs"
 import { Expense } from "@class/model/Expense.server.mjs"
 import { TipoGasto } from "@data/enums/ExpenseType.mjs"
+import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
+import { TransactionsGroup } from "@class/model/TransactionGroup.server.mjs"
 
 // crear base de datos
 const sequelize = new Sequelize({
@@ -44,6 +46,10 @@ Monto.init({
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    dos: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
     uno: {
         type: DataTypes.INTEGER,
         defaultValue: 0
@@ -74,7 +80,9 @@ Monto.init({
     }
     // end metalico
 }, {
-    sequelize: sequelize
+    tableName: 'montos',
+    sequelize: sequelize,
+    timestamps: true
 })
 
 User.init({
@@ -99,7 +107,9 @@ User.init({
         type: DataTypes.STRING(255)
     }
 }, {
-    sequelize: sequelize
+    tableName: 'users',
+    sequelize: sequelize,
+    timestamps: true
 })
 
 Cuenta.init({
@@ -134,7 +144,9 @@ Cuenta.init({
         onDelete: 'CASCADE'
     },
 }, {
-    sequelize: sequelize
+    tableName: 'cuentas',
+    sequelize: sequelize,
+    timestamps: true
 })
 
 Subcuenta.init({
@@ -174,9 +186,42 @@ Subcuenta.init({
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+    },
+    maxMoney: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 20_000
+    },
+    isFilled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 }, {
-    sequelize: sequelize
+    tableName: 'subcuentas',
+    sequelize: sequelize,
+    timestamps: true
+})
+
+TransactionsGroup.init({
+    id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    uuid: {
+        type: DataTypes.STRING(36),
+        defaultValue: 'not assigned (probably a bug)',
+        unique: true
+    },
+    transactionDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    }
+}, {
+    tableName: 'transactiongroups',
+    sequelize: sequelize,
+    timestamps: true
 })
 
 Movimiento.init(
@@ -186,13 +231,15 @@ Movimiento.init(
             autoIncrement: true,
             primaryKey: true
         },
-        transactionGroupUid: {
-            type: DataTypes.STRING(36),
-            defaultValue: ''
-        },
-        transactionDate: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
+        transactionGroup: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            references: {
+                model: TransactionsGroup,
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
+            allowNull: false
         },
         fromCuenta: {
             type: DataTypes.INTEGER.UNSIGNED,
@@ -214,19 +261,23 @@ Movimiento.init(
             onDelete: 'CASCADE',
             allowNull: true
         },
-        monto: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            references: {
-                model: Monto,
-                key: 'id'
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE'
+        cantidad: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            defaultValue: 0
         },
         type: {
             type: DataTypes.ENUM(...Object.values(TipoMovimiento)),
             allowNull: false,
             defaultValue: TipoMovimiento.INGRESO
+        },
+        gastoName: {
+            type: DataTypes.STRING(50),
+            allowNull: true
+        },
+        tipoGasto: {
+            type: DataTypes.ENUM(...Object.values(TipoGasto)),
+            allowNull: true
         },
         // el concepto del movimiento:
         description: {
@@ -235,11 +286,10 @@ Movimiento.init(
             defaultValue: ''
         }
     }, {
-    sequelize: sequelize,
     tableName: 'movimientos',
+    sequelize: sequelize,
     timestamps: true
-}
-)
+})
 
 Expense.init({
     id: {
@@ -271,7 +321,9 @@ Expense.init({
         defaultValue: TipoGasto.MENSUAL
     }
 }, {
-    sequelize: sequelize
+    tableName: 'expenses',
+    sequelize: sequelize,
+    timestamps: true
 })
 
 // relaciones entre tablas
@@ -287,14 +339,17 @@ Monto.belongsTo(User, { foreignKey: 'pendingMonto' })
 Cuenta.hasMany(Subcuenta, { foreignKey: 'cuenta' })
 Subcuenta.belongsTo(Cuenta, { foreignKey: 'cuenta' })
 
-Subcuenta.hasOne(Monto, { foreignKey: 'monto' })
-Monto.belongsTo(Subcuenta, { foreignKey: 'monto' })
+Subcuenta.belongsTo(Monto, { foreignKey: 'monto' })
+Monto.hasOne(Subcuenta, { foreignKey: 'monto' })
 
 Cuenta.hasMany(Movimiento, { foreignKey: 'fromCuenta' })
 Movimiento.belongsTo(Cuenta, { foreignKey: 'fromCuenta' })
 
 Cuenta.hasMany(Movimiento, { foreignKey: 'toCuenta' })
 Movimiento.belongsTo(Cuenta, { foreignKey: 'toCuenta' })
+
+TransactionsGroup.hasMany(Movimiento, { foreignKey: 'transactionGroup' })
+Movimiento.belongsTo(TransactionsGroup, { foreignKey: 'transactionGroup' })
 
 Movimiento.hasOne(Monto, { foreignKey: 'monto' })
 Monto.belongsTo(Movimiento, { foreignKey: 'monto' })
@@ -322,5 +377,12 @@ export let DatabaseController = {
                 drop: false
             }
         })
+    },
+
+    /**
+     * Inicia una transacción y devuelve un objeto de transacción para commitear o rollabckear
+     */
+    async startTransaction(): Promise<Transaction> {
+        return await sequelize.transaction({ type: Transaction.TYPES.EXCLUSIVE })
     }
 }
