@@ -3,15 +3,18 @@
  */
 import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 import { Model } from "sequelize"
-import { Table } from "sequelize-typescript"
 import { User } from "@class/model/User.server.mts"
 import Decimal from "decimal.js"
 
-/**
- * Enumeración para los tipos de gastos.
- */
+export interface TotalMonthlyToPayType {
+    totalExpenses: number
+    expenseList: {
+        name: string
+        cost: number
+        type: TipoGasto
+    }[]
+}
 
-@Table({ tableName: 'expenses' })
 export class Expense extends Model {
     declare id: number
     declare owner: number
@@ -27,7 +30,7 @@ export class Expense extends Model {
 
         switch(this.type) {
             case TipoGasto.ANUAL:
-                amountToPay.div(12)
+                amountToPay = amountToPay.div(12)
             break
             case TipoGasto.MENSUAL:
                 // no hacer nada
@@ -60,7 +63,7 @@ export class Expense extends Model {
      * 
      * @returns number Total de gastos a pagar para el usuario.
      */
-    static async getTotalMonthlyToPay(user: User): Promise<number> {
+    static async getTotalMonthlyToPayResume(user: User): Promise<TotalMonthlyToPayType> {
         // obtener todos los gastos
         const expenses = await Expense.findAll({
             where: {
@@ -68,14 +71,27 @@ export class Expense extends Model {
             }
         })
 
+        // crear la lista para añadir cada gasto
+        let expenseList = [] as TotalMonthlyToPayType["expenseList"]
+
         // obtener gastos totales a pagar
         let total: Decimal = new Decimal(0)
         expenses.forEach(expense => {
             // sumar al total la cantidad mensual a pagar
-            total.add(expense.getMontlyAmountToPay())
+            let montlyToPay = expense.getMontlyAmountToPay()
+
+            total = total.add(montlyToPay)
+            expenseList.push({
+                name: expense.name,
+                cost: montlyToPay,
+                type: expense.type
+            })
         })
 
         // devolver el número redondeado con dos decimales a la alza
-        return total.mul(100).ceil().div(100).toNumber()
+        return {
+            totalExpenses: total.mul(100).ceil().div(100).toNumber(),
+            expenseList: expenseList
+        }
     }
 }
