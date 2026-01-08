@@ -6,7 +6,7 @@
     "url": "https://github.com/abdedarghal111"
   },
   "name": "cash_manager_server",
-  "version": "1.0.0",
+  "version": "0.5.0",
   "license": "MIT",
   "main": "dist/electron/main/electronMain.js",
   "scripts": {
@@ -31,7 +31,8 @@
     "build:win": "pnpm run electron:build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "electron:release": "electron-builder"
+    "electron:release": "electron-builder",
+    "terminal": "pnpm run server:build && node dist/backend/scripts/main.server.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
