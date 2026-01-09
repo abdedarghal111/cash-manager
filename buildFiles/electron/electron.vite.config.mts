@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite"
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { resolveAliases } from '../shared/resolveAliases.mjs'
+import { replacementConstants } from '../shared/replacementDefineConstants.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -46,7 +47,8 @@ export default defineConfig({
       }
     },
     resolve: {
-    'alias': resolveAliases(__src)
-  },
+      'alias': resolveAliases(__src)
+    },
+    define: replacementConstants
   }
 })

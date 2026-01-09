@@ -3,7 +3,6 @@
  */
 import Jasmine from 'jasmine'
 import c from 'colors'
-import { existsSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 

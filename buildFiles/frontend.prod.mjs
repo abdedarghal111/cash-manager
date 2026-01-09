@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite"
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { resolveAliases } from './shared/resolveAliases.mjs'
+import { replacementConstants } from './shared/replacementDefineConstants.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -14,12 +15,13 @@ const __out = resolve(__root, 'dist', 'frontend')
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    tailwindcss(), 
+    tailwindcss(),
     svelte()
   ],
   resolve: {
     'alias': resolveAliases(__src)
   },
+  define: replacementConstants,
   root: __src,
   build: {
     target: 'modules',

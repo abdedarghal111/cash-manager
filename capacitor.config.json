@@ -1,6 +1,6 @@
 {
   "appId": "es.abderra.cash-manager-server",
-  "appName": "Cash Manager Server",
+  "appName": "Cash Manager Client",
   "webDir": "dist/frontend",
   "bundledWebRuntime": false,
   "hideLogs": false

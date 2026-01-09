@@ -13,7 +13,7 @@ Solo contiene un header y un footer llamativos y centra el main
 <View>
     {#snippet header()}
         <div class="text-center py-8 bg-blue-700 text-white">
-            <h1 class="text-4xl font-bold">Cash Manager</h1>
+            <h1 class="text-4xl font-bold">{__APP_NAME__}</h1>
         </div>
     {/snippet}
 
@@ -25,7 +25,7 @@ Solo contiene un header y un footer llamativos y centra el main
 
     {#snippet footer()}
         <footer class="text-center py-8 border-t bg-blue-500 text-white">
-            <p class="text-sm">&copy; 2025 Cash Manager</p>
+            <p class="text-sm">&copy; 2026 {__APP_NAME__} Client {__VERSION__}</p>
         </footer>
     {/snippet}
 </View>

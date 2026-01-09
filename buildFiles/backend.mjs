@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { dirname, join, relative } from 'path'
 import c from 'colors'
 import { resolveServerAliases } from './shared/resolveAliases.mjs'
+import { replacementConstants } from './shared/replacementDefineConstants.mjs'
 /*
 Parámetros disponibles:
 --dev  => compilar para desarrollo
@@ -63,6 +64,7 @@ if (checkParam('--dev')) {
     },
     resolveExtensions: ['.mts'],
     tsconfig: './tsconfig.json',
+    define: replacementConstants,
     plugins: [
       replace({
         include: /\.mts$/, // solo incluir todos los scripts
