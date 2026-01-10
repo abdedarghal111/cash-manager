@@ -17,6 +17,7 @@ import cuentasRouter from '@routes/private/cuentas/index.server.mjs'
 import expensesRouter from '@routes/private/expenses/index.server.mjs'
 import estadisticasRouter from '@routes/private/estadisticas/index.server.mjs'
 import ingresarMontoRouter from '@routes/private/ingresarMonto/index.server.mjs'
+import balancesRouter from '@routes/private/balances/index.server.mjs'
 
 // cargando variables de entorno
 dotenv.config({ path: ENV_FILE_PATH })
@@ -31,6 +32,7 @@ HttpsController.addPrivateRouter(cuentasRouter)
 HttpsController.addPrivateRouter(expensesRouter)
 HttpsController.addPrivateRouter(estadisticasRouter)
 HttpsController.addPrivateRouter(ingresarMontoRouter)
+HttpsController.addPrivateRouter(balancesRouter)
 
 // iniciar el servidor https
 HttpsController.startServer()

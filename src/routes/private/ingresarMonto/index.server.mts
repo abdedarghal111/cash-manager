@@ -410,8 +410,8 @@ export async function aplyIngresarOperation(user: User, transactionResume: calcu
 
     // guardar registro del  pending cash nuevo
     let afterPendingMonto = CashBundle.importFromValidAcceptedCashValues(pendingMonto)
-    console.log(`- antes: ${JSON.stringify(CashBundle.importFromValidAcceptedCashValues(beforePendingCash))}`)
-    console.log(`- después: ${JSON.stringify(CashBundle.importFromValidAcceptedCashValues(afterPendingMonto))}`)
+    // console.log(`- antes: ${JSON.stringify(CashBundle.importFromValidAcceptedCashValues(beforePendingCash))}`)
+    // console.log(`- después: ${JSON.stringify(CashBundle.importFromValidAcceptedCashValues(afterPendingMonto))}`)
 
     // filtrar las cuentas por la de gastos y las demás
     let cuentasOpetarionLogs = [] as [account: Cuenta, subAccount: Subcuenta, monto: Monto, beforeCash: CashBundle, afterCash: CashBundle][]

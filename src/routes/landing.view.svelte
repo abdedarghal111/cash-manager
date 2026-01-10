@@ -27,11 +27,13 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
     import Modal from "@components/Modal.svelte"
     import CuentasView from "@routes/private/cuentas/index.view.svelte"
     import IngresarMontoView from "@routes/private/ingresarMonto/index.view.svelte"
+    import BalancesView from "@routes/private/balances/index.view.svelte"
     import EstadisticasView from "@routes/private/estadisticas/index.view.svelte"
     import ExpensesIndexView from "@routes/private/expenses/index.view.svelte"
 
     let showOperarPopup = $state(false)
     let showConfigurarModal = $state(false)
+    let showVerModal = $state(false)
 
     onMount(async () => {
         // desactivar botones antes de mostrar nada
@@ -86,6 +88,9 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
                     <Themedbutton label="Operar" onclick={() => {
                         showOperarPopup = true
                     }} />
+                    <Themedbutton label="Ver" onclick={() => {
+                        showVerModal = true
+                    }} />
                     <Themedbutton label="Configurar" onclick={() => {
                         showConfigurarModal = true
                     }} />
@@ -106,6 +111,7 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
 
         <Modal bind:show={showOperarPopup} children={operarPopupContent} />
         <Modal bind:show={showConfigurarModal} children={configurarModalContent} />
+        <Modal bind:show={showVerModal} children={verModalContent} />
     {/snippet}
 </DefaultView>
 
@@ -116,9 +122,6 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
         <div class="flex flex-col gap-2">
             <Themedbutton label="Ingresar Monto" onclick={() => {
                 ViewsController.setCurrentView(IngresarMontoView)
-            }} />
-            <Themedbutton label="Estadísticas" onclick={() => {
-                ViewsController.setCurrentView(EstadisticasView)
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showOperarPopup = false
@@ -140,6 +143,24 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showConfigurarModal = false
+            }} />
+        </div>
+    </div>
+{/snippet}
+
+<!-- El panel de ver -->
+{#snippet verModalContent()}
+    <div class="text-center bg-white p-8 rounded-lg shadow-lg">
+        <h3 class="text-2xl mb-6">Ver</h3>
+        <div class="flex flex-col gap-2">
+            <Themedbutton label="Balances" onclick={() => {
+                ViewsController.setCurrentView(BalancesView)
+            }} />
+            <Themedbutton label="Estadísticas" onclick={() => {
+                ViewsController.setCurrentView(EstadisticasView)
+            }} />
+            <Themedbutton label="Cerrar" onclick={() => {
+                showVerModal = false
             }} />
         </div>
     </div>

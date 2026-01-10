@@ -50,7 +50,8 @@ TODO: añadir el aceptar transacción
     import { storable } from "@class/Storable.client.mjs"
     import Fa from "svelte-fa"
     import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
-    import { validCashValues } from "@data/enums/AcceptedCashEquivalent.mjs";
+    import { validCashValues } from "@data/enums/AcceptedCashEquivalent.mjs"
+    import BalancesView from "@routes/private/balances/index.view.svelte"
 
     // importar cuentas y gastos
     let expenses: GETExpensesType.server = $state([])
@@ -390,7 +391,7 @@ TODO: añadir el aceptar transacción
                             }
 
                             // si salió bien la solicitud establecer vista a volver
-                            ViewsController.setReturnView(verCuentasView)
+                            ViewsController.setReturnView(BalancesView)
                             // añadir parametros y establecer la nueva vista
                             let params = new Parameters()
                             params.set('summary', data.summary)

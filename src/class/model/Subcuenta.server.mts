@@ -95,6 +95,7 @@ export class Subcuenta extends Model {
         } else {
             // sumar la cantidad y devolver
             this.total = newTotal.toNumber()
+            // sumar al total pendiente la cantidad
             this.cashPending = new Decimal(this.cashPending).add(cuantity).toNumber()
             return true
         }
