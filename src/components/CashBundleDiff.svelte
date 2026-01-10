@@ -6,6 +6,8 @@
         cashValues: AcceptedCashValues,
         extraClass?: string
     } = $props()
+
+    let keyValue = $derived(Object.entries(CashBundle.importFromValidAcceptedCashValues(cashValues)) as [keyof AcceptedCashValues, number][])
 </script>
 
 <!-- 
@@ -19,7 +21,7 @@ Si se usase border-separate entonces podrías manipular los bordes e la tabla pe
 <div class="rounded-md border border-gray-300 w-fit ${" " + extraClass}">
     <table class={`border-collapse m-0 p-0`}>
         <tbody>
-            {#each (Object.entries(CashBundle.importFromValidAcceptedCashValues(cashValues)) as [keyof AcceptedCashValues, number][]) as [ key, value ]}
+            {#each keyValue as [ key, value ]}
                 {#if value !== 0}
                     <tr class="border-b border-spacing-0 border-gray-300 last:border-b-0">
                         <td class="p-1.5 font-medium text-right text-gray-700">
