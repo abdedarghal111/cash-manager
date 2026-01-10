@@ -54,7 +54,7 @@ export class User extends Model {
         // si no existe la cuenta se crea
         if (!cuentaGastos) {
             cuentaGastos = await Cuenta.create({}, { transaction: transaction })
-            cuentaGastos.name = "Cuenta de gastos"
+            cuentaGastos.name = this.getExpensesAccountName()
             cuentaGastos.ignore = true // para ser ignorada
             cuentaGastos.percentage = 0
             cuentaGastos.isRemainder = false
@@ -66,5 +66,19 @@ export class User extends Model {
         }
         
         return cuentaGastos
+    }
+
+    /**
+     * Nombre de la cuenta a donde van los gastos (cuenta /dev/null) (para estar en un solo sitio)
+     */
+    getExpensesAccountName(): string {
+        return "Cuenta de gastos"
+    }
+
+    /***
+     * Simplemente devuelve el nombre que se le ha concedido al monto pendiente (para estar en un solo sitio)
+     */
+    getPendingCashName(): string {
+        return "Metálico pendiente"
     }
 }

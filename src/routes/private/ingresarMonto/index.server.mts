@@ -156,7 +156,7 @@ router.post('/ingresarMonto', asyncErrorHandler(async (req, res, next) => {
 
     let outSummary = {
         transactionUuid: summary.transactionUuid,
-        cashPendingName: "Metálico pendiente",
+        cashPendingName: user.getPendingCashName(),
         cashPendienteDiff: summary.afterPendingMonto.subMonto(summary.beforePendingCash).exportToAcceptedCashValues(),
         cuentasBundleDiff: summary.cuentasOpetarionLogs.map(([account, subAccount, monto, beforeCash, afterCash]) => {
             return {
