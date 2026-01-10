@@ -99,6 +99,26 @@ export class Monto extends Model implements AcceptedCashValues {
     }
 
     /**
+     * Devuelve una tabla AcceptedCashValues
+     */
+    toAcceptedCashValues(): AcceptedCashValues {
+        return {
+            cincuenta: this.cincuenta,
+            veinte: this.veinte,
+            diez: this.diez,
+            cinco: this.cinco,
+            dos: this.dos,
+            uno: this.uno,
+            cerocincuenta: this.cerocincuenta,
+            ceroveinte: this.ceroveinte,
+            cerodiez: this.cerodiez,
+            cerocinco: this.cerocinco,
+            cerodos: this.cerodos,
+            cerouno: this.cerouno
+        }
+    }
+
+    /**
      * Inserta los billetes desde el mayor a menor en el monto (algoritmo por defecto)
      * 
      * IMPORTANTE: modifica el array introducido (restando el cash movido)
@@ -112,6 +132,13 @@ export class Monto extends Model implements AcceptedCashValues {
         // empezar desde el billete más grande (es así por defecto)
         for (let arrayRow of cashArray) {
             let [cashKey, cashValue, cashCuantity] = arrayRow
+
+            // comprobar que se puede ingresar antes de ingresar
+            if (totalInserted.toNumber() === pendingTotal) {
+                return totalInserted.toNumber()
+            }
+
+
             // sacar el maximo valor posible a insertar
             let maxValue = Decimal.mul(cashValue, cashCuantity).toNumber()
             let cuantityToInsert = 0
@@ -151,30 +178,6 @@ export class Monto extends Model implements AcceptedCashValues {
         beforeCash: CashBundle,
         afterCash: CashBundle
     ][]> {
-        // obtener todos los montos con pendiente del usuario exceptuando el actual
-        // let montosConPendiente = await Monto.findAll({
-        //     where: {
-        //         id: {
-        //             [Op.ne]: this.id // que el id no sea de este monto
-        //         }
-        //     },
-        //     include: [{
-        //         model: Subcuenta,
-        //         required: true, // Fuerza un INNER JOIN para filtrar montos que no tengan subcuenta
-        //         where: {
-        //             cashPending: {
-        //                 [Op.ne]: 0 // Que el pendiente no sea 0
-        //             }
-        //         },
-        //         include: [{
-        //             model: Cuenta,
-        //             required: true, // INNER JOIN
-        //             where: {
-        //                 owner: user.id // Filtrar por el usuario dueño de la cuenta
-        //             }
-        //         }]
-        //     }]
-        // })
 
         // obtener cuentas del usuario
         let accounts = await Cuenta.findAll({
