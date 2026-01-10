@@ -47,14 +47,14 @@ Vista donde se muestran las estadísticas de las cuentas
                         <div class="mb-6 pb-6 border-b border-gray-200 last:border-b-0 last:pb-0">
                             <div class="flex justify-between items-center mb-3">
                                 <h4 class="text-xl font-medium text-gray-700">{cuenta.nombre}</h4>
-                                <span class="text-xl font-bold text-green-600">${cuenta.total.toFixed(2)}</span>
+                                <span class="text-xl font-bold text-green-600">{cuenta.total.toFixed(2)}€</span>
                             </div>
                             {#if cuenta.subcuentas.length > 0}
                                 <ul class="ml-6 space-y-1 text-gray-600">
                                     {#each cuenta.subcuentas as subcuenta (subcuenta.id)}
                                         <li class="flex justify-between text-base">
                                             <span>{subcuenta.nombre}</span>
-                                            <span>${subcuenta.total.toFixed(2)}</span>
+                                            <span>{subcuenta.total.toFixed(2)}€</span>
                                         </li>
                                     {/each}
                                 </ul>
