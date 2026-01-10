@@ -53,6 +53,7 @@ export class User extends Model {
         let cuentaGastos = await Cuenta.findByPk(this.nullAccount, { transaction: transaction })
         // si no existe la cuenta se crea
         if (!cuentaGastos) {
+            // console.log("creando cuenta gastos")
             cuentaGastos = await Cuenta.create({}, { transaction: transaction })
             cuentaGastos.name = this.getExpensesAccountName()
             cuentaGastos.ignore = true // para ser ignorada

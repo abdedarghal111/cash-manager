@@ -98,7 +98,12 @@ User.init({
             key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
+        allowNull: true
+    },
+    nullAccount: { // no se puede poner como foreign key de (cuenta) porque osino saltaría error (Cuenta todavía no existe en esta linea)
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: true
     },
     username: {
         type: DataTypes.STRING(50)
@@ -329,6 +334,9 @@ Expense.init({
 // relaciones entre tablas
 User.hasMany(Cuenta, { foreignKey: 'owner' })
 Cuenta.belongsTo(User, { foreignKey: 'owner' })
+
+User.hasOne(Cuenta, {foreignKey: 'nullAccount'})
+Cuenta.belongsTo(User, { foreignKey: 'nullAccount'})
 
 User.hasMany(Expense, { foreignKey: 'owner' })
 Expense.belongsTo(User, { foreignKey: 'owner' })
