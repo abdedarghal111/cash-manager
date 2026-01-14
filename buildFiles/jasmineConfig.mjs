@@ -122,7 +122,7 @@ runner.env.addReporter({
         for (const expectation of result.failedExpectations) {
             console.log('------------------------------------------------------------------------'.black)
             console.log('        !-> Fallo: ' + expectation.message.yellow)
-            // console.log(expectation.stack);
+            console.log('        !-> En línea: ' + expectation.stack.trim().red)
         }
         console.log('------------------------------------------------------------------------'.black)
 
