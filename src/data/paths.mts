@@ -13,20 +13,22 @@ import { fileURLToPath } from 'url'
 // cuando se ha compilado, la carpeta raiz del proyecto es esa
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const __src = resolve(__dirname, '..')
-const __root = resolve(__src, '..', '..')
-const __local_data = resolve(__root, 'local_data')
-const __test = resolve(__src, 'test')
+const SRC_PATH = resolve(__dirname, '..')
+const ROOT_PATH = resolve(SRC_PATH, '..', '..')
+const LOCAL_DATA_PATH = resolve(ROOT_PATH, 'local_data')
+const TEST_PATH = resolve(SRC_PATH, 'test')
+
+export const TEST_FILES_DIR_PATH = resolve(TEST_PATH, 'testFiles')
 
 // export const SESSION_DB_FILE_PATH = resolve(__local_data, 'sessions.sqlite')
 
-export const SERVER_CRT_FILE_PATH = resolve(__local_data, 'server.crt')
-export const SERVER_KEY_FILE_PATH = resolve(__local_data, 'server.key')
+export const SERVER_CRT_FILE_PATH = resolve(LOCAL_DATA_PATH, 'server.crt')
+export const SERVER_KEY_FILE_PATH = resolve(LOCAL_DATA_PATH, 'server.key')
 
-export const TEST_SERVER_CRT_FILE_PATH = resolve(__test, 'certificates', 'cert.pem')
-export const TEST_SERVER_KEY_FILE_PATH = resolve(__test, 'certificates', 'key.pem')
+export const TEST_SERVER_CRT_FILE_PATH = resolve(TEST_PATH, 'certificates', 'cert.pem')
+export const TEST_SERVER_KEY_FILE_PATH = resolve(TEST_PATH, 'certificates', 'key.pem')
 
 // export const SERVER_CSR_FILE_PATH = resolve(__local_data, 'server.csr')
-export const ENV_FILE_PATH = resolve(__local_data, '.env')
-export const STORAGE_DB_FILE_PATH = resolve(__local_data, 'storage.sqlite')
-export const SERVER_CONFIG_FILE_PATH = resolve(__local_data, 'server.config.json')
+export const ENV_FILE_PATH = resolve(LOCAL_DATA_PATH, '.env')
+export const STORAGE_DB_FILE_PATH = resolve(LOCAL_DATA_PATH, 'storage.sqlite')
+export const SERVER_CONFIG_FILE_PATH = resolve(LOCAL_DATA_PATH, 'server.config.json')
