@@ -1,3 +1,11 @@
+/**
+ * Controlador de la entrada HTTPS y todo lo que tenga que ver con hacer las requests
+ * 
+ * La seguridad (del medio de transporte HTTP)
+ * Los middleware de seguridad y todo eso se controla aquí, en el lado del cliente se usa RequestsManager
+ * 
+ * @see /src/single/Requests.client.mts
+ */ 
 import express, { NextFunction, Request, Response } from 'express'
 import https from 'https'
 import { readFileSync, existsSync } from 'fs'
