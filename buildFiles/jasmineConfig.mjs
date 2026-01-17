@@ -4,8 +4,9 @@
 import Jasmine from 'jasmine'
 import c from 'colors'
 import { TEST_OUT_PATH, TEST_PATH, ROOT_PATH } from './shared/paths.mjs'
-import { join, parse, resolve } from 'path'
+import { join, resolve } from 'path'
 import { belongsToFolder, fail, fileExists, getInputParams, parsePath } from './shared/utility.mjs'
+import { globSync } from 'fs'
 
 // obtener los parámetros introducidos
 const args = getInputParams([
@@ -113,17 +114,18 @@ runner.env.addReporter({
 
     specDone: function (result) {
         // console.log(`----------- ${result.status} ---------------`)
+        let str = '--->'.white + ' ' + result.description.blue + ' | '.white + `${result.duration}ms | `.white
         if (result.status === 'passed') {
-            console.log(' ---> ' + c.green(result.description + ' .OK'))
+            console.log(str + '.OK'.green)
         } else if (result.status === 'failed') {
-            console.log(' ---> ' + c.red(result.description + ' .FAIL'))
+            console.log(str + '.FAIL'.red)
         }
 
         for (const expectation of result.failedExpectations) {
-            console.log('------------------------------------------------------------------------'.black)
             console.log('        !-> Fallo: ' + expectation.message.yellow)
             console.log('        !-> En línea: ' + expectation.stack.trim().red)
         }
+        
         console.log('------------------------------------------------------------------------'.black)
 
         // console.log(result.passedExpectations.length);
@@ -146,10 +148,10 @@ runner.env.addReporter({
     }
 })
 
-let spec_files = [
-    resolve(TEST_OUT_PATH, '**/*.[sS]pec.?(m)js')
-]
+// por defecto obtener todos los ficheros
+let spec_files = globSync(resolve(TEST_OUT_PATH, '**/*.spec.mjs'))
 
+// si se han elegido otros ficheros pues usarlos en vez de todo
 if (customFiles) {
     spec_files = customFiles
     for (let path of customFiles) {
