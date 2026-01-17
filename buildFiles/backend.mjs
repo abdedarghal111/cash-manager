@@ -83,6 +83,7 @@ if (checkParam('--dev')) {
               `${__relativeSrc}/**/*.img`,
               `${__relativeSrc}/**/*.json`,
               `${__relativeSrc}/**/*.pem`,
+              `${__relativeSrc}/**/*.env`
             ],
             to: [__dist],
           },
