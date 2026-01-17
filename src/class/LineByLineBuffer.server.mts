@@ -76,6 +76,17 @@ export class LineByLineBuffer {
     }
 
     /**
+     * Resetea las variables, limpia el buffer y cierra al archivo como si se hubiese reabierto
+     */
+    async clear() {
+        await this.closeFile()
+        this.bufferExcess = null
+        this.fileReadingPos = 0
+        this.currentLine = ''
+        this.reachedEnd = false
+    }
+
+    /**
      * Función que abre el archivo para su lectura
      */
     async openFile(): Promise<void> {
@@ -248,5 +259,24 @@ export class LineByLineBuffer {
         buffer.fill(0, 0, bytesRead)
 
         return outStr
+    }
+
+    /**
+     * Abre el archivo, lee todo el contenido, lo cierra y limpia el buffer
+     * 
+     * @param includeEOL Si se devuelve el string sin el salto de línea al final o no (por defecto no se devuelve)
+     */
+    async openReadAllClose(includeEOL = false) {
+        await this.openFile()
+        let out = ''
+        let content = await this.readLine(includeEOL)
+        while (content) {
+            out += content
+            content = await this.readLine(includeEOL)
+        }
+        await this.closeFileIfReachedEnd()
+        this.clear()
+
+        return out
     }
 }

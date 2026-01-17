@@ -22,7 +22,7 @@ beforeAll(async () => {
 /**
  * Tests básicos para comprobar que funcionan las funcionalidades implementadas
  */
-describe("Tests del Buffer linea por linea", () => {
+describe("Line by line Buffer tests", () => {
     it("Reads the entire file", async () => {
         let testFile = resolve(FILES_PATH, 'test1.txt')
 
@@ -116,6 +116,21 @@ describe("Tests del Buffer linea por linea", () => {
         expect((await myBuffer.readLine())).toBe(testFile1.split(EOL)[0]!)
         expect((await myBuffer.readLine())).toBe(null)
 
+        expect(myBuffer.isFileOpened()).toBeFalse()
+    })
+
+    it("Reads the entire file with openReadAllClose", async () => {
+        let testFile = resolve(FILES_PATH, 'test1.txt')
+
+        // leer archivo completo
+        let expectedFileContents = readFileSync(testFile, 'utf-8')
+
+        // leer el archivo con el buffer
+        let myBuffer = new LineByLineBuffer(testFile)
+
+        let outStr = await myBuffer.openReadAllClose(true)
+        
+        expect(outStr).toBe(expectedFileContents)
         expect(myBuffer.isFileOpened()).toBeFalse()
     })
 })
