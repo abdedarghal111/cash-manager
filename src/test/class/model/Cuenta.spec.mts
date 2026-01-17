@@ -44,7 +44,7 @@ beforeAll(async () => {
 /**
  * Tests básicos para comprobar que funcionan las funcionalidades implementadas
  */
-describe("Tests de la clase Cuenta", () => {
+describe("Cuenta class tests", () => {
     it("removeAllIsRemainderForUser", async () => {  
         // testear función      
         Cuenta.removeAllIsRemainderForUser(testUserId)
