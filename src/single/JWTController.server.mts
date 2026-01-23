@@ -3,7 +3,8 @@
  * 
  * Aquí se crea el controlador que se encarga de dar el okey o rechazar el JWT y de crear las claves y manejarlas
  * 
- * También cuenta con una capa extra que tiene una blacklist de los tokens a denegar
+ * TODO: También cuenta con una capa extra que tiene una blacklist de los tokens a denegar
+ * TODO: Implementar anti-replay para evitar el reuso de tokens
  * 
  * Recursos consultados:
  *  - https://mojoauth.com/keypair-generation/generate-keypair-using-ed25519-with-javascript
@@ -44,14 +45,13 @@ export class JWTController {
         'alg': string,
         'typ': string
     }
-    private JWTheader64 = ''
+    private JWTheader64url = ''
     private JWTheaderStr = ''
-    // private envManager = new DotEnvManager()
 
-    /**
-     * Preparar el controlador
-     */
-    constructor(publicKeyPath = JWT_PUBLIC_KEY_FILE_PATH, privateKeyPath = JWT_PRIVATE_KEY_FILE_PATH) {
+     /**
+      * Preparar el controlador
+      */
+     constructor(publicKeyPath = JWT_PUBLIC_KEY_FILE_PATH, privateKeyPath = JWT_PRIVATE_KEY_FILE_PATH) {
         this.publicKeyPath = publicKeyPath
         this.privateKeyPath = privateKeyPath
         // algoritmo por ahora solo se gestiona uno
@@ -59,8 +59,8 @@ export class JWTController {
             'alg': 'EdDSA',
             'typ': 'JWT'
         }
-        this.JWTheaderStr = JSON.stringify(this.JWTheader)
-        this.JWTheader64 = Buffer.from(this.JWTheaderStr).toString('base64')
+         this.JWTheaderStr = JSON.stringify(this.JWTheader)
+         this.JWTheader64url = Buffer.from(this.JWTheaderStr).toString('base64url')
     }
 
     /**
@@ -69,19 +69,19 @@ export class JWTController {
     public async init() {
         // revisar si existen los dos certificados
         let missingFiles = 0
-        let existsPrivateKey = existsSync(this.publicKeyPath)
-        if (!existsPrivateKey) {
+        let existsPublicKey = existsSync(this.publicKeyPath)
+        if (!existsPublicKey) {
             missingFiles += 1
         }
-        let existsPublicKey = existsSync(this.privateKeyPath)
-        if (!existsPublicKey) {
+        let existsPrivateKey = existsSync(this.privateKeyPath)
+        if (!existsPrivateKey) {
             missingFiles += 1
         }
 
         if (missingFiles === 1) {
             // mandar error porque solo hay un certificado y o existen los dos o no existen los dos
             throw new Error('FATAL: Falta un certificado de sesión', {
-                cause: `Falta el certificado ${existsPrivateKey ? 'publico' : 'privado'} en el path: "${existsPrivateKey ? this.publicKeyPath : this.privateKeyPath}"`
+                cause: `Falta el certificado ${existsPublicKey ? 'privado' : 'publico'} en el path: "${existsPublicKey ? this.privateKeyPath : this.publicKeyPath}"`
             })
         }
 
@@ -103,11 +103,11 @@ export class JWTController {
             const privateKeyPkcs8Buffer = await crypto.subtle.exportKey("pkcs8", generatedPrivate)
 
             this.publicKey = JSON.stringify(publicKeyJwkObject)
-            this.privateKey = Buffer.from(privateKeyPkcs8Buffer).toString()
+            this.privateKey = Buffer.from(privateKeyPkcs8Buffer).toString('base64')
             
             // crear carpeta si no existe
             mkdirSync(dirname(this.privateKeyPath), { recursive: true })
-            mkdirSync(dirname(this.publicKey), { recursive: true })
+             mkdirSync(dirname(this.publicKeyPath), { recursive: true })
 
             // crear ficheros
             writeFileSync(this.privateKeyPath, this.privateKey, { encoding: 'utf-8' })
@@ -131,7 +131,7 @@ export class JWTController {
         )
         this.privateCyptoKey = await crypto.subtle.importKey(
             'pkcs8',
-            Buffer.from(this.privateKey, 'utf-8'),
+             Buffer.from(this.privateKey, 'base64'),
             {
                 name: 'Ed25519',
                 namedCurve: 'Ed25519',
@@ -160,34 +160,25 @@ export class JWTController {
             return resume
         }
 
-        // rescatar partes en base64
-        let header64 = parts[0]!
-        let payload64 = parts[1]!
-        let signature64 = parts[2]!
+        // rescatar partes en base64url (JWT standard)
+        let header64url = parts[0]!
+        let payload64url = parts[1]!
+        let signature64url = parts[2]!
 
         // si no es el mismo header entonces volver
-        if (this.JWTheader64 !== header64) {
+        if (this.JWTheader64url !== header64url) {
             return resume
         }
-        
-        // convertir a texto
-        // let signature = Buffer.from(signature64, 'base64').toString('utf-8')
-        
-        // convertir a base 64
-        let header = Buffer.from(header64, 'base64').toString('utf-8')
-        let payload = Buffer.from(payload64, 'base64').toString('utf-8')
         
         // verificar la firma: comprobar si firma === firma(header.payload)
         let validSignature = await crypto.subtle.verify(
             'Ed25519',
             this.publicCyptoKey!,
-            Buffer.from(signature64, 'base64'),
-            Buffer.from(`${header64}.${payload64}`)
+            Buffer.from(signature64url, 'base64url'),
+            Buffer.from(`${header64url}.${payload64url}`)
         )
         
         if (!validSignature) {
-            parts.forEach((a) => console.log(Buffer.from(a,'base64').toString('utf-8')))
-            console.log("no es válido")
             return resume
         }
 
@@ -242,21 +233,21 @@ export class JWTController {
             expiration: Date.now() + duration
         })
         
-        let payload64 = Buffer.from(payload).toString('base64')
+        let payload64url = Buffer.from(payload).toString('base64url')
         
         // firmar el payload con la clave privada y obtener la firma en base64
         let signBuffer = await crypto.subtle.sign(
             'Ed25519', 
             this.privateCyptoKey!, 
-            Buffer.from(`${this.JWTheader64}.${payload64}`)
+            Buffer.from(`${this.JWTheader64url}.${payload64url}`)
         )
         
-        let signatureBase64 = Buffer.from(signBuffer).toString('base64')
+        let signatureBase64url = Buffer.from(signBuffer).toString('base64url')
 
-        // crear el token final
-        let JWTtoken = `${this.JWTheader64}.${payload64}.${signatureBase64}`
+        // crear el token final (JWT standard uses base64url for all parts)
+        let JWTtoken = `${this.JWTheader64url}.${payload64url}.${signatureBase64url}`
 
-        // establecer la cookie con el token
+        // establecer la cookie con el token (base64url is URL-safe, but keep encodeURIComponent for safety)
         cookie.value = encodeURIComponent(JWTtoken)
 
         // retornar la cookie
@@ -275,14 +266,14 @@ export class JWTController {
 
         // extraer la payload
         let parts = JWTcookie.value.split('.')
-        let payload = parts.at(1)
+        let payloadBase64url = parts.at(1)
 
-        if (payload === undefined) {
+        if (payloadBase64url === undefined) {
             return resume
         }
 
-        // de base64 a texto
-        payload = Buffer.from(payload, 'base64').toString('utf-8')
+        // de base64url a texto (JWT uses base64url)
+        let payload = Buffer.from(payloadBase64url, 'base64url').toString('utf-8')
 
         let contents
 
