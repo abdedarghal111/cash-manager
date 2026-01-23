@@ -66,6 +66,6 @@
         "composite": false
     },
 
-    "include": ["src", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/lib/primus.jsx", "../shared/src/**/*.mts"],
+    "include": ["src", "src/**/*.ts", "../src/**/*.mts", "src/**/*.js", "src/**/*.svelte"],
     "exclude": ["node_modules", "dist", ".vite", "src/**/*.css"],
 }
