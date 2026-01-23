@@ -13,6 +13,7 @@ import { DatabaseController } from '@single/DatabaseController.server.mjs'
 import HttpsController from '@single/HttpController.server.mjs'
 import amILoggedRouter from '@routes/private/amILogged/index.server.mjs'
 import registerRouter from '@routes/public/register/index.server.mjs'
+import loginRouter from '@routes/public/login/index.server.mjs'
 import cuentasRouter from '@routes/private/cuentas/index.server.mjs'
 import expensesRouter from '@routes/private/expenses/index.server.mjs'
 import estadisticasRouter from '@routes/private/estadisticas/index.server.mjs'
@@ -28,6 +29,7 @@ await DatabaseController.sync()
 // cargar routers del servidor (los privados tienen middleware de login)
 HttpsController.addPrivateRouter(amILoggedRouter)
 HttpsController.addPublicRouter(registerRouter)
+HttpsController.addPublicRouter(loginRouter)
 HttpsController.addPrivateRouter(cuentasRouter)
 HttpsController.addPrivateRouter(expensesRouter)
 HttpsController.addPrivateRouter(estadisticasRouter)
