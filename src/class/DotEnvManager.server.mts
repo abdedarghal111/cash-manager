@@ -52,7 +52,7 @@ export class DotEnvManager {
             /**
              * Eso quiere decir que todavía no has setupeado tu instalación, sigue las indicaciones en el readme.md
              */
-            throw new Error('Fatal: No se encontró el archivo .env', {
+            throw new Error('FATAL: No se encontró el archivo .env', {
                 cause: `No se ha encontrado el archivo de configuración ${envFilePath}`,
             })
         }

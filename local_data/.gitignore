@@ -1,6 +1,8 @@
-server.crt
-server.csr
-server.key
+https
+# https/server.crt
+# https/server.csr
+# https/server.key
+sessions
 storage.sqlite
 sessions.sqlite
 .env

@@ -22,8 +22,12 @@ export const TEST_FILES_DIR_PATH = resolve(TEST_PATH, 'testFiles')
 
 // export const SESSION_DB_FILE_PATH = resolve(__local_data, 'sessions.sqlite')
 
-export const SERVER_CRT_FILE_PATH = resolve(LOCAL_DATA_PATH, 'server.crt')
-export const SERVER_KEY_FILE_PATH = resolve(LOCAL_DATA_PATH, 'server.key')
+export const SERVER_CRT_FILE_PATH = resolve(LOCAL_DATA_PATH, 'https', 'server.crt')
+export const SERVER_KEY_FILE_PATH = resolve(LOCAL_DATA_PATH, 'https', 'server.key')
+
+export const SESSIONS_FOLDER_PATH = resolve(LOCAL_DATA_PATH, 'sessions')
+export const JWT_PRIVATE_KEY_FILE_PATH = resolve(SESSIONS_FOLDER_PATH, 'private.key')
+export const JWT_PUBLIC_KEY_FILE_PATH = resolve(SESSIONS_FOLDER_PATH, 'public.key')
 
 export const TEST_SERVER_CRT_FILE_PATH = resolve(TEST_PATH, 'certificates', 'cert.pem')
 export const TEST_SERVER_KEY_FILE_PATH = resolve(TEST_PATH, 'certificates', 'key.pem')
