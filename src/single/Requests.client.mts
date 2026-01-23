@@ -3,7 +3,6 @@
  */
 import { storable } from "@class/Storable.client.mjs"
 import axios, { AxiosInstance } from "axios"
-import { Credentials } from "./Credentials.client.mjs"
 import { get, Writable } from "svelte/store"
 import toast from "svelte-french-toast"
 
@@ -38,17 +37,14 @@ export let RequestsManager = {
                 method: "POST",
                 allowAbsoluteUrls: false, // para que siempre url sea baseURL+url
                 transformRequest: [function (data: { [x: string]: any }, headers) {
-                    // añadir las credenciales y empaquetar
-                    let credentials = Credentials.getCredentials()
-                    headers.set("username", credentials.username)
-                    headers.set("password", credentials.password)
                     headers.set("Content-Type", "application/json")
                     return JSON.stringify(data)
                 }],
                 responseEncoding: 'utf8',
                 responseType: "json",
                 maxRedirects: 0, // ninguna redicección, es una api
-                transport: 'https' // siempre usar https
+                transport: 'https', // siempre usar https
+                withCredentials: true // para guardar las cookies
             })
         }
 

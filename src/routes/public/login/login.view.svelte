@@ -23,6 +23,11 @@ Vista de login, para iniciar sesión
     import LandingView from "@routes/landing.view.svelte"
     import { get } from "svelte/store"
     import { Credentials } from "@single/Credentials.client.mjs"
+    import { RequestsManager } from "@single/Requests.client.mjs";
+    import type { POSTLoginType } from "./index.server.mts";
+    import toast from "svelte-french-toast";
+
+    let disabledButtons = $state(false)
 
     $effect(() => {
         // campos cada que se actualicen los input
@@ -43,8 +48,25 @@ Vista de login, para iniciar sesión
             <ThemedTextInput label="constraseña:" bind:value={inputPassword} type="password" />
         </div>
 
-        <Themedbutton label="Entrar" onclick={() => {
-            ViewsController.setCurrentView(LandingView)
-        }} />
+        <div class="flex flex-row gap-2">
+            <Themedbutton label="Entrar" enabled={!disabledButtons} onclick={async () => {
+                disabledButtons = true
+                let response = await RequestsManager.makeRequest<POSTLoginType.server, POSTLoginType.client>('POST', '/login', {
+                    username: inputUsername,
+                    password: inputPassword
+                })
+
+                if (response) {
+                    toast.success(response.message)
+                }
+
+                ViewsController.setCurrentView(LandingView)
+                disabledButtons = false
+            }} />
+            
+            <Themedbutton label="Volver" enabled={!disabledButtons} onclick={() => {
+                ViewsController.setCurrentView(LandingView)
+            }} />
+            </div>
     {/snippet}
 </DefaultView>
