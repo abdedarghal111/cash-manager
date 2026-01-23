@@ -4,7 +4,8 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import { User } from '@class/model/User.server.mjs'
-import { asyncErrorHandler } from '@single/HttpController.server.mjs'
+import HttpsController, { asyncErrorHandler } from '@single/HttpController.server.mjs'
+import { SendCookie } from '@single/CookieParser.mjs'
 
 // tipos que acepta y devuelve el servidor
 export namespace POSTregisterType {
@@ -65,7 +66,13 @@ export default express.Router().post("/register", asyncErrorHandler(async (req, 
         password: bcrypt.hashSync(body.password, 10)
     })
 
-    res.status(201).json({
+    // crear la cookie de sesión
+    let JWTCookie = new SendCookie('passport', '')
+    await HttpsController.jwtController.newSessionToCookie(user.id, JWTCookie)
+    JWTCookie.setAsSecure(req.locals.host)
+    JWTCookie.setMaxAge('D', 14)
+
+    res.status(201).header('Set-Cookie', JWTCookie.toString()).json({
         message: "Usuario creado correctamente"
     })
 }))
