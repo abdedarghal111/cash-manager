@@ -1,5 +1,5 @@
 /**
- * Fichero principal del servidor
+ * Fichero principal del servidor que inicializa las cosas en orden
  * 
  * Básicamente inicializará la base de datos y el servidor http.
  * 
@@ -7,34 +7,30 @@
  * 
  * A partir de public routers y routers privados
  */
-import dotenv from 'dotenv'
-import { ENV_FILE_PATH } from '@data/paths.mjs'
-import { DatabaseController } from '@single/DatabaseController.server.mjs'
-import HttpsController from '@single/HttpController.server.mjs'
-import amILoggedRouter from '@routes/private/amILogged/index.server.mjs'
-import registerRouter from '@routes/public/register/index.server.mjs'
-import loginRouter from '@routes/public/login/index.server.mjs'
-import cuentasRouter from '@routes/private/cuentas/index.server.mjs'
-import expensesRouter from '@routes/private/expenses/index.server.mjs'
-import estadisticasRouter from '@routes/private/estadisticas/index.server.mjs'
-import ingresarMontoRouter from '@routes/private/ingresarMonto/index.server.mjs'
-import balancesRouter from '@routes/private/balances/index.server.mjs'
+const { Logger } = await import('@class/Logger.server.mjs')
 
-// cargando variables de entorno
-dotenv.config({ path: ENV_FILE_PATH })
+Logger.info(`Arrancando el servidor`)
+// sobreescribir funciones de console.log/warn/error para que se vean como logs
+Logger.alterConsoleFunctions()
 
-// inicializando base de datos
+const { DatabaseController } = await import('@single/DatabaseController.server.mjs')
 await DatabaseController.sync()
 
-// cargar routers del servidor (los privados tienen middleware de login)
-HttpsController.addPrivateRouter(amILoggedRouter)
-HttpsController.addPublicRouter(registerRouter)
-HttpsController.addPublicRouter(loginRouter)
-HttpsController.addPrivateRouter(cuentasRouter)
-HttpsController.addPrivateRouter(expensesRouter)
-HttpsController.addPrivateRouter(estadisticasRouter)
-HttpsController.addPrivateRouter(ingresarMontoRouter)
-HttpsController.addPrivateRouter(balancesRouter)
+const { HttpsController } = await import('@single/HttpController.server.mjs')
+await HttpsController.startServer()
 
-// iniciar el servidor https
-HttpsController.startServer()
+Logger.info('Iniciando endpoints...')
+
+// cargar routers del servidor (los privados tienen middleware de login)
+HttpsController.addPrivateRouter((await import('@routes/private/amILogged/index.server.mjs')).default)
+HttpsController.addPublicRouter((await import('@routes/public/register/index.server.mjs')).default)
+HttpsController.addPublicRouter((await import('@routes/public/login/index.server.mjs')).default)
+HttpsController.addPrivateRouter((await import('@routes/private/cuentas/index.server.mjs')).default)
+HttpsController.addPrivateRouter((await import('@routes/private/expenses/index.server.mjs')).default)
+HttpsController.addPrivateRouter((await import('@routes/private/estadisticas/index.server.mjs')).default)
+HttpsController.addPrivateRouter((await import('@routes/private/ingresarMonto/index.server.mjs')).default)
+HttpsController.addPrivateRouter((await import('@routes/private/balances/index.server.mjs')).default)
+
+Logger.success('Endpoints desplegados', 2)
+
+Logger.success(`Servidor Desplegado!`)
