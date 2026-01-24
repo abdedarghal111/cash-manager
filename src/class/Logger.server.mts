@@ -83,7 +83,7 @@ export class Logger {
 
     static info(msg: string, subCommand = 1)
     {
-        this.logMessage(msg, subCommand, 'cyan')
+        this.logMessage(msg, subCommand, 'blue')
     }
 
     static success(msg: string, subCommand = 1)
