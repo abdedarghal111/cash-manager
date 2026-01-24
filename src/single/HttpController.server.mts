@@ -19,6 +19,8 @@ import {
 } from '@data/paths.mjs'
 import { CookieParser } from '@single/CookieParser.mts'
 import { JWTController } from '@single/JWTController.server.mts'
+import { hostname } from 'os'
+import { Logger } from '@class/Logger.server.mjs'
 
 // declaración global de las propiedades para el tipado fuerte
 declare global {
@@ -36,6 +38,7 @@ declare global {
 
 // variables
 let PORT = 5432
+const jwtController = new JWTController()
 
 // Montar el servidor
 let existsRealCerts = existsSync(SERVER_CRT_FILE_PATH) && existsSync(SERVER_KEY_FILE_PATH)
@@ -112,10 +115,6 @@ app.use((req, res, next) => {
 // CUIDADO: esto solo funciona si le llega un header Content-Type: application/json
 app.use(express.json())
 
-// inicializar JWTController para manejar las credenciales
-const jwtController = new JWTController()
-await jwtController.init()
-
 // manejo de errores sincronos (por ahora todavía ni me ha tocado un error ni ha funcionado)
 // si algo sale mal devolver error e imprimirlo también
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -124,14 +123,15 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     return next(err)
   }
 
-  console.error("-------------- SYNC ERROR --------------")
-  console.error(
-    `- Name: ${err.name}\n` +
-    `- Message: ${err.message}\n` +
-    `- Cause: ${err.cause}\n` +
-    `- Stack: ${err.stack}\n`
-  )
-  console.error("-------------- END ERROR --------------")
+  let msg = "-------------- SYNC ERROR --------------\n"
+  msg += `- Name: ${err.name}\n`
+  msg += `- Message: ${err.message}\n`
+  msg += `- Cause: ${err.cause}\n`
+  msg += `- Stack: ${err.stack}\n`
+  msg += "-------------- END ERROR --------------"
+
+  Logger.error(msg)
+
   // añadir cabecera 500 y pasar al siguiente
   res.status(500).json({ message: 'Error interno del servidor' })
   return next(err)
@@ -141,14 +141,16 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // actua como un wrapper en cada endpoint de cada middleware
 export const asyncErrorHandler = (func: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
   func(req, res, next).catch((err: Error) => {
-    console.error("-------------- ASYNC ERROR --------------")
-    console.error(
-      `- Name: ${err.name}\n` +
-      `- Message: ${err.message}\n` +
-      `- Cause: ${err.cause}\n` +
-      `- Stack: ${err.stack}\n`
-    )
-    console.error("-------------- END ERROR --------------")
+
+    let msg = "-------------- ASYNC ERROR --------------\n"
+    msg += `- Name: ${err.name}\n`
+    msg += `- Message: ${err.message}\n`
+    msg += `- Cause: ${err.cause}\n`
+    msg += `- Stack: ${err.stack}\n`
+    msg += "-------------- END ERROR --------------"
+
+    Logger.error(msg)
+
     // añadir cabecera 500 y pasar al siguiente
     res.status(500).json({ message: 'Error interno del servidor' })
     next()
@@ -215,48 +217,70 @@ privateRouter.use(asyncErrorHandler(async (req, res, next) => {
 }))
 
 // clase controladora
-let HttpsController = {
+export let HttpsController = {
 
-    express: app,
-    server: httpsServer,
-    jwtController: jwtController,
+  express: app,
+  server: httpsServer,
+  jwtController: jwtController,
 
-    /**
-     * Indica si se usan certificados reales o solo los de prueba en caso de false
-     */
-    secure: existsRealCerts,
+  /**
+   * Indica si se usan certificados reales o solo los de prueba en caso de false
+   */
+  secure: existsRealCerts,
 
-    /**
-     * Inicia el servidor
-     */
-    startServer: () => {
-        // Iniciar el servidor
-        app.use(publicRouter)
-        app.use(privateRouter)
+  /**
+   * Inicia el servidor
+   */
+  startServer: async () => {
+    // inicializar JWTController para manejar las credenciales
+    await jwtController.init()
 
-        httpsServer.listen(PORT, () => {
-          //listening in my ip
-          console.log(`Servidor corriendo en https://localhost:${PORT}`)
-        })
-    },
+    // Iniciar el servidor
+    Logger.info(`Iniciando el servidor HTTPS`)
+    app.use(publicRouter)
+    app.use(privateRouter)
 
-    /**
-     * Agrega un router a la parte pública de la api
-     * 
-     * @param {express.Router} router
-     */
-    addPublicRouter: (router: express.Router) => {
-      publicRouter.use(router)
-    },
+    let address = await new Promise((resolve, reject) => {
+      httpsServer.listen(PORT, () => {
+        // rescatar el address y devolverlo correctamente
+        let address = httpsServer.address()
 
-    /**
-     * Agrega un router a la parte privada de la api
-     * 
-     * @param {express.Router} router
-     */
-    addPrivateRouter: (router: express.Router) => {
-      privateRouter.use(router)
-    }
+        if (typeof address === 'string') {
+          return resolve(address)
+        }
+
+        if (address === null) {
+          throw new Error('FATAL: Error al iniciar el servidor', {
+            cause: 'Por alguna razón no ha devuelto una address válida, revisar más a fondo.'
+          })
+        }
+
+        let { port, family, address: _address } = address
+        resolve(`https://${hostname()}:${port}`)
+      })
+    })
+
+    // esperar a que se resuelva la promesa
+    Logger.success( `Servidor HTTPS iniciado correctamente en ${address}`, 2)
+  },
+
+  /**
+   * Agrega un router a la parte pública de la api
+   * 
+   * @param {express.Router} router
+   */
+  addPublicRouter: (router: express.Router) => {
+    publicRouter.use(router)
+  },
+
+  /**
+   * Agrega un router a la parte privada de la api
+   * 
+   * @param {express.Router} router
+   */
+  addPrivateRouter: (router: express.Router) => {
+    privateRouter.use(router)
+  }
 }
 
 export default HttpsController

@@ -9,17 +9,23 @@ import { Expense } from "@class/model/Expense.server.mjs"
 import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
 import { TransactionsGroup } from "@class/model/TransactionGroup.server.mjs"
+import { Logger } from "@class/Logger.server.mjs"
 
 // crear base de datos
+Logger.info(`Iniciando la base de datos`)
+
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: STORAGE_DB_FILE_PATH, // Ruta del archivo SQLite
-    logging: (msg) => {
+    logging: (msg, benchmark) => {
         // Solo loguea si el mensaje contiene "ERROR"
         if (msg.includes('ERROR')) {
-            console.error(msg)
+            Logger.error(`${benchmark}ms | ${msg}`, -1)
+        } else {
+            Logger.log(`${benchmark}ms | ${msg}`, -1)
         }
-    }
+    },
+    benchmark: true
 })
 
 // crear tablas
@@ -362,6 +368,8 @@ Movimiento.belongsTo(TransactionsGroup, { foreignKey: 'transactionGroup' })
 Movimiento.hasOne(Monto, { foreignKey: 'monto' })
 Monto.belongsTo(Movimiento, { foreignKey: 'monto' })
 
+Logger.success(`Base de datos iniciada`, 2)
+
 /**
  * Controlador de la base de datos
  */
@@ -374,6 +382,7 @@ export let DatabaseController = {
      * @returns true
      */
     sync: async () => {
+        Logger.info(`Sincronizando la base de datos`)
         // await User.sync()
         // await Cuenta.sync()
         // await Subcuenta.sync()
@@ -385,6 +394,7 @@ export let DatabaseController = {
                 drop: false
             }
         })
+        Logger.success(`Base de datos sincronizada`, 2)
     },
 
     /**

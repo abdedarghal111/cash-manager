@@ -26,6 +26,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
 import { dirname } from "path"
 import { ReceivedCookie, SendCookie } from "@single/CookieParser.mts"
 import { Validator } from "@single/Validator.mts"
+import { Logger } from "@class/Logger.server.mjs"
 
 // que la cookie dure máximo 2 semana (miliseg * seg * min * hora * día * semana)
 const MAX_DURATION_COOKIE = 1 * 1000 * 60 * 60 * 24 * 7 * 2
@@ -67,6 +68,8 @@ export class JWTController {
      * Inicializa el controlador
      */
     public async init() {
+        Logger.info(`Inicializando Controlador de JSON web tokens...`)
+
         // revisar si existen los dos certificados
         let missingFiles = 0
         let existsPublicKey = existsSync(this.publicKeyPath)
@@ -112,6 +115,8 @@ export class JWTController {
             // crear ficheros
             writeFileSync(this.privateKeyPath, this.privateKey, { encoding: 'utf-8' })
             writeFileSync(this.publicKeyPath, this.publicKey, { encoding: 'utf-8' })
+
+            Logger.success(`Claves generadas y guardadas`, 2)
         } else {
             // cargar las claves a las variables
             this.publicKey = readFileSync(this.publicKeyPath, 'utf-8')
@@ -139,6 +144,7 @@ export class JWTController {
             true,
             ['sign']
         )
+        Logger.success(`Claves cargadas correctamente`, 2)
     }
 
     /**
