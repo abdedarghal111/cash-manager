@@ -4,6 +4,7 @@
  */
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { SERVER_CONFIG_FILE_PATH } from '@data/paths.mjs'
+import { Logger } from '@class/Logger.server.mjs'
 
 class ServerConfig {
     /**
@@ -11,19 +12,12 @@ class ServerConfig {
      */
     private static config: Record<string, any> = {}
 
-    // para comprobar si ha cargado
-    private static loaded = false
-
     /**
      * Método que carga la configuración del servidor
      * @throws Error si el json está mal formado
      */
     public static init() {
-        // tener un debounce preparado
-        if(this.loaded) {
-            return
-        }
-        this.loaded = true
+        Logger.info('Cargando la configuración del servidor...')
 
         // si existe entonces cargar
         if (existsSync(SERVER_CONFIG_FILE_PATH)) {
@@ -33,13 +27,17 @@ class ServerConfig {
                 this.config = JSON.parse(fileContent)
             } catch (e) {
                 // si falla entonces salir
-                console.error("Fatal error: can't parse server.config.json.", e)
-                process.exit(1)
+                throw new Error("FATAL: JSON mal formado.", {
+                    cause: `Ha habido algun problema leyendo el fichero ${SERVER_CONFIG_FILE_PATH}, deberás solucionar tu mismo el error existente para poder continuar.`
+                })
             }
         } else {
             // si no existe entonces crearlo
             this.writeConfig()
+            Logger.info('Nuevo fichero de configuración creado.', 2)
         }
+
+        Logger.success('Configuración cargada correctamente.', 2)
     }
 
     /**
@@ -69,9 +67,6 @@ class ServerConfig {
         this.writeConfig()
     }
 }
-
-// inicializar la configuración del servidor
-ServerConfig.init()
 
 // devolver después de los preparativos
 export { ServerConfig }

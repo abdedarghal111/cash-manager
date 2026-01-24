@@ -7,3 +7,4 @@ storage.sqlite
 sessions.sqlite
 .env
 app.log
+server.config.json

@@ -23,6 +23,8 @@ Esquema:
 │
 ├── .env                    (SCN) archivo con variables de entorno o configuraciones del sistema
 │
+├── server.config.json      (SD) archivo con los datos persistentes del servidor (No tocar)
+│
 ├── storage.sqlite          (SD) base de datos sqlite del sistema
 │
 ├── https                   (N) contiene lo relacionado con la capa https (certificados del dominio o autofirmados)
