@@ -123,14 +123,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     return next(err)
   }
 
-  let msg = "-------------- SYNC ERROR --------------\n"
-  msg += `- Name: ${err.name}\n`
-  msg += `- Message: ${err.message}\n`
-  msg += `- Cause: ${err.cause}\n`
-  msg += `- Stack: ${err.stack}\n`
-  msg += "-------------- END ERROR --------------"
-
-  Logger.error(msg)
+  Logger.logError(err, 'SYNC ERROR')
 
   // añadir cabecera 500 y pasar al siguiente
   res.status(500).json({ message: 'Error interno del servidor' })
@@ -142,14 +135,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 export const asyncErrorHandler = (func: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
   func(req, res, next).catch((err: Error) => {
 
-    let msg = "-------------- ASYNC ERROR --------------\n"
-    msg += `- Name: ${err.name}\n`
-    msg += `- Message: ${err.message}\n`
-    msg += `- Cause: ${err.cause}\n`
-    msg += `- Stack: ${err.stack}\n`
-    msg += "-------------- END ERROR --------------"
-
-    Logger.error(msg)
+    Logger.logError(err, 'ASYNC ERROR')
 
     // añadir cabecera 500 y pasar al siguiente
     res.status(500).json({ message: 'Error interno del servidor' })

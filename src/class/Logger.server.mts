@@ -36,6 +36,10 @@ let levels = {
 export class Logger {
     /**
      * Función interna genérica para imprimir un mensaje en el output de manera bonita
+     * 
+     * @param msg El mensaje a imprimir
+     * @param subCommand El prefijo a colocar, 0 === no prefijo
+     * @param color El color del mensaje (soportado por librería colors) 'none' === no color
      */
     protected static logMessage(msg: string, subCommand: number, color: string)
     {
@@ -44,8 +48,8 @@ export class Logger {
         process.stdout.write(colors.grey(timeElapsed))
 
         // obtener tabulaciones
-        let levelStr = levels[subCommand as keyof typeof levels]["color"]
-        let length = levels[subCommand as keyof typeof levels]["text"].length
+        let levelStr = subCommand === 0 ? '' : levels[subCommand as keyof typeof levels]["color"]
+        let length = subCommand === 0 ? 0 : levels[subCommand as keyof typeof levels]["text"].length
 
         process.stdout.write(levelStr)
 
@@ -101,7 +105,7 @@ export class Logger {
      * Modifica las funciones de console para que se vean como logs
      * altera console.log, console.warn y console.error
      */
-    static async alterConsoleFunctions() 
+    static alterConsoleFunctions() 
     {
         console.log = (...data) => {
             Logger.info(data.join(', '), -2)
@@ -114,5 +118,21 @@ export class Logger {
         console.error = (...data) => {
             Logger.error(data.join(', '), -4)
         }
+    }
+
+    /**
+     * Muestra un error de manera agradable visualmente
+     */
+    static logError(err: Error, errorHeader = 'ERROR') {
+        let msg = colors.bgRed(`------------------------------------------------ ${errorHeader} ------------------------------------------------\n`)
+
+        msg += colors.blue('- Name: ') + colors.gray(err.name) + '\n'
+        msg += colors.blue('- Message: ') + colors.red(err.message) + '\n'
+        msg += colors.blue('- Cause: ') + colors.yellow(err.cause as string) + '\n'
+        msg += colors.blue('- Stack: ') + colors.gray(err.stack ?? '') + '\n'
+
+        msg += colors.bgRed(`---------------------------------------------- END ${errorHeader} ----------------------------------------------`)
+
+        this.logMessage(msg, 0, 'none')
     }
 }
