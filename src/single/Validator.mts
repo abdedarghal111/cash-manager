@@ -44,6 +44,32 @@ export class Validator {
     }
 
     /**
+     * Parsea un string a un booleano y lo devuelve si es válido.
+     * @param data Entrada a parsear.
+     * @returns `true` o `false` si es un string que representa un booleano, de otro modo `InvalidValidation`.
+     */
+    public static parseBoolean(data: any): ValidatorResult<boolean> {
+        // si no es un string entonces inválido
+        if (typeof data !== 'string') {
+            return InvalidValidation
+        }
+
+        // entonces solo tiene que ser identico a true o false
+        const lowerData = data.toLowerCase()
+        
+        if (lowerData === 'true') {
+            return true
+        }
+
+        if (lowerData === 'false') {
+            return false
+        }
+            
+        // es otro string diferente
+        return InvalidValidation
+    }
+
+    /**
      * Valida si la entrada es un número.
      * @param data Entrada a validar.
      * @returns El número o InvalidValidation.
