@@ -14,6 +14,7 @@ import { ENV_FILE_PATH } from "@data/paths.mjs"
 import { existsSync, statSync, writeFileSync } from "fs"
 import { EOL } from "os"
 import { Logger } from "@class/Logger.server.mts"
+import { Validator } from "@single/Validator.mjs"
 
 // regex para las variables
 /** 
@@ -37,8 +38,10 @@ export class DotEnvManager {
     lastChanged = 0
     // el contenido del archivo
     fileContents = ''
-    // variables del archivo de entorno
+    // variables del archivo de entorno (EXCLUSIVAMENTE DEL ARCHIVO)
     dotenvVariables: { [key: string]: string } = {}
+    // si preferir variables de entorno antes que las del fichero
+    prefeerSystemEnv = false
 
     /**
      * Constructor de la clase
@@ -47,7 +50,7 @@ export class DotEnvManager {
      * 
      * @param filePath Ruta al archivo .env o el por defecto
      */
-    constructor(envFilePath = ENV_FILE_PATH) {
+    constructor(envFilePath = ENV_FILE_PATH, prefeerEnvVars = false) {
         // revisar si existe el .env
         if (!existsSync(envFilePath)) {
             /**
@@ -58,8 +61,10 @@ export class DotEnvManager {
             })
         }
 
+        
         // preparar propiedades
         this.envFilePath = envFilePath
+        this.prefeerSystemEnv = prefeerEnvVars
         this.lineByLineBuffer = new LineByLineBuffer(this.envFilePath)
     }
 
@@ -111,12 +116,23 @@ export class DotEnvManager {
     /**
      * Función que lee el contenido del dotenv si ha sido actualizado y devuelve la variable buscada
      * 
+     * Si está configurado para preferir variables de entorno, entonces devolverá la variable del entorno
+     * 
      * @param varName Nombre de la variable a leer
      * @returns Valor de la variable o undefined si no existe
      */
     async getVar(varName: string) {
         // revisar se ha actualizado
         await this.checkUpdatedAndReload()
+
+        // si preferir variables de entorno, entonces buscar en el proceso (debe estar especificada en el fichero igualmente)
+        if (this.dotenvVariables[varName] === undefined) {
+            // prevenir obtener variables no autorizadas (no declaradas en .env) por seguridad
+            return undefined
+        }
+        if (this.prefeerSystemEnv && process.env[varName] !== undefined) {
+            return process.env[varName]
+        }
 
         // buscar el valor o undefined si no está
         return this.dotenvVariables[varName]
@@ -193,6 +209,20 @@ export let getGlobalDotEnvInstance = async () => {
         Logger.info('Cargando variables de entorno...')
         globalDotEnvManager = new DotEnvManager()
         await globalDotEnvManager.init()
+
+        let strVal = await globalDotEnvManager.getVar('USE_SYSTEM_ENV_FIRST')
+        let boolean = Validator.parseBoolean(strVal)
+
+        if (Validator.isNotValid(boolean)) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable USE_SYSTEM_ENV_FIRST tiene un valor booleano inválido "${strVal}" en el archivo ${globalDotEnvManager.envFilePath}`
+            })
+        }
+
+        // establecer uso de variables de entorno o del sistema
+        globalDotEnvManager.prefeerSystemEnv = boolean
+        Logger.info(`Se ha establecido preferir el ENV del ${boolean ? 'sistema' : 'archivo .env'}.`, 2)
+
         Logger.success('Variables de entorno cargadas.', 2)
     }
 
