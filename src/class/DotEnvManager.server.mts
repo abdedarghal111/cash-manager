@@ -13,6 +13,7 @@ import { LineByLineBuffer } from "@class/LineByLineBuffer.server.mjs"
 import { ENV_FILE_PATH } from "@data/paths.mjs"
 import { existsSync, statSync, writeFileSync } from "fs"
 import { EOL } from "os"
+import { Logger } from "@class/Logger.server.mts"
 
 // regex para las variables
 /** 
@@ -184,6 +185,21 @@ export class DotEnvManager {
         return false
     }
 }
+
+let globalDotEnvManager: null | DotEnvManager = null
+export let getGlobalDotEnvInstance = async () => {
+    // si no existe cargar el singleton
+    if (globalDotEnvManager === null) {
+        Logger.info('Cargando variables de entorno...')
+        globalDotEnvManager = new DotEnvManager()
+        await globalDotEnvManager.init()
+        Logger.success('Variables de entorno cargadas.', 2)
+    }
+
+    return globalDotEnvManager
+}
+
+
 
 /**
  * función para leer una linea y filtrar la variable lanzando excepción si está incorrecto
