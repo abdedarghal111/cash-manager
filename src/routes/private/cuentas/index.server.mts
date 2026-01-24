@@ -276,10 +276,10 @@ router.delete('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // @ts-ignore
     const user = req.locals.user as User
 
-    // // inabilitar temporalmente el no poder guardar por seguridad
-    // // inestabilizaría la base de datos si no se pudiese guardar
-    // // básicamente el histórico guarda foreign key de la cuenta por lo que no se debe borrar
-    // return res.status(501).send('Desactivado por integridad de datos')
+    // inabilitar temporalmente el no poder borrar la cuenta
+    // algunas cuentas ya han participado en el historial por lo que no deben de poder ser borradas
+    // TODO: implementar prevenir borrar cuentas que ya han tenido transferencias o participado en transferencias
+    return res.status(501).send('Desactivado por integridad de datos')
 
     // revisar que esté el id
     const accountId = Validator.parseInt(req.params.id)
