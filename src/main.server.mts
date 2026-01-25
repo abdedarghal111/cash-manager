@@ -16,16 +16,28 @@ try {
     // sobreescribir funciones de console.log/warn/error para que se vean como logs
     Logger.alterConsoleFunctions()
 
+    const { ServerConfig } = await import('@single/ServerConfig.server.mjs')
+    ServerConfig.init()
+
+    const { VersionController } = await import('@single/VersionController.mts')
+    let successUpdating = await VersionController.checkAndApplyVersions()
+
+    if (!successUpdating) {
+        process.exit(1)
+    }
+    // TODO: implementar lógica para denegar peticiones con otra versión
+
     const { getGlobalDotEnvInstance } = await import('@class/DotEnvManager.server.mjs')
     await getGlobalDotEnvInstance()
 
     const { DatabaseController } = await import('@single/DatabaseController.server.mjs')
-    await DatabaseController.sync()
+    // ya no es necesario sincronizar, hay que hacerlo vía updates @see src\data\versionFixes.server.mts
+    // await DatabaseController.sync()
 
     const { HttpsController } = await import('@single/HttpController.server.mjs')
     await HttpsController.startServer()
 
-    Logger.info('Iniciando endpoints...')
+    Logger.info('Añadiendo endpoints...')
 
     // cargar routers del servidor (los privados tienen middleware de login)
     HttpsController.addPrivateRouter((await import('@routes/private/amILogged/index.server.mjs')).default)
