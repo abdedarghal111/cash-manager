@@ -1,4 +1,4 @@
-import { VersionController } from "@single/VersionController.mts"
+import { VersionController } from "@single/VersionController.server.mjs"
 
 type VersionTuple = [number, number, number]
 

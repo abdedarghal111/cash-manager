@@ -10,6 +10,8 @@ import { TipoGasto } from "@data/enums/ExpenseType.mjs"
 import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
 import { TransactionsGroup } from "@class/model/TransactionGroup.server.mjs"
 import { Logger } from "@class/Logger.server.mjs"
+import { getGlobalDotEnvInstance } from "@class/DotEnvManager.server.mjs"
+import { Validator } from "./Validator.mts"
 
 // crear base de datos
 Logger.info(`Iniciando la base de datos`)
@@ -22,7 +24,10 @@ const sequelize = new Sequelize({
         if (msg.includes('ERROR')) {
             Logger.error(`${benchmark}ms | ${msg}`, -1)
         } else {
-            Logger.log(`${benchmark}ms | ${msg}`, -1)
+            if (DatabaseController.showLogs) {
+                // solo mostrar logs si está permitido
+                Logger.log(`${benchmark}ms | ${msg}`, -1)
+            }
         }
     },
     benchmark: true
@@ -375,6 +380,27 @@ Logger.success(`Base de datos iniciada`, 2)
  */
 export let DatabaseController = {
     sequelize: sequelize,
+    showLogs: false,
+
+    /**
+     * Actualiza la configuración de mostrar logs
+     */
+    updateShowLogsFromEnvVar: async () => {
+        let dotenv = await getGlobalDotEnvInstance()
+
+        // TODO: refactorizar esta función y pasarla a dotenv para que se gestione la validación ahí
+        let strVal = await dotenv.getVar('SHOW_DATABASE_LOGS')
+        let boolean = Validator.parseBoolean(strVal)
+
+        if (Validator.isNotValid(boolean)) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable SHOW_DATABASE_LOGS tiene un valor booleano inválido "${strVal}" en el archivo ${dotenv.envFilePath}`
+            })
+        }
+
+        // actualizar la configuración
+        DatabaseController.showLogs = boolean
+    },
 
     /**
      * Sincroniza la base de datos (revisar las tablas y crearlas)

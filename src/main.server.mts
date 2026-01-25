@@ -19,7 +19,7 @@ try {
     const { ServerConfig } = await import('@single/ServerConfig.server.mjs')
     ServerConfig.init()
 
-    const { VersionController } = await import('@single/VersionController.mts')
+    const { VersionController } = await import('@single/VersionController.server.mjs')
     let successUpdating = await VersionController.checkAndApplyVersions()
 
     if (!successUpdating) {
@@ -28,9 +28,11 @@ try {
     // TODO: implementar lógica para denegar peticiones con otra versión
 
     const { getGlobalDotEnvInstance } = await import('@class/DotEnvManager.server.mjs')
-    await getGlobalDotEnvInstance()
+    let dotenv = await getGlobalDotEnvInstance()
 
     const { DatabaseController } = await import('@single/DatabaseController.server.mjs')
+    // mostrar logs solo si está permitido
+    await DatabaseController.updateShowLogsFromEnvVar()
     // ya no es necesario sincronizar, hay que hacerlo vía updates @see src\data\versionFixes.server.mts
     // await DatabaseController.sync()
 
@@ -60,6 +62,6 @@ try {
         Logger.error(error as string)
     }
 
-    Logger.warn('El servidor no pudo arrancar, lee el error y soluciona el problema.')
+    Logger.warn('El servidor no pudo arrancar, lee el error y soluciona el problema antes de volver a ejecutar.')
     process.exit(1)
 }
