@@ -28,6 +28,14 @@ let levels = {
     [2]: {
         text: '  -> ',
         color: colors.white('  -> ')
+    },
+    [3]: {
+        text: '    ● ',
+        color: colors.white('    ● ')
+    },
+    [4]: {
+        text: '      - ',
+        color: colors.white('      - ')
     }
 }
 
@@ -108,7 +116,7 @@ export class Logger {
     static alterConsoleFunctions() 
     {
         console.log = (...data) => {
-            Logger.info(data.join(', '), -2)
+            Logger.log(data.join(', '), -2)
         }
 
         console.warn = (...data) => {
@@ -126,10 +134,10 @@ export class Logger {
     static logError(err: Error, errorHeader = 'ERROR') {
         let msg = colors.bgRed(`------------------------------------------------ ${errorHeader} ------------------------------------------------\n`)
 
-        msg += colors.blue('- Name: ') + colors.gray(err.name) + '\n'
-        msg += colors.blue('- Message: ') + colors.red(err.message) + '\n'
-        msg += colors.blue('- Cause: ') + colors.yellow(err.cause as string) + '\n'
-        msg += colors.blue('- Stack: ') + colors.gray(err.stack ?? '') + '\n'
+        msg += colors.cyan('- Name: ') + colors.gray(err.name) + '\n'
+        msg += colors.cyan('- Message: ') + colors.red(err.message) + '\n'
+        msg += colors.cyan('- Cause: ') + colors.yellow(err.cause as string) + '\n'
+        msg += colors.cyan('- Stack: ') + colors.gray(err.stack ?? '') + '\n'
 
         msg += colors.bgRed(`---------------------------------------------- END ${errorHeader} ----------------------------------------------`)
 
