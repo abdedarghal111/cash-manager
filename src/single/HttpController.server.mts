@@ -80,8 +80,8 @@ app.use((req, res, next) => {
   // para decirle al solicitante que las cookies están permitidas
   res.header('Access-Control-Allow-Credentials', 'true')
 
-  // headers permitidos
-  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+  // headers permitidos (version también)
+  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, version')
   
   // métodos permitidos
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
@@ -93,6 +93,17 @@ app.use((req, res, next) => {
   if(req.method === 'OPTIONS') {
     return res.sendStatus(200)
   }
+
+  // revisar version del cliente y comparar que sean iguales
+  // TODO: buscar alternativa, puede ser molesto para el cliente tener que actualizar siempre la versión manualmente
+  const clientVersion = typeof req.headers.version === 'string' ? req.headers.version : ''
+  if(clientVersion !== __VERSION__) {
+    return res.status(426).send({
+      message: 'Versiones incompatibles',
+      version: __VERSION__
+    })
+  }
+
 
   // construir locals 
   // @ts-ignore

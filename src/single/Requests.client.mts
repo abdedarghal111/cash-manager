@@ -38,6 +38,7 @@ export let RequestsManager = {
                 allowAbsoluteUrls: false, // para que siempre url sea baseURL+url
                 transformRequest: [function (data: { [x: string]: any }, headers) {
                     headers.set("Content-Type", "application/json")
+                    headers.set('version', __VERSION__)
                     return JSON.stringify(data)
                 }],
                 responseEncoding: 'utf8',
