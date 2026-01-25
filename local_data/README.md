@@ -33,8 +33,10 @@ Esquema:
 │   │
 │   └── server.key  -> ...  (SCN) certificado o enlace simbólico para el certificado (recomendado enlace simbólico, por si usas lets encrypt)
 │
-└── sessions                contiene los certificados usados para firmar las sesiones de usuario (JSON Web Tokens)
-    │
-    ├── private.key -> ...  (SD) clave privada para la firma
-    │
-    └── public.key  -> ...  (SD) clave pública para la firma
+├── sessions                contiene los certificados usados para firmar las sesiones de usuario (JSON Web Tokens)
+│   │
+│   ├── private.key -> ...  (SD) clave privada para la firma
+│   │
+│   └── public.key  -> ...  (SD) clave pública para la firma
+│
+└── backup                  (D) Carpeta con copias de seguridad que se realizan antes de las actualizaciones para la integridad de los datos
