@@ -7,6 +7,7 @@ import { Validator } from '@single/Validator.mjs'
 import { main as helloWorldEntry } from './entrys/helloWorld.server.mts'
 import { main as dropDatabaseEntry } from './entrys/dropDatabase.server.mts'
 import { main as databaseOperationEntry } from './entrys/databaseOperation.server.mts'
+import { main as createDotEnvEntry } from './entrys/CreateDotEnv.server.mts'
 
 // estandarizar tipo de entrada/salida aceptada
 export type EntryType = (rl: Interface) => Promise<{
@@ -18,7 +19,8 @@ export type EntryType = (rl: Interface) => Promise<{
 const scriptsLibrary = {
     'Hello world': helloWorldEntry,
     'Borrar Base de datos': dropDatabaseEntry,
-    'Operaciones con la base de datos': databaseOperationEntry
+    'Operaciones con la base de datos': databaseOperationEntry,
+    'Copiar y pegar .env': createDotEnvEntry
 } as {
     [key: string]: EntryType
 }
