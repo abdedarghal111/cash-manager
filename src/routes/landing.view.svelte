@@ -41,10 +41,10 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
         showButtons = false
 
         // comprobar credenciales
-        let username = await GETamILogged()
+        let { username, message } = await GETamILogged()
 
         // si no se ha podido conectar con el servidor
-        if(username === false) {
+        if(username === '' && message === '') {
             status = "Has configurado mal el servidor o está apagado, vuelve a intentarlo (redirección en 5 segundos)."
             colorStatus = "bg-red-200"
             setTimeout(() => {
@@ -53,11 +53,16 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
                 ViewsController.setCurrentView(SetupView, parameters)
             }, 5000)
         } else if (username === "") {
-            // si es un usuario incorrecto
-            colorStatus = "bg-yellow-200"
-            status = "Conexión correcta, credenciales incorrectas, registrate o inicia sesión."
+            if (message !== '') {
+                colorStatus = "bg-red-200"
+                status = message
+            } else {
+                // si es un usuario incorrecto
+                colorStatus = "bg-yellow-200"
+                status = "Conexión correcta, credenciales incorrectas, registrate o inicia sesión."
+            }
             Credentials.setLogged(false)
-        } else if (username) {
+        } else {
             // se ha conectado correctamente
             colorStatus = "bg-green-200"
             status = `Bienvenido ${username}, credenciales correctas.`
