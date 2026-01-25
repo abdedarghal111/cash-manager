@@ -15,8 +15,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const SRC_PATH = resolve(__dirname, '..')
 const ROOT_PATH = resolve(SRC_PATH, '..', '..')
-const LOCAL_DATA_PATH = resolve(ROOT_PATH, 'local_data')
+export const LOCAL_DATA_PATH = resolve(ROOT_PATH, 'local_data')
 const TEST_PATH = resolve(SRC_PATH, 'test')
+export const BACKUP_LOCAL_DATA_PATH = resolve(LOCAL_DATA_PATH, 'backup')
 
 export const TEST_FILES_DIR_PATH = resolve(TEST_PATH, 'testFiles')
 
