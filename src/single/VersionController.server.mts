@@ -297,13 +297,13 @@ export const VersionController = {
             Logger.warn(`Nueva instalación detectada`, 2)
             Logger.info(`Asignando versión actual: ${targetVersion}`, 2)
             ServerConfig.set('SYSTEM_VERSION', targetVersion)
-            return true
+            return 'newInstall'
         }
 
         // comparar las versiones para ver si hay que hacer algo
         if (systemVersion === targetVersion) {
             Logger.success('No hay actualizaciones locales pendientes.', 2)
-            return true
+            return 'noUpdates'
         }
 
         Logger.warn(`Nueva versión detectada: ${targetVersion} (versión actual: ${systemVersion})`, 2)
@@ -325,7 +325,7 @@ export const VersionController = {
             Logger.info('No hay actualizaciones locales pendientes.', 3)
             Logger.info(`Asignando versión actual: ${targetVersion}`, 3)
             ServerConfig.set('SYSTEM_VERSION', targetVersion)
-            return true
+            return 'noUpdates'
         }
 
         Logger.info(`Realizando ${pendingVersions.length} actualizaciones...`, 2)
@@ -339,7 +339,7 @@ export const VersionController = {
                 // si no se ha podido actualizar salir
                 Logger.warn('INFO: Antes de volver a ejecutar, solucione los problemas existentes.', 1)
                 Logger.info('Saliendo del programa...', 2)
-                return false
+                return 'errored'
             }
 
             // si no aplicar la versión y seguir
@@ -350,7 +350,7 @@ export const VersionController = {
 
         Logger.success('Todas las actualizaciones realizadas correctamente.', 2)
 
-        return true
+        return 'updated'
     }
 }
 

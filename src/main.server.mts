@@ -20,9 +20,9 @@ try {
     ServerConfig.init()
 
     const { VersionController } = await import('@single/VersionController.server.mjs')
-    let successUpdating = await VersionController.checkAndApplyVersions()
+    let updateState = await VersionController.checkAndApplyVersions()
 
-    if (!successUpdating) {
+    if (updateState === 'errored') {
         process.exit(1)
     }
     // TODO: implementar lógica para denegar peticiones con otra versión
@@ -34,7 +34,9 @@ try {
     // mostrar logs solo si está permitido
     await DatabaseController.updateShowLogsFromEnvVar()
     // ya no es necesario sincronizar, hay que hacerlo vía updates @see src\data\versionFixes.server.mts
-    // await DatabaseController.sync()
+    if (updateState === 'newInstall') {
+        await DatabaseController.sync()
+    }
 
     const { HttpsController } = await import('@single/HttpController.server.mjs')
     await HttpsController.startServer()
