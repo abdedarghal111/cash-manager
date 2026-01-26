@@ -184,7 +184,7 @@ privateRouter.use(asyncErrorHandler(async (req, res, next) => {
     let responseCookie = JWTCookie.toSendCookie()
     responseCookie.setAsSecure(req.locals.host)
     responseCookie.setAsDeleted()
-    return res.sendStatus(403).header('Set-Cookie', responseCookie.toString())
+    return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
   }
 
   // si necesita ser renovada (cerca de caducar)
@@ -205,7 +205,7 @@ privateRouter.use(asyncErrorHandler(async (req, res, next) => {
     let responseCookie = JWTCookie.toSendCookie()
     responseCookie.setAsSecure(req.locals.host)
     responseCookie.setAsDeleted()
-    return res.sendStatus(403).header('Set-Cookie', responseCookie.toString())
+    return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
   }
   
   req.locals.user = user
