@@ -32,7 +32,7 @@ export async function GETamILogged() {
                 if(error.response.status === 401) {
                     return {
                         username: '',
-                        message: ''
+                        message: 'Conexión correcta, credenciales incorrectas, registrate o inicia sesión.'
                     }
                 }
 

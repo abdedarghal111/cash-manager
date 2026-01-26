@@ -53,14 +53,8 @@ En caso contrario se muestra el botón para iniciar sesión o registrarse y se l
                 ViewsController.setCurrentView(SetupView, parameters)
             }, 5000)
         } else if (username === "") {
-            if (message !== '') {
-                colorStatus = "bg-red-200"
-                status = message
-            } else {
-                // si es un usuario incorrecto
-                colorStatus = "bg-yellow-200"
-                status = "Conexión correcta, credenciales incorrectas, registrate o inicia sesión."
-            }
+            colorStatus = "bg-yellow-200"
+            status = message
             Credentials.setLogged(false)
         } else {
             // se ha conectado correctamente

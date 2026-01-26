@@ -96,6 +96,7 @@ app.use((req, res, next) => {
 
   // revisar version del cliente y comparar que sean iguales
   // TODO: buscar alternativa, puede ser molesto para el cliente tener que actualizar siempre la versión manualmente
+  // TODO: añadir un analytics system o algo para tomar registro de las peticiones en graphana
   const clientVersion = typeof req.headers.version === 'string' ? req.headers.version : ''
   if(clientVersion !== __VERSION__) {
     return res.status(426).send({
