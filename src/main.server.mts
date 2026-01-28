@@ -26,6 +26,7 @@ try {
         process.exit(1)
     }
     // TODO: implementar lógica para denegar peticiones con otra versión
+    // TODO: implementar obtener certificado de let's encrypt automáticamente
 
     const { getGlobalDotEnvInstance } = await import('@class/DotEnvManager.server.mjs')
     let dotenv = await getGlobalDotEnvInstance()
