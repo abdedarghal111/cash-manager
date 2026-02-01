@@ -29,9 +29,9 @@ Esquema:
 │
 ├── https                   (N) contiene lo relacionado con la capa https (certificados del dominio o autofirmados)
 │   │
-│   ├── server.crt  -> ...  (SCN) certificado o enlace simbólico para el certificado (recomendado enlace simbólico, por si usas lets encrypt)
+│   ├── server.crt  -> ...  (SC) certificado o enlace simbólico para el certificado (recomendado enlace simbólico)
 │   │
-│   └── server.key  -> ...  (SCN) certificado o enlace simbólico para el certificado (recomendado enlace simbólico, por si usas lets encrypt)
+│   └── server.key  -> ...  (SC) certificado o enlace simbólico para el certificado (recomendado enlace simbólico)
 │
 ├── sessions                contiene los certificados usados para firmar las sesiones de usuario (JSON Web Tokens)
 │   │
@@ -40,3 +40,10 @@ Esquema:
 │   └── public.key  -> ...  (SD) clave pública para la firma
 │
 └── backup                  (D) Carpeta con copias de seguridad que se realizan antes de las actualizaciones para la integridad de los datos
+
+### Información extra.
+
+- Configura el `.env` y configura el servidor conforme a tus comodidades.
+- Si ya tienes certificados Let's Encrypt, desactiva el cliente en `.env` en `USE_ACME_CLIENT="false"` y coloca tus certificados en `local_data/https/server.crt` y `local_data/https/server.key`.
+- Si vas a desplegar usa HTTPS: `USE_LOCALHOST_MODE=false`.
+- No está pensado para instalación local o usarlo en un solo dispositivo, pero si es así, simplemente dejaló en modo localhost.

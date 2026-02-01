@@ -43,20 +43,20 @@ try {
         await DatabaseController.sync()
     }
 
-    const { HttpsController } = await import('@single/HttpController.server.mjs')
-    await HttpsController.startServer()
+    const { HttpController } = await import('@single/HttpController.server.mjs')
+    await HttpController.startServer()
 
     Logger.info('Añadiendo endpoints...')
 
     // cargar routers del servidor (los privados tienen middleware de login)
-    HttpsController.addPrivateRouter((await import('@routes/private/amILogged/index.server.mjs')).default)
-    HttpsController.addPublicRouter((await import('@routes/public/register/index.server.mjs')).default)
-    HttpsController.addPublicRouter((await import('@routes/public/login/index.server.mjs')).default)
-    HttpsController.addPrivateRouter((await import('@routes/private/cuentas/index.server.mjs')).default)
-    HttpsController.addPrivateRouter((await import('@routes/private/expenses/index.server.mjs')).default)
-    HttpsController.addPrivateRouter((await import('@routes/private/estadisticas/index.server.mjs')).default)
-    HttpsController.addPrivateRouter((await import('@routes/private/ingresarMonto/index.server.mjs')).default)
-    HttpsController.addPrivateRouter((await import('@routes/private/balances/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/amILogged/index.server.mjs')).default)
+    HttpController.addPublicRouter((await import('@routes/public/register/index.server.mjs')).default)
+    HttpController.addPublicRouter((await import('@routes/public/login/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/cuentas/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/expenses/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/estadisticas/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/ingresarMonto/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/balances/index.server.mjs')).default)
 
     Logger.success('Endpoints desplegados', 2)
 

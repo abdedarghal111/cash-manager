@@ -17,13 +17,15 @@ Te muestra el formulario de configuración inicial y te permite ir a la vista de
     import { onMount } from "svelte"
     import { storable } from "@class/Storable.client.mjs"
     import { get } from "svelte/store"
+    import ThemedCheckboxInput from "@components/ThemedCheckboxInput.svelte";
 
-    let [serverUrl, serverPort] = RequestsManager.getReactiveServerAndPort()
+    let [serverUrl, serverPort, usingHttps] = RequestsManager.getReactiveSettings()
 
     let inputServerUrl = $state(get(serverUrl))
     let inputServerPort = $state(get(serverPort))
+    let inputUsingHttps = $state(get(usingHttps))
 
-    let previewedURL = $derived(`https://${inputServerUrl}:${inputServerPort}/`)
+    let previewedURL = $derived(`${inputUsingHttps ? 'https' : 'http'}://${inputServerUrl}:${inputServerPort}/`)
 
     onMount(() => {
         // cada vez que se monte esta vista
@@ -39,8 +41,8 @@ Te muestra el formulario de configuración inicial y te permite ir a la vista de
     })
 
     $effect(() => {
-        // actualizar el puerto y la url cada que se actualicen los campos
-        RequestsManager.setServerParameters(inputServerUrl, inputServerPort)
+        // actualizar elsetNewSettingsda que se actualicen los campos
+        RequestsManager.setNewSettings(inputServerUrl, inputServerPort, inputUsingHttps)
     })
 </script>
 
@@ -59,6 +61,7 @@ Te muestra el formulario de configuración inicial y te permite ir a la vista de
         <div class="py-5 flex flex-col gap-1">
             <ThemedTextInput label="servidor:" bind:value={inputServerUrl} />
             <ThemedTextInput label="puerto:" bind:value={inputServerPort} />
+            <ThemedCheckboxInput label="usar HTTPS:" bind:value={inputUsingHttps} />
         </div>
 
         <p class="text-sm text-gray-700 mb-4">Se enviaran las peticiones a: {previewedURL}</p>

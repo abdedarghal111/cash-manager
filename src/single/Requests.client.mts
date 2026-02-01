@@ -8,12 +8,26 @@ import toast from "svelte-french-toast"
 
 let serverUrl = storable("serverUrl", "localhost")
 let serverPort = storable("serverPort", "5432")
+let usingHttps = storable("usingHttps", false)
 
 // se inicializa dentro de la función
 let requester: null|AxiosInstance = null
 let recreate = true
 
 export let RequestsManager = {
+    /**
+     * Devuelve si se está usando https
+     */
+    getUsingHttps: () => {
+        return get(usingHttps)
+    },
+
+    /**
+     * Aplica si usar https o http
+     */
+    setUseHttps: (useHttps: boolean) => {
+        usingHttps.set(useHttps)
+    },
 
     /**
      * Devuelve el requester listo con las configuraciones adecuadas
@@ -29,10 +43,12 @@ export let RequestsManager = {
             if(get(serverUrl) === "" || get(serverPort) === "") {
                 console.error("NO SE HA ESTABLECIDO UN SERVIDOR VÁLIDO")
             }
+            
+            let protocol = get(usingHttps) ? 'https' : 'http'
 
             // aquí se establece el comportamiento por defecto, info: https://axios-http.com/docs/req_config
             requester = axios.create({
-                baseURL: `https://${get(serverUrl)}:${get(serverPort)}`,
+                baseURL: `${protocol}://${get(serverUrl)}:${get(serverPort)}`,
                 timeout: 5000,
                 method: "POST",
                 allowAbsoluteUrls: false, // para que siempre url sea baseURL+url
@@ -44,7 +60,7 @@ export let RequestsManager = {
                 responseEncoding: 'utf8',
                 responseType: "json",
                 maxRedirects: 0, // ninguna redicección, es una api
-                transport: 'https', // siempre usar https
+                transport: protocol,
                 withCredentials: true // para guardar las cookies
             })
         }
@@ -58,23 +74,19 @@ export let RequestsManager = {
 
     /**
      * Asigna un nuevo puerto y url al requester
-     * 
-     * @param {string} url 
-     * @param {string} port 
      */
-    setServerParameters: (url: string, port: string) => {
+    setNewSettings: (url: string, port: string, usingHTTPS: boolean) => {
         serverUrl.set(url)
         serverPort.set(port)
+        usingHttps.set(usingHTTPS)
         recreate = true
     },
 
     /**
      * devuelve la url y el puerto en un objeto reactivo para su uso en vistas
-     * 
-     * @returns {[Writable<string>, Writable<string>]}
      */
-    getReactiveServerAndPort: () => {
-        return [serverUrl, serverPort] as [Writable<string>, Writable<string>]
+    getReactiveSettings: () => {
+        return [serverUrl, serverPort, usingHttps] as [Writable<string>, Writable<string>, Writable<boolean>]
     },
 
     /**

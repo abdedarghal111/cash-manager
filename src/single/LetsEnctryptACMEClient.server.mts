@@ -16,14 +16,14 @@ import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { ServerConfig } from './ServerConfig.server.mts'
 
 // SOLO para testing
-const USER_INSECURE_MODE = true
-if (USER_INSECURE_MODE) {
-    // la siguiente linea solo para testing:
+const USE_INSECURE_AND_TESTING_MODE = false
+if (USE_INSECURE_AND_TESTING_MODE) {
+    // la siguiente linea solo para testing (es necesaria):
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0"
 }
 // para aceptar requests inseguras para TESTING si se está testeando
-let userAgentToUse = USER_INSECURE_MODE ? new https.Agent({ rejectUnauthorized: false }) : undefined
-let ACMEDirUrl = USER_INSECURE_MODE ? 'https://acme-v02.api.letsencrypt.org/directory' : 'https://0.0.0.0:14000/dir'
+let userAgentToUse = USE_INSECURE_AND_TESTING_MODE ? new https.Agent({ rejectUnauthorized: false }) : undefined
+let ACMEDirUrl = USE_INSECURE_AND_TESTING_MODE ?  'https://0.0.0.0:14000/dir' : 'https://acme-v02.api.letsencrypt.org/directory'
 // 'https://acme-staging-v02.api.letsencrypt.org' // lets encrypt stagging
 
 export const LetsEnctryptACMEClient = {
@@ -33,6 +33,15 @@ export const LetsEnctryptACMEClient = {
      * asignado en las variables de entorno.
      */
     checkCertificate: async () => {
+        // antes que nada revisar si está configurado para usar el cliente ACME
+        let dotenv = await getGlobalDotEnvInstance()
+        if (!(await dotenv.getBoolean('USE_ACME_CLIENT'))) {
+            Logger.log('El cliente de ACME está marcado como desactivado (en el .env).', 1)
+            return
+        }
+
+        Logger.warn('Inciando cliente ACME', 1)
+
         // revisar caducidad de certificado actual
         Logger.log('Revisando certificados actuales', 1)
         if (isActualCertValid()) {
@@ -41,7 +50,6 @@ export const LetsEnctryptACMEClient = {
         }
 
         // si está caducado o no existe entonces comenzar el protocolo de obtener el certificado nuevo
-        let dotenv = await getGlobalDotEnvInstance()
         let dominio = await dotenv.getString('SERVER_ADDRESS')
         dominio = dominio.toLowerCase() // para que sea identico sin confusiones
         Logger.warn('No se han encontrado certificados válidos, realizando nueva petición de certificado a Let\'s Encrypt.', 2)
@@ -424,7 +432,7 @@ function isActualCertValid() {
     // DIFF                    ========
     // si la diferencia es positiva entonces caducado
     let diff = (new Date()).getTime() - (new Date(cert.validTo)).getTime()
-    if (diff < 0) {
+    if (diff > 0) {
         return false
     }
 

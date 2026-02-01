@@ -4,7 +4,7 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import { User } from '@class/model/User.server.mjs'
-import HttpsController, { asyncErrorHandler } from '@single/HttpController.server.mjs'
+import HttpController, { asyncErrorHandler } from '@single/HttpController.server.mjs'
 import { SendCookie } from '@single/CookieParser.mjs'
 
 // tipos que acepta y devuelve el servidor
@@ -68,7 +68,7 @@ export default express.Router().post("/register", asyncErrorHandler(async (req, 
 
     // crear la cookie de sesión
     let JWTCookie = new SendCookie('passport', '')
-    await HttpsController.jwtController.newSessionToCookie(user.id, JWTCookie)
+    await HttpController.jwtController.newSessionToCookie(user.id, JWTCookie)
     JWTCookie.setAsSecure(req.locals.host)
     JWTCookie.setMaxAge('D', 14)
 

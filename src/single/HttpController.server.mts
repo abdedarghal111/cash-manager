@@ -8,19 +8,16 @@
  */ 
 import express, { NextFunction, Request, Response } from 'express'
 import https from 'https'
+import http from 'http'
 import { readFileSync, existsSync } from 'fs'
 import helmet from 'helmet'
 import { User } from '@class/model/User.server.mjs'
-import { 
-  SERVER_CRT_FILE_PATH,
-  SERVER_KEY_FILE_PATH,
-  TEST_SERVER_KEY_FILE_PATH,
-  TEST_SERVER_CRT_FILE_PATH
-} from '@data/paths.mjs'
+import { SERVER_CRT_FILE_PATH, SERVER_KEY_FILE_PATH } from '@data/paths.mjs'
 import { CookieParser } from '@single/CookieParser.mts'
 import { JWTController } from '@single/JWTController.server.mts'
 import { hostname } from 'os'
 import { Logger } from '@class/Logger.server.mjs'
+import { getGlobalDotEnvInstance } from '@class/DotEnvManager.server.mjs'
 
 // declaración global de las propiedades para el tipado fuerte
 declare global {
@@ -37,20 +34,35 @@ declare global {
 }
 
 // variables
-let PORT = 5432
+let dotenv = await getGlobalDotEnvInstance()
+let usingHTTPS = !(await dotenv.getBoolean('USE_LOCALHOST_MODE'))
+let PORT = 0 as number
+let HTTP_NAME = '' as string
+if (usingHTTPS) {
+  // cosillas https
+  if (!existsSync(SERVER_CRT_FILE_PATH) || !existsSync(SERVER_KEY_FILE_PATH)) {
+    throw new Error('FATAL: Certifiados del servidor no encontrados', {
+      cause: `Los archivos de certificado ${SERVER_CRT_FILE_PATH} y/o clave ${SERVER_KEY_FILE_PATH} no existen`
+    })
+  }
+  PORT = await dotenv.getInt('HTTPS_SERVER_PORT')
+  HTTP_NAME = 'HTTPS'
+} else {
+  // cosillas http
+  PORT = await dotenv.getInt('HTTP_SERVER_PORT')
+  HTTP_NAME = 'HTTP'
+}
+
 const jwtController = new JWTController()
 
-// Montar el servidor
-let existsRealCerts = existsSync(SERVER_CRT_FILE_PATH) && existsSync(SERVER_KEY_FILE_PATH)
-
-// TODO: integrar generar certificados aleatorios si no existen reales: https://mojoauth.com/keypair-generation/generate-keypair-using-ed25519-with-expressjs
+// montar el servidor
 let app = express()
-let httpsServer = https.createServer(
-  {
-    key: existsRealCerts ? readFileSync(SERVER_KEY_FILE_PATH, 'utf-8') : readFileSync(TEST_SERVER_KEY_FILE_PATH, 'utf-8'),
-    cert: existsRealCerts ? readFileSync(SERVER_CRT_FILE_PATH, 'utf-8') : readFileSync(TEST_SERVER_CRT_FILE_PATH, 'utf-8')
-  }, app
-)
+let httpServer = usingHTTPS ?
+	https.createServer({
+		key: readFileSync(SERVER_KEY_FILE_PATH, 'utf-8'),
+		cert: readFileSync(SERVER_CRT_FILE_PATH, 'utf-8')
+	}, app) :
+	http.createServer(app)
 
 // medidas de seguridad
 app.use(
@@ -215,33 +227,33 @@ privateRouter.use(asyncErrorHandler(async (req, res, next) => {
 }))
 
 // clase controladora
-export let HttpsController = {
+export let HttpController = {
 
   express: app,
-  server: httpsServer,
+  server: httpServer,
   jwtController: jwtController,
 
   /**
    * Indica si se usan certificados reales o solo los de prueba en caso de false
    */
-  secure: existsRealCerts,
+  usingHttps: usingHTTPS,
 
   /**
    * Inicia el servidor
    */
   startServer: async () => {
     // inicializar JWTController para manejar las credenciales
-    await jwtController.init()
-
+    await jwtController.init()    
+    
     // Iniciar el servidor
-    Logger.info(`Iniciando el servidor HTTPS`)
+    Logger.info(`Iniciando el servidor ${HTTP_NAME}`)
     app.use(publicRouter)
     app.use(privateRouter)
 
     let address = await new Promise((resolve, reject) => {
-      httpsServer.listen(PORT, () => {
+      httpServer.listen(PORT, () => {
         // rescatar el address y devolverlo correctamente
-        let address = httpsServer.address()
+        let address = httpServer.address()
 
         if (typeof address === 'string') {
           return resolve(address)
@@ -254,12 +266,12 @@ export let HttpsController = {
         }
 
         let { port, family, address: _address } = address
-        resolve(`https://${hostname()}:${port}`)
+        resolve(`${HTTP_NAME.toLocaleLowerCase()}://${hostname()}:${port}`)
       })
     })
 
     // esperar a que se resuelva la promesa
-    Logger.success( `Servidor HTTPS iniciado correctamente en ${address}`, 2)
+    Logger.success( `Servidor ${HTTP_NAME} iniciado correctamente en ${address}`, 2)
   },
 
   /**
@@ -281,4 +293,4 @@ export let HttpsController = {
   }
 }
 
-export default HttpsController
+export default HttpController

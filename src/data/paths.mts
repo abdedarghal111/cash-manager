@@ -30,9 +30,6 @@ export const SESSIONS_FOLDER_PATH = resolve(LOCAL_DATA_PATH, 'sessions')
 export const JWT_PRIVATE_KEY_FILE_PATH = resolve(SESSIONS_FOLDER_PATH, 'private.key')
 export const JWT_PUBLIC_KEY_FILE_PATH = resolve(SESSIONS_FOLDER_PATH, 'public.key')
 
-export const TEST_SERVER_CRT_FILE_PATH = resolve(TEST_PATH, 'certificates', 'cert.pem')
-export const TEST_SERVER_KEY_FILE_PATH = resolve(TEST_PATH, 'certificates', 'key.pem')
-
 // export const SERVER_CSR_FILE_PATH = resolve(__local_data, 'server.csr')
 export const ENV_FILE_PATH = resolve(LOCAL_DATA_PATH, '.env')
 export const STORAGE_DB_FILE_PATH = resolve(LOCAL_DATA_PATH, 'storage.sqlite')
