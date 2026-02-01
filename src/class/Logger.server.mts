@@ -3,6 +3,7 @@
  */
 import colors from "colors/safe.js"
 import { EOL } from "os"
+import util from 'util'
 
 let levels = {
     [-4]: {
@@ -116,15 +117,27 @@ export class Logger {
     static alterConsoleFunctions() 
     {
         console.log = (...data) => {
-            Logger.log(data.join(', '), -2)
+            let out = [] as string[]
+            data.forEach((ae) => {
+                out.push(util.inspect(ae, { showHidden: true, depth: Infinity, colors: false }))
+            })
+            Logger.log(out.join(', '), -2)
         }
 
         console.warn = (...data) => {
-            Logger.warn(data.join(', '), -3)
+            let out = [] as string[]
+            data.forEach((ae) => {
+                out.push(util.inspect(ae, { showHidden: true, depth: Infinity, colors: false }))
+            })
+            Logger.warn(out.join(', '), -3)
         }
 
         console.error = (...data) => {
-            Logger.error(data.join(', '), -4)
+            let out = [] as string[]
+            data.forEach((ae) => {
+                out.push(util.inspect(ae, { showHidden: true, depth: Infinity, colors: false }))
+            })
+            Logger.error(out.join(', '), -4)
         }
     }
 
