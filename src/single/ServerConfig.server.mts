@@ -1,6 +1,11 @@
 /**
  * Clase ServerConfig, se encarga de cargar y guardar configuración persistente del servidor.
  * Esto lo hace creando un fichero json en la carpeta de datos del servidor.
+ * 
+ * Las variables que existen ahora mismo en la configuración son:
+ * 
+ * SYSTEM_VERSION: versión actual del servidor
+ * VALID_ACME_CERTIFICATES: si los certificados han sido aceptados por Let's Encrypt
  */
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { SERVER_CONFIG_FILE_PATH } from '@data/paths.mjs'
