@@ -68,3 +68,11 @@ Al querer profundizar y evitar el uso de librerías extras (obviando los framewo
 
 Existen muchas otras implementaciones pero no representan una sustitución a librerías existentes sino más bien parte del servidor.
 Como por ejemplo una utilidad de terminal `pnpm run terminal` que contiene macros para usar scripts rápidos o cosas similares como borrar todas las cuentas etcétera.
+
+Otro último detalle es que en teoría está disponible para:
+
+- Windows
+- Linux
+- Mac
+- Android
+- IOs
