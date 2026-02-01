@@ -139,6 +139,80 @@ export class DotEnvManager {
     }
 
     /**
+     * Un DotEnvManager.getVar pero que valida que sea un booleano antes.
+     * 
+     * @returns boolean
+     * @throws Error si la variable no existe o no es un booleano válido
+     */
+    async getBoolean(varName: string) {
+        let strVal = await this.getVar(varName)
+        let boolean = Validator.parseBoolean(strVal)
+
+        if (Validator.isNotValid(boolean)) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable ${varName} tiene un valor booleano inválido "${strVal}" en el archivo ${this.envFilePath}`
+            })
+        }
+
+        return boolean
+    }
+
+    /**
+     * Un DotEnvManager.getVar pero que revis que sea un string antes.
+     * 
+     * Por defecto no permite strings vacíos
+     * 
+     * @param varName Nombre de variable
+     * @param allowEmpty si está en false entonces permite devolver strings vacíos
+     * @returns string
+     * @throws Error si la variable no existe o no es un booleano válido
+     */
+    async getString(varName: string, allowEmpty = false) {
+        let strVal = await this.getVar(varName)
+
+        if (strVal === undefined) {
+            throw new Error('FATAL: Variable sin valor.', {
+                cause: `La variable ${varName} no está asignada en el archivo ${this.envFilePath} y es necesaria`
+            })
+        }
+
+        if (strVal === '' && !allowEmpty) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable ${varName} está vacía "${strVal}" en el archivo ${this.envFilePath} y no está permitido, coloquele un valor válido`
+            })
+        }
+
+        return strVal
+    }
+
+    /**
+     * Un DotEnvManager.getVar pero que valida que sea un entero antes.
+     * 
+     * @param varName Nombre de variable
+     * @param onlyUnsigned si está en true entonces solo permite devolver enteros unsigned
+     * @returns boolean
+     * @throws Error si la variable no existe o no es un entero válido
+     */
+    async getInt(varName: string, onlyUnsigned = false) {
+        let strVal = await this.getVar(varName)
+        let int = Validator.parseInt(strVal)
+
+        if (Validator.isNotValid(int)) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable ${varName} tiene un número entero inválido "${strVal}" en el archivo ${this.envFilePath}`
+            })
+        }
+
+        if (onlyUnsigned && int < 0) {
+            throw new Error('FATAL: Valor de variable inválido.', {
+                cause: `La variable ${varName} tiene un número entero negativo "${strVal}" pero solo se permiten positivos en el archivo ${this.envFilePath}`
+            })
+        }
+
+        return int
+    }
+
+    /**
      * Función para sobreescribir el contenido de una variable dotenv
      */
     async writeVar(varName: string, value: string, createIfNotExists = false): Promise<void> {
@@ -210,16 +284,8 @@ export let getGlobalDotEnvInstance = async () => {
         globalDotEnvManager = new DotEnvManager()
         await globalDotEnvManager.init()
 
-        let strVal = await globalDotEnvManager.getVar('USE_SYSTEM_ENV_FIRST')
-        let boolean = Validator.parseBoolean(strVal)
-
-        if (Validator.isNotValid(boolean)) {
-            throw new Error('FATAL: Valor de variable inválido.', {
-                cause: `La variable USE_SYSTEM_ENV_FIRST tiene un valor booleano inválido "${strVal}" en el archivo ${globalDotEnvManager.envFilePath}`
-            })
-        }
-
         // establecer uso de variables de entorno o del sistema
+        let boolean = await globalDotEnvManager.getBoolean('USE_SYSTEM_ENV_FIRST')
         globalDotEnvManager.prefeerSystemEnv = boolean
         Logger.info(`Se ha establecido preferir el ENV del ${boolean ? 'sistema' : 'archivo .env'}.`, 2)
 
