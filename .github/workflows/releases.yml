@@ -81,7 +81,11 @@ jobs:
         uses: joutvhu/create-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          name: 'ICS file viewer ${{ github.ref_name }}'
-          body: 'Auto-generated release for ${{ github.ref_name }}'
+          name: 'Cash Manager ${{ github.ref_name }}'
+          body: | 
+            Auto-generated release for ${{ github.ref_name }}
+            These are the executables for windows, linux and mac (frontend only).
+            For server, you have to install the source code and deploy it (You can use pm2 for it, recomended).
+            For android, you have to compile it by your own.
           draft: false
           prerelease: false
