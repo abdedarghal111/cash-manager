@@ -388,18 +388,8 @@ export let DatabaseController = {
     updateShowLogsFromEnvVar: async () => {
         let dotenv = await getGlobalDotEnvInstance()
 
-        // TODO: refactorizar esta función y pasarla a dotenv para que se gestione la validación ahí
-        let strVal = await dotenv.getVar('SHOW_DATABASE_LOGS')
-        let boolean = Validator.parseBoolean(strVal)
-
-        if (Validator.isNotValid(boolean)) {
-            throw new Error('FATAL: Valor de variable inválido.', {
-                cause: `La variable SHOW_DATABASE_LOGS tiene un valor booleano inválido "${strVal}" en el archivo ${dotenv.envFilePath}`
-            })
-        }
-
         // actualizar la configuración
-        DatabaseController.showLogs = boolean
+        DatabaseController.showLogs = await dotenv.getBoolean('SHOW_DATABASE_LOGS')
     },
 
     /**

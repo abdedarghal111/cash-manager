@@ -31,6 +31,10 @@ try {
     const { getGlobalDotEnvInstance } = await import('@class/DotEnvManager.server.mjs')
     let dotenv = await getGlobalDotEnvInstance()
 
+    const { LetsEnctryptACMEClient } = await import('@single/LetsEnctryptACMEClient.server.mjs')
+    // revisar certificados y realizar peticiones ACME a letsencrypt si es necesario
+    await LetsEnctryptACMEClient.checkCertificate()
+
     const { DatabaseController } = await import('@single/DatabaseController.server.mjs')
     // mostrar logs solo si está permitido
     await DatabaseController.updateShowLogsFromEnvVar()
