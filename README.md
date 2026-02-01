@@ -1,14 +1,26 @@
 # Cash Manager Server
 
 <p align="center">
-    <img src="./buildFiles/assets/icon.png" alt="App icon" width="200">
+    <img src="./buildFiles/assets/icons/icon.png" alt="App icon" width="200">
 </p>
 
-Una app todavía en proceso. Solo un pequeño side project, nada especial. Y el icono también.
+Una app todavía en proceso. Solo un pequeño side project, nada especial.
 
 ## Motivación
 
-Esta aplicación nació simplemente porque quería hacer una app. Todavía está en progreso el resto.
+Esta aplicación nació simplemente porque quería hacer una app para tener un conteo y finanzas básicas que
+pueda revisar y modificarse desde cualquier lado pero que a la vez mis datos los tenga yo y no otra entidad.
+
+Y así es como surge esta aplicación. Un pequeño proyecto de desarrollo personal, con el objetivo de aprender y mejorar mis habilidades en desarrollo web y introducirme un poco más en el desarrollo multiplataforma. No son aplicaciones eficientes porque son ports de tecnologías web pero funcionan que es lo que importa.
+
+Para poder convertirlo en un proyecto android se hace uso de Capacitor.js, que convierte el proyecto en un proyecto de android con
+java, esto ayuda también a "mojarse" un poco en el desarrollo android para entender que está sucediendo aunque sea mínimamente.
+
+## Stack del proyecto
+
+Frontend: svelte y tailwind
+Backend: express.js, sqlite y sequelize
+comunicación: Axios
 
 ## Convencion de este proyecto
 
@@ -37,10 +49,22 @@ Esta aplicación nació simplemente porque quería hacer una app. Todavía está
 - Después de clonar:
     - Instalar dependencias
     - Ir a la carpeta local_data
-        - Crear un enlace simbólico de tus certificados
-        - Leer y seguir las instrucciones del archivo .env.example
+        - Leer, clonar el archivo .env.example pegarlo como `.env` modificando sus variables a gusto.
     - compilar el backend con `pnpm run server:build`
-    - desplegar con `deploy:start` (se aconseja tener instalado pm2 en el sistema)
+    - Se aconseja desplegar con pm2
     - compilar el frontend con la aplicación preferida (se sigue el mismo método que con cualquier framework individual)
         - Para electron usa tu método preferido (mira package.json si quieres ir más rapido)
-        - Para capacitor.js también (se aconseja haber compilado un proyecto aparte porque se necesitan android tools)
+        - Para capacitor.js también (se aconseja haber compilado un proyecto aparte, porque se necesitan android tools)
+
+## Extras
+
+Al querer profundizar y evitar el uso de librerías extras (obviando los frameworks y las librerías para exportar a otras plataformas), he decidido realizar mis propias implementaciones a varias librerías, siendo algunas de estas:
+
+- `ACMEClient`: He estudiado el protocolo ACME e implementado un módulo que hace la petición a Let's Encrypt revisando si los certificados son válidos y pidiendo unos nuevos si fuese necesario.
+- `express-session`: Se ha prescindido de sesiones y he implementado mi propio JSON Web Token, una cookie que funciona como un DNI del cliente y que solo puede emitir el servidor.
+- `cookie-parser`: No se ha usado para evitar dependencias innecesarias, en su lugar se han parseado las cookies manualmente. Con mi propio constructor.
+- `dotenv`: He creado mi propio lector de ficheros `.env` para evitar dependencias externas y también tener implementaciones propias.
+- `readline`: He implementado un lector linea por linea que va leyendo de manera eficiente el fichero poco a poco así gestionando la memoria de manera eficiente en vez de un readline muy abstraido.
+
+Existen muchas otras implementaciones pero no representan una sustitución a librerías existentes sino más bien parte del servidor.
+Como por ejemplo una utilidad de terminal `pnpm run terminal` que contiene macros para usar scripts rápidos o cosas similares como borrar todas las cuentas etcétera.
