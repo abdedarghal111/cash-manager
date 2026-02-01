@@ -6,8 +6,6 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const createWindow = () => {
-  // para ignorar los certificados inseguros
-  app.commandLine.appendSwitch('ignore-certificate-errors')
   const win = new BrowserWindow({
     width: 800,
     height: 600,

@@ -5,7 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./styles/global.css" rel="stylesheet">
     <title>Cash Manager Server</title>
-</head>
+    <!-- 
+        La etiqueta de abajo es para suprimir el riesgo de seguridad para electron
+        También lo que realiza es aplicar políticas que permiten, obtener recursos externos y hacer peticiones externas pero
+        no permite ejecutar código remoto.
+    -->
+    <meta 
+    http-equiv="Content-Security-Policy" 
+    content="default-src 'self'; 
+            script-src 'self'; 
+            connect-src *; 
+            img-src * data:; 
+            style-src 'self' 'unsafe-inline';"
+    >
 <body class="h-full">
     <script type="module" src="./main.client.mts"></script>
 </body>
