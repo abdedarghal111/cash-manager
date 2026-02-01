@@ -31,7 +31,7 @@
     "build:win": "pnpm run electron:build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "build:android": "pnpm run client:build && cap sync && cap add android && cap sync && cd android && gradlew assembleDebug && cd ..",
+    "build:android": "pnpm run client:build && cap add android && cap sync && npx capacitor-assets generate --assetPath assets --android && cd android && gradlew assembleDebug && cd ..",
     "electron:release": "electron-builder",
     "cap": "cap",
     "terminal": "pnpm run server:build && node dist/backend/scripts/main.server.mjs"
@@ -84,6 +84,7 @@
     "vite": "^6.4.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "latest",
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.1.0",
