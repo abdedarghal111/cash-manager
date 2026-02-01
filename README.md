@@ -18,9 +18,9 @@ java, esto ayuda también a "mojarse" un poco en el desarrollo android para ente
 
 ## Stack del proyecto
 
-Frontend: svelte y tailwind
-Backend: express.js, sqlite y sequelize
-comunicación: Axios
+- Frontend: svelte y tailwind
+- Backend: express.js, sqlite y sequelize
+- comunicación: Axios
 
 ## Convencion de este proyecto
 
