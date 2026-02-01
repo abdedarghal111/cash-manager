@@ -3,5 +3,10 @@
   "appName": "Cash Manager Client",
   "webDir": "dist/frontend",
   "bundledWebRuntime": false,
-  "hideLogs": false
+  "hideLogs": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }
