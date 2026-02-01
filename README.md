@@ -1,4 +1,4 @@
-# Cash Manager Server
+# Cash Manager
 
 <p align="center">
     <img src="./buildFiles/assets/icons/icon.png" alt="App icon" width="200">
