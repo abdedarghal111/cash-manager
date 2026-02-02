@@ -14,23 +14,23 @@ const __out = resolve(__root, 'dist', 'frontend')
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    svelte()
-  ],
-  resolve: {
-    'alias': resolveAliases(__src)
-  },
-  define: replacementConstants,
-  root: __src,
-  build: {
-    target: 'modules',
-    outDir: __out,
-    assetsDir: 'public',
-    cssMinify: true,
-    minify: true,
-    emptyOutDir: true,
-    copyPublicDir: true,
-    cssCodeSplit: false,
-  }
+	plugins: [
+		tailwindcss(),
+		svelte()
+	],
+	resolve: {
+		'alias': resolveAliases(__src)
+	},
+	define: replacementConstants,
+	root: __src,
+	build: {
+		target: 'modules',
+		outDir: __out,
+		assetsDir: 'public',
+		cssMinify: true,
+		minify: true,
+		emptyOutDir: true,
+		copyPublicDir: true,
+		cssCodeSplit: false,
+	}
 })
