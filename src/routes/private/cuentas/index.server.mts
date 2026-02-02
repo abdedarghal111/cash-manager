@@ -281,43 +281,43 @@ router.delete('/cuentas/:id', asyncErrorHandler(async (req, res, next) => {
     // TODO: implementar prevenir borrar cuentas que ya han tenido transferencias o participado en transferencias
     return res.status(501).send('Desactivado por integridad de datos')
 
-    // revisar que esté el id
-    const accountId = Validator.parseInt(req.params.id)
-    if (Validator.isNotValid(accountId)) {
-        return res.status(400).json({ message: 'El ID de la cuenta no es valido' })
-    }
+    // // revisar que esté el id
+    // const accountId = Validator.parseInt(req.params.id)
+    // if (Validator.isNotValid(accountId)) {
+    //     return res.status(400).json({ message: 'El ID de la cuenta no es valido' })
+    // }
 
-    // Find the account first to check balance
-    const account = await Cuenta.findOne({
-        where: {
-            id: accountId,
-            owner: user.id
-        }
-    })
+    // // Find the account first to check balance
+    // const account = await Cuenta.findOne({
+    //     where: {
+    //         id: accountId,
+    //         owner: user.id
+    //     }
+    // })
 
-    if (!account) {
-        return res.status(404).json({ message: 'Cuenta no encontrada' })
-    }
+    // if (!account) {
+    //     return res.status(404).json({ message: 'Cuenta no encontrada' })
+    // }
 
-    // Check account balance
-    const balance = await account.getTotal()
-    if (balance !== 0) {
-        return res.status(409).json({ message: 'La cuenta no se puede eliminar porque tiene un saldo pendiente.' })
-    }
+    // // Check account balance
+    // const balance = await account.getTotal()
+    // if (balance !== 0) {
+    //     return res.status(409).json({ message: 'La cuenta no se puede eliminar porque tiene un saldo pendiente.' })
+    // }
 
-    const result = await Cuenta.destroy({
-        where: {
-            id: accountId,
-            owner: user.id
-        }
-    })
+    // const result = await Cuenta.destroy({
+    //     where: {
+    //         id: accountId,
+    //         owner: user.id
+    //     }
+    // })
 
-    if (result === 0) {
-        // This case should ideally not be reached if account was found, but good for safety
-        return res.status(404).json({ message: 'Cuenta no encontrada o ya eliminada' })
-    }
+    // if (result === 0) {
+    //     // This case should ideally not be reached if account was found, but good for safety
+    //     return res.status(404).json({ message: 'Cuenta no encontrada o ya eliminada' })
+    // }
 
-    return res.status(200).json({ message: 'Cuenta eliminada correctamente' } as DELETECuentaType.server)
+    // return res.status(200).json({ message: 'Cuenta eliminada correctamente' } as DELETECuentaType.server)
 }))
 
 export default router

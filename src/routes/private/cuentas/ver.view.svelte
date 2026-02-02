@@ -153,7 +153,7 @@ Vista para ver y editar los detalles de una cuenta específica.
     <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <h3 class="text-xl font-semibold text-slate-800">Confirmar Eliminación</h3>
         <p class="text-slate-600 mt-2">
-            ¿Estás seguro de que quieres eliminar la cuenta <span class="font-semibold">"{cuenta?.name}"</span>?
+            ¿Estás seguro de que quieres eliminar la cuenta <span class="font-semibold">"{editedName}"</span>?
         </p>
         <p class="text-sm text-amber-600 bg-amber-50 p-3 rounded-md mt-4">
             Atención: La cuenta solo se puede eliminar si su balance es cero. Esta acción no se puede deshacer.
