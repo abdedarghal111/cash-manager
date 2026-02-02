@@ -30,20 +30,23 @@ jobs:
           node-version: 22
           check-latest: true
 
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install build dependencies (Linux only)
         if: runner.os == 'Linux'
         run: |
           sudo apt update && sudo apt install -y icnsutils graphicsmagick
 
       - name: Install dependencies
-        run: yarn install --check-files --frozen-lockfile
+        run: pnpm install --prefer-offline --frozen-lockfile
 
       - name: Build and release
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            yarn run build:linux --publish always
+            pnpm run build:linux --publish always
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            yarn run build:mac --publish always
+            pnpm run build:mac --publish always
           fi
 
   windows:
@@ -62,11 +65,14 @@ jobs:
           node-version: 22
           check-latest: true
 
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install dependencies
-        run: yarn install --check-files --frozen-lockfile
+        run: pnpm install --prefer-offline --frozen-lockfile
 
       - name: Build and release
-        run: yarn run build:win --publish always
+        run: pnpm run build:win --publish always
   
   create-release-publication:
     runs-on: ubuntu-latest
