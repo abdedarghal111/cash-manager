@@ -69,6 +69,8 @@ Al querer profundizar y evitar el uso de librerías extras (obviando los framewo
 Existen muchas otras implementaciones pero no representan una sustitución a librerías existentes sino más bien parte del servidor.
 Como por ejemplo una utilidad de terminal `pnpm run terminal` que contiene macros para usar scripts rápidos o cosas similares como borrar todas las cuentas etcétera.
 
+Otra implementación, es la de detección de nuevas actualizaciones y manejar copias de seguridad y aplicar actualizaciones como modificaciones en la base de datos o acciones pre update.
+
 Otro último detalle es que en teoría está disponible para:
 
 - Windows
