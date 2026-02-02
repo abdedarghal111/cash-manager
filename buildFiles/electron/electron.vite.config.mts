@@ -17,38 +17,44 @@ const __electronMain = resolve(__electronConfigFolder, 'electronMain.mjs')
 const __electronPreload = resolve(__electronConfigFolder, 'electronPreload.mjs')
 
 export default defineConfig({
-  main: {
-    plugins: [externalizeDepsPlugin()],
-    build: {
-      lib: {
-        entry: __electronMain
-      },
-      outDir: resolve(__out, 'main')
-    }
-  },
-  preload: {
-    plugins: [externalizeDepsPlugin()],
-    build: {
-      lib: {
-        entry: __electronPreload
-      },
-      outDir: resolve(__out, 'preload')
-    }
-  },
-  renderer: {
-    plugins: [svelte(), tailwindcss()],
-    root: __src,
-    build: {
-      outDir: resolve(__out, 'renderer'),
-      rollupOptions: {
-        input: {
-          index: __index
-        }
-      }
-    },
-    resolve: {
-      'alias': resolveAliases(__src)
-    },
-    define: replacementConstants
-  }
+	main: {
+		plugins: [externalizeDepsPlugin()],
+		build: {
+			lib: {
+				entry: __electronMain
+			},
+			outDir: resolve(__out, 'main')
+		},
+		resolve: {
+			'alias': resolveAliases(__src)
+		}
+	},
+	preload: {
+		plugins: [externalizeDepsPlugin()],
+		build: {
+			lib: {
+				entry: __electronPreload
+			},
+			outDir: resolve(__out, 'preload')
+		},
+		resolve: {
+			'alias': resolveAliases(__src)
+		}
+	},
+	renderer: {
+		plugins: [svelte(), tailwindcss()],
+		root: __src,
+		build: {
+			outDir: resolve(__out, 'renderer'),
+			rollupOptions: {
+				input: {
+					index: __index
+				}
+			}
+		},
+		resolve: {
+			'alias': resolveAliases(__src)
+		},
+		define: replacementConstants
+	}
 })
