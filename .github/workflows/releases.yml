@@ -32,6 +32,8 @@ jobs:
 
       - name: Install Pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Install build dependencies (Linux only)
         if: runner.os == 'Linux'
