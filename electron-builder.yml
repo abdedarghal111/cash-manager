@@ -1,5 +1,5 @@
-appId: es.abderra.cash-manager-server
-productName: "Cash Manager Server"
+appId: es.abderra.cash-manager-client
+productName: "Cash Manager Client"
 
 #output: "dist/electron"
 #compression: store # para que el ejecutable tenga la mínima compresión (apertura rápida)

@@ -27,7 +27,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          node-version: 24.8.0
           check-latest: true
 
       - name: Install Pnpm
@@ -64,7 +64,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          node-version: 24.8.0
           check-latest: true
 
       - name: Install Pnpm
