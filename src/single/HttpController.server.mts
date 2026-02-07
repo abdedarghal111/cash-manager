@@ -5,7 +5,7 @@
  * Los middleware de seguridad y todo eso se controla aquí, en el lado del cliente se usa RequestsManager
  * 
  * @see /src/single/Requests.client.mts
- */ 
+ */
 import express, { NextFunction, Request, Response } from 'express'
 import https from 'https'
 import http from 'http'
@@ -21,16 +21,16 @@ import { getGlobalDotEnvInstance } from '@class/DotEnvManager.server.mjs'
 
 // declaración global de las propiedades para el tipado fuerte
 declare global {
-  namespace Express {
-    interface Request {
-      locals: {
-        absoluteUrl: string // la url completa a la que se hace la request
-        host: string // host ejemplo 127.0.0.1 o www.tal.es
-        cookiesManager: CookieParser // el cookies parser después del middleware también
-        user: User // el usuario después de pasar el middleware
-      },
-    }
-  }
+	namespace Express {
+		interface Request {
+			locals: {
+				absoluteUrl: string // la url completa a la que se hace la request
+				host: string // host ejemplo 127.0.0.1 o www.tal.es
+				cookiesManager: CookieParser // el cookies parser después del middleware también
+				user: User // el usuario después de pasar el middleware
+			},
+		}
+	}
 }
 
 // variables
@@ -40,18 +40,18 @@ let usingHTTPS = !(await dotenv.getBoolean('USE_LOCALHOST_MODE'))
 let PORT = 0 as number
 let HTTP_NAME = '' as string
 if (usingHTTPS) {
-  // cosillas https
-  if (!existsSync(SERVER_CRT_FILE_PATH) || !existsSync(SERVER_KEY_FILE_PATH)) {
-    throw new Error('FATAL: Certifiados del servidor no encontrados', {
-      cause: `Los archivos de certificado ${SERVER_CRT_FILE_PATH} y/o clave ${SERVER_KEY_FILE_PATH} no existen`
-    })
-  }
-  PORT = await dotenv.getInt('HTTPS_SERVER_PORT')
-  HTTP_NAME = 'HTTPS'
+	// cosillas https
+	if (!existsSync(SERVER_CRT_FILE_PATH) || !existsSync(SERVER_KEY_FILE_PATH)) {
+		throw new Error('FATAL: Certifiados del servidor no encontrados', {
+			cause: `Los archivos de certificado ${SERVER_CRT_FILE_PATH} y/o clave ${SERVER_KEY_FILE_PATH} no existen`
+		})
+	}
+	PORT = await dotenv.getInt('HTTPS_SERVER_PORT')
+	HTTP_NAME = 'HTTPS'
 } else {
-  // cosillas http
-  PORT = await dotenv.getInt('HTTP_SERVER_PORT')
-  HTTP_NAME = 'HTTP'
+	// cosillas http
+	PORT = await dotenv.getInt('HTTP_SERVER_PORT')
+	HTTP_NAME = 'HTTP'
 }
 
 let serverURL = `${HTTP_NAME}://${serverHostname}:${PORT}`.toLocaleLowerCase()
@@ -69,14 +69,14 @@ let httpServer = usingHTTPS ?
 
 // medidas de seguridad
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  })
+	helmet.contentSecurityPolicy({
+		directives: {
+			defaultSrc: ["'self'"],
+			scriptSrc: ["'self'"],
+			objectSrc: ["'none'"],
+			upgradeInsecureRequests: [],
+		},
+	})
 )
 
 /**
@@ -90,54 +90,54 @@ app.use(
  * 4. El middleware private maneja las credenciales
  */
 app.use((req, res, next) => {
-  // orígenes permitidos: para permitir que el solicitante guarde cookies (lo mismo que poner *)
-  res.header('Access-Control-Allow-Origin', req.headers.origin)
-  // para decirle al solicitante que las cookies están permitidas
-  res.header('Access-Control-Allow-Credentials', 'true')
+	// orígenes permitidos: para permitir que el solicitante guarde cookies (lo mismo que poner *)
+	res.header('Access-Control-Allow-Origin', req.headers.origin)
+	// para decirle al solicitante que las cookies están permitidas
+	res.header('Access-Control-Allow-Credentials', 'true')
 
-  // headers permitidos (version también)
-  res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, version')
-  
-  // métodos permitidos
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-  
-  // guardar la información de options 24h
-  res.header('Access-Control-Max-Age', '86400')
+	// headers permitidos (version también)
+	res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, version')
 
-  // responder al método options
-  if(req.method === 'OPTIONS') {
-    return res.sendStatus(200)
-  }
+	// métodos permitidos
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
 
-  // revisar version del cliente y comparar que sean iguales
-  // TODO: buscar alternativa, puede ser molesto para el cliente tener que actualizar siempre la versión manualmente
-  // TODO: añadir un analytics system o algo para tomar registro de las peticiones en graphana
-  const clientVersion = typeof req.headers.version === 'string' ? req.headers.version : ''
-  if(clientVersion !== __VERSION__) {
-    return res.status(426).send({
-      message: 'Versiones incompatibles',
-      version: __VERSION__
-    })
-  }
+	// guardar la información de options 24h
+	res.header('Access-Control-Max-Age', '86400')
+
+	// responder al método options
+	if (req.method === 'OPTIONS') {
+		return res.sendStatus(200)
+	}
+
+	// revisar version del cliente y comparar que sean iguales
+	// TODO: buscar alternativa, puede ser molesto para el cliente tener que actualizar siempre la versión manualmente
+	// TODO: añadir un analytics system o algo para tomar registro de las peticiones en graphana
+	const clientVersion = typeof req.headers.version === 'string' ? req.headers.version : ''
+	if (clientVersion !== __VERSION__) {
+		return res.status(426).send({
+			message: 'Versiones incompatibles',
+			version: __VERSION__
+		})
+	}
 
 
-  // construir locals 
-  // @ts-ignore
-  req.locals = {}
+	// construir locals 
+	// @ts-ignore
+	req.locals = {}
 
-  // leer las cookies recibidas por el usuario
-  req.locals.cookiesManager = new CookieParser(req.headers.cookie)
+	// leer las cookies recibidas por el usuario
+	req.locals.cookiesManager = new CookieParser(req.headers.cookie)
 
-  // url solicitada ejemplo: https://localhost:1234/miendpoint
-//   req.locals.absoluteUrl = req.protocol + '://' + req.get('host') + req.originalUrl
-  req.locals.absoluteUrl = req.protocol + '://' + serverHostname + req.originalUrl
+	// url solicitada ejemplo: https://localhost:1234/miendpoint
+	//   req.locals.absoluteUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+	req.locals.absoluteUrl = req.protocol + '://' + serverHostname + req.originalUrl
 
-  // el host sin el puerto
-  req.locals.host = serverHostname
-  // req.locals.host = req.get('host')!.split(':').at(0)! ?? ''
+	// el host sin el puerto
+	req.locals.host = serverHostname
+	// req.locals.host = req.get('host')!.split(':').at(0)! ?? ''
 
-  // pasar al siguiente middleware
-  next()
+	// pasar al siguiente middleware
+	next()
 })
 
 // habilitar parsear json
@@ -147,29 +147,29 @@ app.use(express.json())
 // manejo de errores sincronos (por ahora todavía ni me ha tocado un error ni ha funcionado)
 // si algo sale mal devolver error e imprimirlo también
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  // si no es un error entonces pasar al siguiente
-  if(!(err instanceof Error)) {
-    return next(err)
-  }
+	// si no es un error entonces pasar al siguiente
+	if (!(err instanceof Error)) {
+		return next(err)
+	}
 
-  Logger.logError(err, 'SYNC ERROR')
+	Logger.logError(err, 'SYNC ERROR')
 
-  // añadir cabecera 500 y pasar al siguiente
-  res.status(500).json({ message: 'Error interno del servidor' })
-  return next(err)
+	// añadir cabecera 500 y pasar al siguiente
+	res.status(500).json({ message: 'Error interno del servidor' })
+	return next(err)
 })
 
 // manejo de errores asincronos:
 // actua como un wrapper en cada endpoint de cada middleware
 export const asyncErrorHandler = (func: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
-  func(req, res, next).catch((err: Error) => {
+	func(req, res, next).catch((err: Error) => {
 
-    Logger.logError(err, 'ASYNC ERROR')
+		Logger.logError(err, 'ASYNC ERROR')
 
-    // añadir cabecera 500 y pasar al siguiente
-    res.status(500).json({ message: 'Error interno del servidor' })
-    next()
-  })
+		// añadir cabecera 500 y pasar al siguiente
+		res.status(500).json({ message: 'Error interno del servidor' })
+		next()
+	})
 }
 
 // los dos posibles routers
@@ -178,130 +178,130 @@ let privateRouter = express.Router()
 
 // middleware para el router privado, valida el token jwt y pasa si está todo ok
 privateRouter.use(asyncErrorHandler(async (req, res, next) => {
-  // TODO: añadir un rate limiter para prevenir solicitudes abusivas
+	// TODO: añadir un rate limiter para prevenir solicitudes abusivas
 
-  // recoger cookie de usuario
-  let JWTCookie = req.locals.cookiesManager.get("passport")
+	// recoger cookie de usuario
+	let JWTCookie = req.locals.cookiesManager.get("passport")
 
-  // sesión inválida si no existe o no es válida
-  if (!JWTCookie) {
-    return res.sendStatus(401)
-  }
-  
-  // recibir resumen de la sesión
-  let { isValid: validJWT, outdated: outdatedJWT, needRenew, userId } = await jwtController.isValidSession(JWTCookie)
-  
-  // si no es válida entonces devolver
-  if (!validJWT) {
-    return res.sendStatus(401)
-  }
-  
-  // si está caducada entonces borrarla
-  if (outdatedJWT) {
-    let responseCookie = JWTCookie.toSendCookie()
-    responseCookie.setAsSecure(req.locals.host)
-    responseCookie.setAsDeleted()
-    return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
-  }
+	// sesión inválida si no existe o no es válida
+	if (!JWTCookie) {
+		return res.sendStatus(401)
+	}
 
-  // si necesita ser renovada (cerca de caducar)
-  if (needRenew) {
-    let renewedJWTCookie = JWTCookie.toSendCookie()
-    await jwtController.newSessionToCookie(userId, renewedJWTCookie)
-    renewedJWTCookie.setAsSecure(req.locals.host)
-    renewedJWTCookie.setMaxAge('D', 14)
-    // añadir header a la respuesta
-    res.header('Set-Cookie', renewedJWTCookie.toString())
-  }
+	// recibir resumen de la sesión
+	let { isValid: validJWT, outdated: outdatedJWT, needRenew, userId } = await jwtController.isValidSession(JWTCookie)
 
-  // buscar usuario
-  let user = await User.findByPk(userId)
-  
-  if (!user) {
-    // cookie inválida, borrarla
-    let responseCookie = JWTCookie.toSendCookie()
-    responseCookie.setAsSecure(req.locals.host)
-    responseCookie.setAsDeleted()
-    return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
-  }
-  
-  req.locals.user = user
+	// si no es válida entonces devolver
+	if (!validJWT) {
+		return res.sendStatus(401)
+	}
 
-  // es válido, siguiente middleware
-  next()
+	// si está caducada entonces borrarla
+	if (outdatedJWT) {
+		let responseCookie = JWTCookie.toSendCookie()
+		responseCookie.setAsSecure(req.locals.host)
+		responseCookie.setAsDeleted()
+		return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
+	}
+
+	// si necesita ser renovada (cerca de caducar)
+	if (needRenew) {
+		let renewedJWTCookie = JWTCookie.toSendCookie()
+		await jwtController.newSessionToCookie(userId, renewedJWTCookie)
+		renewedJWTCookie.setAsSecure(req.locals.host)
+		renewedJWTCookie.setMaxAge('D', 14)
+		// añadir header a la respuesta
+		res.header('Set-Cookie', renewedJWTCookie.toString())
+	}
+
+	// buscar usuario
+	let user = await User.findByPk(userId)
+
+	if (!user) {
+		// cookie inválida, borrarla
+		let responseCookie = JWTCookie.toSendCookie()
+		responseCookie.setAsSecure(req.locals.host)
+		responseCookie.setAsDeleted()
+		return res.header('Set-Cookie', responseCookie.toString()).sendStatus(403)
+	}
+
+	req.locals.user = user
+
+	// es válido, siguiente middleware
+	next()
 }))
 
 // clase controladora
 export let HttpController = {
 
-  express: app,
-  server: httpServer,
-  jwtController: jwtController,
+	express: app,
+	server: httpServer,
+	jwtController: jwtController,
 
-  // la dirección
-  hostname: serverHostname,
+	// la dirección
+	hostname: serverHostname,
 
-  // la url del servidor, por ejemplo: "https://miweb.tal:XXXX"
-  serverUrl: serverURL,
+	// la url del servidor, por ejemplo: "https://miweb.tal:XXXX"
+	serverUrl: serverURL,
 
-  /**
-   * Indica si se usan certificados reales o solo los de prueba en caso de false
-   */
-  usingHttps: usingHTTPS,
+	/**
+	 * Indica si se usan certificados reales o solo los de prueba en caso de false
+	 */
+	usingHttps: usingHTTPS,
 
-  /**
-   * Inicia el servidor
-   */
-  startServer: async () => {
-    // inicializar JWTController para manejar las credenciales
-    await jwtController.init()    
-    
-    // Iniciar el servidor
-    Logger.info(`Iniciando el servidor ${HTTP_NAME}`)
-    app.use(publicRouter)
-    app.use(privateRouter)
+	/**
+	 * Inicia el servidor
+	 */
+	startServer: async () => {
+		// inicializar JWTController para manejar las credenciales
+		await jwtController.init()
 
-    let address = await new Promise((resolve, reject) => {
-      httpServer.listen(PORT, () => {
-        // rescatar el address y devolverlo correctamente
-        let address = httpServer.address()
+		// Iniciar el servidor
+		Logger.info(`Iniciando el servidor ${HTTP_NAME}`)
+		app.use(publicRouter)
+		app.use(privateRouter)
 
-        if (typeof address === 'string') {
-          return resolve(address)
-        }
+		let address = await new Promise((resolve, reject) => {
+			httpServer.listen(PORT, () => {
+				// rescatar el address y devolverlo correctamente
+				let address = httpServer.address()
 
-        if (address === null) {
-          throw new Error('FATAL: Error al iniciar el servidor', {
-            cause: 'Por alguna razón no ha devuelto una address válida, revisar más a fondo.'
-          })
-        }
+				if (typeof address === 'string') {
+					return resolve(address)
+				}
 
-        let { port, family, address: _address } = address
-        resolve(`${HTTP_NAME.toLocaleLowerCase()}://${hostname()}:${port} or ${serverURL}`)
-      })
-    })
+				if (address === null) {
+					throw new Error('FATAL: Error al iniciar el servidor', {
+						cause: 'Por alguna razón no ha devuelto una address válida, revisar más a fondo.'
+					})
+				}
 
-    // esperar a que se resuelva la promesa
-    Logger.success( `Servidor ${HTTP_NAME} iniciado correctamente en ${address}`, 2)
-  },
+				let { port, family, address: _address } = address
+				resolve(`${HTTP_NAME.toLocaleLowerCase()}://${hostname()}:${port} or ${serverURL}`)
+			})
+		})
 
-  /**
-   * Agrega un router a la parte pública de la api
-   * 
-   * @param {express.Router} router
-   */
-  addPublicRouter: (router: express.Router) => {
-    publicRouter.use(router)
-  },
+		// esperar a que se resuelva la promesa
+		Logger.success(`Servidor ${HTTP_NAME} iniciado correctamente en ${address}`, 2)
+	},
 
-  /**
-   * Agrega un router a la parte privada de la api
-   * 
-   * @param {express.Router} router
-   */
-  addPrivateRouter: (router: express.Router) => {
-    privateRouter.use(router)
-  }
+	/**
+	 * Agrega un router a la parte pública de la api
+	 * 
+	 * @param {express.Router} router
+	 */
+	addPublicRouter: (router: express.Router) => {
+		publicRouter.use(router)
+	},
+
+	/**
+	 * Agrega un router a la parte privada de la api
+	 * 
+	 * @param {express.Router} router
+	 */
+	addPrivateRouter: (router: express.Router) => {
+		privateRouter.use(router)
+	}
 }
 
 export default HttpController
