@@ -35,6 +35,7 @@ declare global {
 
 // variables
 let dotenv = await getGlobalDotEnvInstance()
+let serverHostname = await dotenv.getString('SERVER_HOSTNAME')
 let usingHTTPS = !(await dotenv.getBoolean('USE_LOCALHOST_MODE'))
 let PORT = 0 as number
 let HTTP_NAME = '' as string
@@ -52,6 +53,8 @@ if (usingHTTPS) {
   PORT = await dotenv.getInt('HTTP_SERVER_PORT')
   HTTP_NAME = 'HTTP'
 }
+
+let serverURL = `${HTTP_NAME}://${serverHostname}:${PORT}`.toLocaleLowerCase()
 
 const jwtController = new JWTController()
 
@@ -126,10 +129,12 @@ app.use((req, res, next) => {
   req.locals.cookiesManager = new CookieParser(req.headers.cookie)
 
   // url solicitada ejemplo: https://localhost:1234/miendpoint
-  req.locals.absoluteUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+//   req.locals.absoluteUrl = req.protocol + '://' + req.get('host') + req.originalUrl
+  req.locals.absoluteUrl = req.protocol + '://' + serverHostname + req.originalUrl
 
   // el host sin el puerto
-  req.locals.host = req.get('host')!.split(':').at(0)! ?? ''
+  req.locals.host = serverHostname
+  // req.locals.host = req.get('host')!.split(':').at(0)! ?? ''
 
   // pasar al siguiente middleware
   next()
@@ -233,6 +238,12 @@ export let HttpController = {
   server: httpServer,
   jwtController: jwtController,
 
+  // la dirección
+  hostname: serverHostname,
+
+  // la url del servidor, por ejemplo: "https://miweb.tal:XXXX"
+  serverUrl: serverURL,
+
   /**
    * Indica si se usan certificados reales o solo los de prueba en caso de false
    */
@@ -266,7 +277,7 @@ export let HttpController = {
         }
 
         let { port, family, address: _address } = address
-        resolve(`${HTTP_NAME.toLocaleLowerCase()}://${hostname()}:${port}`)
+        resolve(`${HTTP_NAME.toLocaleLowerCase()}://${hostname()}:${port} or ${serverURL}`)
       })
     })
 
