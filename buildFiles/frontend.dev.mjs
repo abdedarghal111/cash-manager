@@ -33,6 +33,9 @@ export default defineConfig({
 			additionalPaths: (watcher) => {
 				watcher.add(__src)
 			}
+		},
+		cors: {
+			origin: '*'
 		}
 	},
 	cacheDir: '/.vite-cache',
