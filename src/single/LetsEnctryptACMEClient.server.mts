@@ -50,7 +50,7 @@ export const LetsEnctryptACMEClient = {
         }
 
         // si está caducado o no existe entonces comenzar el protocolo de obtener el certificado nuevo
-        let dominio = await dotenv.getString('SERVER_ADDRESS')
+        let dominio = await dotenv.getString('SERVER_HOSTNAME')
         dominio = dominio.toLowerCase() // para que sea identico sin confusiones
         Logger.warn('No se han encontrado certificados válidos, realizando nueva petición de certificado a Let\'s Encrypt.', 2)
         Logger.info(`Se usará el dominio de "${dominio}" para la obtención del certificado.`, 3)
