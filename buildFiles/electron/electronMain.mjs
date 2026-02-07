@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron/main'
+import { app, BrowserWindow, session } from 'electron/main'
 import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import icon from '@assets/icon.png'
@@ -13,7 +13,8 @@ const createWindow = () => {
 		height: 600,
 		webPreferences: {
 			// Path from main/electronMain.js to preload/electronPreload.js
-			preload: resolve(__dirname, '../preload/electronPreload.js')
+			preload: resolve(__dirname, '../preload/electronPreload.js'),
+			webSecurity: false // puede ser arriesgado pero las cors no se pueden manejar casi.
 		},
 		icon: icon //resolve(__iconsFolder, 'icon.png') (no existe)
 	})
