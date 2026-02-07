@@ -13,3 +13,6 @@ export const replacementConstants = {
     '__VERSION__': `'${packageJson.version}'`,
     '__APP_NAME__': `'Cash Manager'`
 }
+
+// TODO: añadir el hash de git para la compilación y saltar error si no se ha podido obtener
+// const commitHash = child.execSync("git rev-parse --short HEAD").toString();
