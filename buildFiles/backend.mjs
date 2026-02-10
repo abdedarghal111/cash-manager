@@ -51,11 +51,11 @@ if (checkParam('--dev')) {
 	let ctx = await esbuild.context({
 		logLevel: 'info',
 		entryPoints: entryPoints,
-		sourceRoot: __src,
+		// sourceRoot: __src,
 		outdir: __dist,
 		bundle: false,
 		minify: false,
-		sourcemap: false,
+		sourcemap: true,
 		target: 'es2022',
 		platform: 'node',
 		format: 'esm',
