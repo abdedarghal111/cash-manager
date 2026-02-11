@@ -107,8 +107,12 @@ jobs:
         - name: Setup Gradle
           uses: gradle/actions/setup-gradle@v5
 
-        - name: Build app
-          run: npm run build:android
+        - name: Prepare capacitor app build
+          run: pnpm run cap:prepareAndroid
+
+        - name: Build capacitor app APK
+          working-directory: ./android
+          run: ./gradlew assembleDebug
 
         - name: Upload APK
           uses: actions/upload-artifact@v6
