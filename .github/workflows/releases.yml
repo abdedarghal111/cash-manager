@@ -1,6 +1,6 @@
 # Credits to https://github.com/marktext/marktext
 # This workflow is based on the one from marktext/marktext
-name: Release new version
+name: Compile frontend releases
 
 on:
   push:
@@ -77,6 +77,44 @@ jobs:
 
       - name: Build and release
         run: pnpm run build:win --publish always
+    
+  android: 
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Install Node.js
+          uses: actions/setup-node@v6
+          with:
+            node-version: 24.8.0
+            check-latest: true
+
+        - name: Install Pnpm
+          uses: pnpm/action-setup@v4
+          with:
+            version: 10
+
+        - name: Install dependencies
+          run: pnpm install --prefer-offline --dangerously-allow-all-builds
+
+        - name: Setup Java
+          uses: actions/setup-java@v5
+          with:
+            distribution: 'temurin'
+            java-version: '21'
+            cache: 'gradle'
+
+        - name: Build APK
+          working-directory: ./android
+          run: ./gradlew assembleDebug
+
+        - name: Build app
+          run: npm run build
+
+        - name: Upload APK
+          uses: actions/upload-artifact@v6
+          with:
+            name: ${{ inputs.artifactName }}
+            path: ./android/app/build/outputs/apk/debug/
   
   create-release-publication:
     runs-on: ubuntu-latest
