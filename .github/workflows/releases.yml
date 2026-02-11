@@ -37,8 +37,7 @@ jobs:
 
       - name: Install build dependencies (Linux only)
         if: runner.os == 'Linux'
-        run: |
-          sudo apt update && sudo apt install -y icnsutils graphicsmagick --no-install-recommends
+        run: sudo apt update && sudo apt install -y icnsutils graphicsmagick --no-install-recommends
 
       - name: Install dependencies
         run: pnpm install --prefer-offline --dangerously-allow-all-builds
@@ -71,6 +70,9 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+
+      - name: Debug actions
+        run: ls . -a
 
       - name: Install dependencies
         run: pnpm install --prefer-offline --dangerously-allow-all-builds
