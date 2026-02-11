@@ -107,17 +107,20 @@ jobs:
         - name: Setup Gradle
           uses: gradle/actions/setup-gradle@v5
 
+        - name: Build client bundle
+          run: pnpm run client:build
+
         - name: Prepare capacitor app build
           run: pnpm run cap:prepareAndroid
 
         - name: Build capacitor app APK
           working-directory: ./android
-          run: ./gradlew assembleDebug
+          run: ./gradlew assembleDebug --no-daemon
 
         - name: Upload APK
           uses: actions/upload-artifact@v6
           with:
-            name: ${{ inputs.artifactName }}
+            name: androidAPK
             path: ./android/app/build/outputs/apk/debug/
   
   create-release-publication:
