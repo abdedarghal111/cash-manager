@@ -63,6 +63,14 @@ export class Monto extends Model implements AcceptedCashValues {
     }
 
     /**
+     * Devuelve el total de dinero en metálico sin revisarlo en la base de datos
+     */
+    getCurrentTotal(): number {
+        let bundle = CashBundle.importFromValidAcceptedCashValues(this)
+        return bundle.getTotal()
+    }
+
+    /**
      * Devuelve un array [keyBillete, valor, cantidad] con los billetes que tienen cantidad 
      */
     exportNonEmptyCashArray(): CashArrayType {
