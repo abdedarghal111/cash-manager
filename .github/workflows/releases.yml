@@ -71,9 +71,6 @@ jobs:
         with:
           version: 10
 
-      - name: Debug actions
-        run: ls . -a
-
       - name: Install dependencies
         run: pnpm install --prefer-offline --dangerously-allow-all-builds
 
@@ -107,10 +104,6 @@ jobs:
             distribution: 'temurin'
             java-version: '21'
             cache: 'gradle'
-
-        - name: Build APK
-          working-directory: ./android
-          run: ./gradlew assembleDebug
 
         - name: Build app
           run: npm run build
