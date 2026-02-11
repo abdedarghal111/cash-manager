@@ -20,7 +20,7 @@
     "client:build:watch": "vite build --config buildFiles/frontend.prod.mjs --watch",
     "client:check": "svelte-check --tsconfig tsconfig.json && tsc -p tsconfig.json",
     "dev": "concurrently \"pnpm run server:dev\" \"pnpm run client:dev\"",
-    "tests:run": "pnpm run server:build && node buildFiles/jasmineConfig.mjs",
+    "tests:run": "pnpm run server:build && node --enable-source-maps buildFiles/jasmineConfig.mjs",
     "deploy:build": "pnpm run server:build && pnpm run client:build",
     "deploy:start": "pm2 start dist/app.mjs --name cashms --log serverData/app.log",
     "deploy:stop": "pm2 stop cashms",
