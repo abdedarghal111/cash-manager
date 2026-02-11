@@ -27,7 +27,7 @@ export class Monto extends Model implements AcceptedCashValues {
     declare cerouno: number
 
     /**
-     * pone a cero el dinero en metálico y los totales de la subcuenta
+     * pone a cero el dinero en metálico
      */
     clearCash(): void {
         this.cincuenta = 0
@@ -134,41 +134,45 @@ export class Monto extends Model implements AcceptedCashValues {
      * @returns el valor total de los billetes usados
      */
     insertCashArray(cashArray: CashArrayType, pendingTotal: number): number {
-        let totalInserted = new Decimal(0)
-        // let usedCash = [] as CashArrayType
+        let totalInserted = new Decimal(0) // el total insertado
+        let totalRemaining = new Decimal(pendingTotal) // el restante que falta
 
         // empezar desde el billete más grande (es así por defecto)
         for (let arrayRow of cashArray) {
             let [cashKey, cashValue, cashCuantity] = arrayRow
 
-            // comprobar que se puede ingresar antes de ingresar
-            if (totalInserted.toNumber() === pendingTotal) {
-                return totalInserted.toNumber()
-            }
-
-
             // sacar el maximo valor posible a insertar
-            let maxValue = Decimal.mul(cashValue, cashCuantity).toNumber()
+            let maxInsertValue = Decimal.mul(cashValue, cashCuantity)
             let cuantityToInsert = 0
 
             // si el totalPendiente es mayor a lo que se puede insertar
-            if (pendingTotal > maxValue) {
+            if (totalRemaining.greaterThanOrEqualTo(maxInsertValue)) {
                 // insertar todos los billetes
                 cuantityToInsert = cashCuantity
             } else {
                 // insertar solo los que se puedan floor(totalValor/valorBillete)
-                let idealToInsert = new Decimal(pendingTotal).div(cashValue).floor()
+                let idealToInsert = totalRemaining.div(cashValue).floor().toNumber()
                 // insertar solo disponible
-                cuantityToInsert = Math.min(idealToInsert.toNumber(), cashCuantity)
+                // si tengo pocos billetes pero puedo insertar más: insertar solo los pocos
+                // si tengo muchos billetes pero no se pueden insertar más: insertar solo lo posible
+                cuantityToInsert = Math.min(idealToInsert, cashCuantity)
             }
 
             // insertar billetes
             this[cashKey] += cuantityToInsert
+            // descontar de cashArray
+            arrayRow[2] -= cuantityToInsert
+
             // registrar valor insertado
             let valueInserted = new Decimal(cashValue).mul(cuantityToInsert)
             totalInserted = totalInserted.add(valueInserted)
-            // descontar de cashArray
-            arrayRow[2] -= cuantityToInsert
+            // descontar del pendiente
+            totalRemaining = totalRemaining.sub(valueInserted)
+
+            // comprobar que se puede ingresar antes de ingresar
+            if (totalRemaining.equals(0)) {
+                return totalInserted.toNumber()
+            }
         }
 
         return totalInserted.toNumber()
