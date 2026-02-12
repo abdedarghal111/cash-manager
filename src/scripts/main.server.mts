@@ -4,10 +4,9 @@
 import { createInterface, Interface } from 'readline'
 import 'colors'
 import { Validator } from '@single/Validator.mjs'
-import { main as helloWorldEntry } from './entrys/helloWorld.server.mts'
-import { main as dropDatabaseEntry } from './entrys/dropDatabase.server.mts'
-import { main as databaseOperationEntry } from './entrys/databaseOperation.server.mts'
-import { main as createDotEnvEntry } from './entrys/CreateDotEnv.server.mts'
+import { main as helloWorldEntry } from './entrys/helloWorld.server.mjs'
+import { main as databaseOperationEntry } from './entrys/databaseOperation.server.mjs'
+import { main as createDotEnvEntry } from './entrys/createDotEnv.server.mjs'
 
 // estandarizar tipo de entrada/salida aceptada
 export type EntryType = (rl: Interface) => Promise<{
@@ -18,7 +17,6 @@ export type EntryType = (rl: Interface) => Promise<{
 // entradas para cada script
 const scriptsLibrary = {
     'Hello world': helloWorldEntry,
-    'Borrar Base de datos': dropDatabaseEntry,
     'Operaciones con la base de datos': databaseOperationEntry,
     'Copiar y pegar .env': createDotEnvEntry
 } as {
