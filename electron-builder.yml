@@ -18,7 +18,7 @@ win:
     - provider: github
       releaseType: release
   icon: buildFiles/assets/icons/icon.ico
-  artifactName: "${productName}-${version}-win.${ext}"
+  artifactName: "${productName}-v${version}-win.${ext}"
 
 mac:
   target:
@@ -28,7 +28,7 @@ mac:
     - provider: github
       releaseType: release
   icon: buildFiles/assets/icons/icon.icns
-  artifactName: "${productName}-${version}-mac.${ext}"
+  artifactName: "${productName}-v${version}-mac.${ext}"
 
 linux:
   target:
@@ -38,4 +38,4 @@ linux:
     - provider: github
       releaseType: release
   icon: buildFiles/assets/icons/icon.png
-  artifactName: "${productName}-${version}-linux.${ext}"
+  artifactName: "${productName}-v${version}-linux.${ext}"
