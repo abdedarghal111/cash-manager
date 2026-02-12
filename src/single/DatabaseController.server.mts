@@ -11,7 +11,6 @@ import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
 import { TransactionsGroup } from "@class/model/TransactionGroup.server.mjs"
 import { Logger } from "@class/Logger.server.mjs"
 import { getGlobalDotEnvInstance } from "@class/DotEnvManager.server.mjs"
-import { Validator } from "./Validator.mts"
 
 // crear base de datos
 Logger.info(`Iniciando la base de datos`)
@@ -233,6 +232,15 @@ TransactionsGroup.init({
     transactionDate: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+    },
+    owner: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+            model: User,
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 }, {
     tableName: 'transactiongroups',
@@ -369,6 +377,9 @@ Movimiento.belongsTo(Cuenta, { foreignKey: 'toCuenta' })
 
 TransactionsGroup.hasMany(Movimiento, { foreignKey: 'transactionGroup' })
 Movimiento.belongsTo(TransactionsGroup, { foreignKey: 'transactionGroup' })
+
+User.hasMany(TransactionsGroup, { foreignKey: 'owner' })
+TransactionsGroup.belongsTo(User, { foreignKey: 'owner' })
 
 Movimiento.hasOne(Monto, { foreignKey: 'monto' })
 Monto.belongsTo(Movimiento, { foreignKey: 'monto' })

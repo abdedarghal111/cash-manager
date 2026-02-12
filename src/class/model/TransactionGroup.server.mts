@@ -10,6 +10,7 @@ export class TransactionsGroup extends Model {
     declare uuid: string
     declare transactionDate: Date
     declare description: string
+    declare owner: number // el usuario al que pertenece el grupo de movimientos
 
     /**
      * Crea un nuevo movimiento para el grupo y lo devuelve
@@ -34,7 +35,7 @@ export class TransactionsGroup extends Model {
     /**
      * Devuelve una nueva instancia con un identificador único
      */
-    static async createWithUuid(transaction?: Transaction): Promise<TransactionsGroup> {
+    static async createWithUuid(userId: number, transaction?: Transaction): Promise<TransactionsGroup> {
         let registerWithSameUuid: TransactionsGroup | null
         let newUuid: string
 
@@ -49,8 +50,10 @@ export class TransactionsGroup extends Model {
             })
         } while (registerWithSameUuid)
 
-        return await TransactionsGroup.create({
-            uuid: newUuid
-        }, { transaction: transaction })
+        let transactionGroup = await TransactionsGroup.create({}, { transaction: transaction })
+        transactionGroup.uuid = newUuid
+        transactionGroup.owner = userId
+        await transactionGroup.save({ transaction: transaction })
+        return transactionGroup
     }
 }

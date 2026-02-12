@@ -367,7 +367,7 @@ export async function aplyIngresarOperation(user: User, transactionResume: calcu
     let allAccounts: Cuenta[] = []
     
     // crear un grupo de transacción
-    let transactionGroup = await TransactionsGroup.createWithUuid(transaction)
+    let transactionGroup = await TransactionsGroup.createWithUuid(user.id, transaction)
 
     // obtener cuenta de gastos
     let gastosAccount = await user.getExpensesAccount(transaction)
