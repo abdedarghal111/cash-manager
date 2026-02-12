@@ -363,11 +363,15 @@ export async function calculateExpenseImpact(user: User, cashBundle: CashBundle)
  * Se debe recalcar que esta función considera que se ha introducido un input ideal y correcto, usa la salida de la otra función
  */
 export async function aplyIngresarOperation(user: User, transactionResume: calculateExpenseImpactType, cashBundle: CashBundle, transaction: Transaction) {
+    // recoger todas las cuentas
+    let allAccounts: Cuenta[] = []
+    
     // crear un grupo de transacción
     let transactionGroup = await TransactionsGroup.createWithUuid(transaction)
 
     // obtener cuenta de gastos
     let gastosAccount = await user.getExpensesAccount(transaction)
+    allAccounts.push(gastosAccount)
 
     // registrar todos los gastos
     for (let gastoResume of transactionResume.expensesList) {
@@ -384,6 +388,7 @@ export async function aplyIngresarOperation(user: User, transactionResume: calcu
     for (let cuentaResume of transactionResume.cuentas) {
         let cuenta = cuentaResume.instance
         let amount = cuentaResume.moneyToSum
+        allAccounts.push(cuenta)
 
         // depositar
         cuenta.depositMoney(amount, transaction)
@@ -405,7 +410,7 @@ export async function aplyIngresarOperation(user: User, transactionResume: calcu
     pendingMonto.setFromCashBundle(new CashBundle().setFromValidAcceptedCashValues(cashBundle).sumMonto(pendingMonto))
 
     // redistribuir los billetes pendiente a las cuentas con dinero pendiente
-    let operationLogs = await pendingMonto.reallocateCashToSubaccounts(user, transaction)
+    let operationLogs = await pendingMonto.reallocateCashToSubaccounts(user, allAccounts, transaction)
     await pendingMonto.save({ transaction: transaction })
 
     // guardar registro del  pending cash nuevo

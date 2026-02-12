@@ -59,6 +59,7 @@ export class User extends Model {
             cuentaGastos.ignore = true // para ser ignorada
             cuentaGastos.percentage = 0
             cuentaGastos.isRemainder = false
+            // cuentaGastos.owner = this.id
             await cuentaGastos.save({ transaction: transaction })
 
             // guardar el id de la cuenta correspondiente en el usuario

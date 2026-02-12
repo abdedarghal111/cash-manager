@@ -5,9 +5,6 @@ import { Model, Transaction } from "sequelize"
 import { Subcuenta } from "@class/model/Subcuenta.server.mjs"
 import { User } from "@class/model/User.server.mts"
 import Decimal from "decimal.js"
-import { Movimiento } from "@class/model/Movimiento.server.mts"
-import { TipoMovimiento } from "@data/enums/MovimientoType.mjs"
-import { TransactionsGroup } from "@class/model/TransactionGroup.server.mts"
 
 export type PercentageFormattedCuentas = {
     instance: Cuenta, 

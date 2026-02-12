@@ -179,25 +179,15 @@ export class Monto extends Model implements AcceptedCashValues {
     }
 
     /**
-     * Redistribuye los billetes a los montos de las cuentas de un usuario en concreto rellenando los pendientes
-     * 
-     * Generalmente está pensada para la cuenta de cash pendiente del usuario (agloba el dinero en un monto y después lo va repartiendo a los demás)
+     * Redistribuye los billetes a los montos de las cuentas pasadas por parámetro
      */
-    async reallocateCashToSubaccounts(user: User, transaction?: Transaction): Promise<[
+    async reallocateCashToSubaccounts(user: User, accounts: Cuenta[], transaction?: Transaction): Promise<[
         account: Cuenta,
         subAccount: Subcuenta,
         monto: Monto,
         beforeCash: CashBundle,
         afterCash: CashBundle
     ][]> {
-
-        // obtener cuentas del usuario
-        let accounts = await Cuenta.findAll({
-            where: {
-                owner: user.id
-            },
-            transaction: transaction
-        })
 
         // obtener todas las subcuentas-monto pendientes
         let EverySubaccountMonto = [] as [
