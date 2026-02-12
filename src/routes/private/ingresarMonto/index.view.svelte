@@ -3,8 +3,6 @@ Vista para ingresar el monto. Permite:
 - Previsualizar y modificar gastos a aplicar.
 - Previsualizar y configurar la distribución del ingreso entre cuentas con porcentajes.
 - Ingresar billetes y monedas para calcular el total.
-
-TODO: añadir el aceptar transacción
 -->
 <script module lang="ts">
     // diccionario de valores de los billetes en notación numérica (50, 1, 0.50)
@@ -37,7 +35,7 @@ TODO: añadir el aceptar transacción
     import IngresarMontoView from "@routes/private/ingresarMonto/index.view.svelte"
     import verExpenseView from "@routes/private/expenses/ver.view.svelte"
     import crearExpenseView from "@routes/private/expenses/crear.view.svelte"
-    import verCuentasView from "@routes/private/cuentas/index.view.svelte"
+    import verCuentaView from "@routes/private/cuentas/ver.view.svelte"
     import crearCuentasView from "@routes/private/cuentas/crear.view.svelte"
     import summaryView from "@routes/private/ingresarMonto/summary.view.svelte"
     import type { POSTIngresarMontoType, POSTPrevisualizarIngresarMontoType } from "@routes/private/ingresarMonto/index.server.mjs"
@@ -230,7 +228,7 @@ TODO: añadir el aceptar transacción
                                         // añadir parametros y establecer la nueva vista
                                         let params = new Parameters()
                                         params.set('id', account.id)
-                                        ViewsController.setCurrentView(verCuentasView, params)
+                                        ViewsController.setCurrentView(verCuentaView, params)
                                     }} />
                                 </li>
                             {/each}
