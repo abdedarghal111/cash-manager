@@ -117,12 +117,13 @@ jobs:
           working-directory: ./android
           run: ./gradlew assembleDebug --no-daemon
 
-        - name: Upload APK
-          uses: actions/upload-artifact@v6
+        - name: Upload pload APK to release
+          uses: svenstaro/upload-release-action@v2
           with:
-            name: androidAPK
-            path: ./android/app/build/outputs/apk/debug/
-  
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: ./android/app/build/outputs/apk/debug/apk-debug.apk
+            tag: ${{ github.ref_name }}
+
   create-release-publication:
     runs-on: ubuntu-latest
     env:
