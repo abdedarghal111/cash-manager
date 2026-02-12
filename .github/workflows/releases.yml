@@ -140,7 +140,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: 'Cash Manager ${{ github.ref_name }}'
           body: | 
-            Auto-generated release for ${{ github.ref_name }}
+            Auto-generated release for ${{ github.ref_name }} from this line to the end.
             These are the executables for windows, linux and mac (frontend only).
             For server, you have to install the source code and deploy it (You can use pm2 for it, recomended).
             For android, you have to compile it by your own.
