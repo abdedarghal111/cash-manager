@@ -35,7 +35,7 @@ Vista donde se previsualizan las subcuentas y cuentas con todo el dinero que con
 <DefaultView>
     {#snippet main()}
         <div class="max-w-4xl mx-auto space-y-10 py-10">
-            <h2 class="text-3xl text-blue-900 font-bold text-center">Montos</h2>
+            <h2 class="text-3xl text-blue-900 font-bold text-center">Balances</h2>
 
             <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
 
@@ -72,6 +72,10 @@ Vista donde se previsualizan las subcuentas y cuentas con todo el dinero que con
                                 extraClass="mx-auto my-2 mb-5"
                             />
                         {/each}
+                        {#if cuenta.subaccounts.length === 0}
+                            <p class="text-gray-600 text-sm text-center">No hay subcuentas.</p>
+                            <p class="text-gray-600 text-sm text-center mb-5">Total: 0€</p>
+                        {/if}
                     {/each}
 
                     <!-- <h4 class="text-lg text-blue-800 font-bold mt-4">Cuenta </h4> -->
