@@ -8,6 +8,45 @@
  * Para actualizaciones de DB revisar https://sequelize.org/docs/v6/other-topics/migrations/
  */
  const versions: [string, () => Promise<void>][] = [
+    ['0.7.4', async () => {
+        // En esta versión se crea una nueva columna a la tabla
+        let { Logger } = await import("@class/Logger.server.mjs")
+        // cargar dotenv
+        const { getGlobalDotEnvInstance } = await import('@class/DotEnvManager.server.mjs')
+        let dotenv = await getGlobalDotEnvInstance()
+        // cargar base de datos
+        const { DatabaseController } = await import('@single/DatabaseController.server.mjs')
+        const { DataTypes } = await import ('sequelize')
+        let queryInterface = DatabaseController.sequelize.getQueryInterface()
+
+        // revisar si ya existe primero
+        let tableDescription = await queryInterface.describeTable('transactiongroups')
+        if (tableDescription['owner'] !== undefined) {
+            Logger.log(`La columna 'owner' ya existe en la tabla 'transactiongroups'. No se realizarán cambios.`, 2)
+            return
+        }
+
+        // añadir columna extra
+        await queryInterface.addColumn('transactiongroups', 'owner', {
+            type: DataTypes.INTEGER.UNSIGNED,
+            references: {
+                model: 'users',
+                key: 'id'
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'CASCADE'
+        })
+
+        // comprobar que se ha añadido correctamente
+        tableDescription = await queryInterface.describeTable('transactiongroups')
+        if (tableDescription['owner'] === undefined) {
+            throw new Error('FATAL: 0.7.4 - Fallo actualizando', {
+                cause: `Fallo en la migración. No se ha añadido correctamente la columna owner a la tabla transactiongroups`
+            })
+        }
+
+        Logger.success("Columna 'owner' añadida correctamente", 2)
+    }],
     ['0.7.0', async () => {
         // Avisar que HTTPS_SERVER_ADDRESS pasó a ser SERVER_HOSTNAME
         let { Logger } = await import("@class/Logger.server.mjs")
