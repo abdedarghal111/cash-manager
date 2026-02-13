@@ -182,51 +182,6 @@ router.post('/ingresarMonto', asyncErrorHandler(async (req, res, next) => {
 
 export default router
 
-// /**
-//  * Función para validar el monto introducido
-//  * 
-//  * Si falla devuelve string con la causa
-//  */
-// export function validateMonto(monto: AcceptedCashValues): AcceptedCashValues | string {
-//     if (!monto) {
-//         return "No se proporcionó el monto"
-//     }
-    
-//     let cleanCash: AcceptedCashValues = {
-//         cincuenta: 0,
-//         veinte: 0,
-//         diez: 0,
-//         dos: 0,
-//         cinco: 0,
-//         dos: 0,
-//         uno: 0,
-//         cerocincuenta: 0,
-//         ceroveinte: 0,
-//         cerodiez: 0,
-//         cerocinco: 0,
-//         cerodos: 0,
-//         cerouno: 0,
-//     }
-
-//     // validar tabla
-//     if (typeof monto !== 'object') {
-//         return 'El monto ingresado no es un objeto válido'
-//     }
-
-//     // validar cada uno de los valores
-//     for (let keyCash of Object.keys(cleanCash) as Array<keyof AcceptedCashValues>) {
-//         let number = Validator.int(monto[keyCash])
-//         if (Validator.isNotValid(number) || number < 0) {
-//             // si algun valor no es válido devolver
-//             return `El monto ingresado para ${AcceptedCashEquivalent[keyCash]} no es válido`
-//         }
-//         // ingresar solo los valores que nos interesan
-//         cleanCash[keyCash] = number
-//     }
-
-//     return cleanCash
-// }
-
 export type cuentasBalanceDiffType = {
     instance: Cuenta
     name: string
