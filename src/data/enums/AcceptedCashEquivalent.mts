@@ -34,6 +34,8 @@ export const AcceptedCashEquivalent: AcceptedCashValues = {
     cerouno: 0.01,
 }
 
-// dos arrays diferentes pero en el mismo orden (keys por un lado y values por otro)
+// array para iterar los cash values
+export const AcceptedCashIterable = Object.entries(AcceptedCashEquivalent) as [keyof AcceptedCashValues, number][]
+// arrays diferentes pero en el mismo orden (keys por un lado y values por otro)
 export const validCashValues = Object.values(AcceptedCashEquivalent) as number[]
 export const validCashStrings = Object.keys(AcceptedCashEquivalent) as (keyof AcceptedCashValues)[]
