@@ -126,6 +126,198 @@ describe("Monto Class - Cash Movement Tests", () => {
     })
 })
 
+describe("Monto extractCashArray Tests", () => {
+    
+    it("should handle empty requested bundle with money in Monto", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        
+        // Monto tiene dinero: 2x50
+        monto.cincuenta = 2
+        await monto.save()
+
+        // Bundle vacío
+        let bundle = new CashBundle()
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // No debe devolver nada
+        expect(totalReturned).toBe(0)
+        expect(returnedMoney.length).toBe(0)
+
+        // Monto debe seguir igual
+        expect(monto.cincuenta).toBe(2)
+
+        await monto.destroy()
+    })
+
+    it("should handle requested bundle with money but empty Monto", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        await monto.save()
+
+        // Bundle pide dinero: 1x50
+        let bundle = new CashBundle()
+        bundle.cincuenta = 1
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // No debe devolver nada porque el monto está vacío
+        expect(totalReturned).toBe(0)
+        expect(returnedMoney.length).toBe(0)
+
+        // Monto sigue vacío
+        expect(monto.cincuenta).toBe(0)
+
+        await monto.destroy()
+    })
+
+    it("should not extract money if denominations do not match", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        
+        // Monto tiene: 2x10, 2x5
+        monto.diez = 2
+        monto.cinco = 2
+        await monto.save()
+
+        // Bundle pide: 1x50, 1x20
+        let bundle = new CashBundle()
+        bundle.cincuenta = 1
+        bundle.veinte = 1
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // No debe devolver nada
+        expect(totalReturned).toBe(0)
+        expect(returnedMoney.length).toBe(0)
+
+        // Monto debe seguir intacto
+        expect(monto.diez).toBe(2)
+        expect(monto.cinco).toBe(2)
+        expect(monto.cincuenta).toBe(0)
+        expect(monto.veinte).toBe(0)
+
+        await monto.destroy()
+    })
+
+    it("should extract only available amount if requested is more than available", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        
+        // Monto tiene: 2x50
+        monto.cincuenta = 2
+        await monto.save()
+
+        // Bundle pide: 5x50
+        let bundle = new CashBundle()
+        bundle.cincuenta = 5
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // Debe devolver lo que tenía (2x50 = 100)
+        expect(totalReturned).toBe(100)
+        // returnedMoney debe ser [['cincuenta', 2]]
+        expect(returnedMoney.length).toBe(1)
+        expect(returnedMoney[0]![0]).toBe('cincuenta')
+        expect(returnedMoney[0]![1]).toBe(2)
+
+        // Monto debe quedar vacío
+        expect(monto.cincuenta).toBe(0)
+
+        await monto.destroy()
+    })
+
+    it("should extract exactly what is requested if Monto has more", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        
+        // Monto tiene: 5x50
+        monto.cincuenta = 5
+        await monto.save()
+
+        // Bundle pide: 2x50
+        let bundle = new CashBundle()
+        bundle.cincuenta = 2
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // Debe devolver lo pedido (2x50 = 100)
+        expect(totalReturned).toBe(100)
+        expect(returnedMoney.length).toBe(1)
+        expect(returnedMoney[0]![0]).toBe('cincuenta')
+        expect(returnedMoney[0]![1]).toBe(2)
+
+        // Monto debe quedar con el resto (3x50)
+        expect(monto.cincuenta).toBe(3)
+
+        await monto.destroy()
+    })
+
+    it("should handle mixed scenario: surplus of high value, exact mid value, and shortage of low value", async () => {
+        let monto = await Monto.create()
+        monto.clearCash()
+        
+        // Configurar Monto Inicial
+        // Sobrado de 50 (tenemos 10, pediremos 5)
+        monto.cincuenta = 10
+        // Justo de 20, 10, 5 (tenemos 5 de cada, pediremos 5)
+        monto.veinte = 5
+        monto.diez = 5
+        monto.cinco = 5
+        // Falta de 2 y 1 (tenemos 2 de cada, pediremos 5)
+        monto.dos = 2
+        monto.uno = 2
+        
+        await monto.save()
+
+        // Configurar Bundle Solicitado
+        let bundle = new CashBundle()
+        bundle.cincuenta = 5
+        bundle.veinte = 5
+        bundle.diez = 5
+        bundle.cinco = 5
+        bundle.dos = 5
+        bundle.uno = 5
+        
+        let requestedArray = bundle.getNonEmptyCashArray()
+
+        let [returnedMoney, totalReturned] = monto.extractCashArray(requestedArray)
+
+        // Calcular lo esperado
+        // 5x50 + 5x20 + 5x10 + 5x5 + 2x2 + 2x1
+        // 250 + 100 + 50 + 25 + 4 + 2 = 431
+        expect(totalReturned).toBe(431)
+
+        // Verificar array devuelto (el orden puede variar según implementación de export, pero extractCashArray suele mantener orden del request o del map)
+        // Convertimos a objeto o mapa para verificar fácil
+        let returnedMap = new Map(returnedMoney)
+        
+        expect(returnedMap.get('cincuenta')).toBe(5) // Se extrajeron 5
+        expect(returnedMap.get('veinte')).toBe(5)    // Se extrajeron 5
+        expect(returnedMap.get('diez')).toBe(5)      // Se extrajeron 5
+        expect(returnedMap.get('cinco')).toBe(5)     // Se extrajeron 5
+        expect(returnedMap.get('dos')).toBe(2)       // Solo había 2
+        expect(returnedMap.get('uno')).toBe(2)       // Solo había 2
+
+        // Verificar estado final del Monto
+        expect(monto.cincuenta).toBe(5) // Quedaron 5 (10 - 5)
+        expect(monto.veinte).toBe(0)    // Quedaron 0
+        expect(monto.diez).toBe(0)      // Quedaron 0
+        expect(monto.cinco).toBe(0)     // Quedaron 0
+        expect(monto.dos).toBe(0)       // Quedaron 0 (se llevaron todo lo que había)
+        expect(monto.uno).toBe(0)       // Quedaron 0
+
+        await monto.destroy()
+    })
+
+})
+
 describe("Monto Multi-phase Lifecycle Test", () => {
 
     /**

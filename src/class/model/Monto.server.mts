@@ -127,6 +127,35 @@ export class Monto extends Model implements AcceptedCashValues {
     }
 
     /**
+     * Extrae los billetes que se puedan del monto solicitados por el CashArray introducido por argumento
+     * 
+     * Devuelve un array con los billetes que se han extraido
+     */
+    extractCashArray(requestedArray: CashArrayType): [[keyof AcceptedCashValues, number][], number] {
+        let totalReturned = new Decimal(0)
+        let returnedMoney: [keyof AcceptedCashValues, number][] = []
+        for (const [cashKey, cashValue, neededCuantity] of requestedArray) {
+            let avalibleCuantity = this[cashKey]
+            // si no hay cantidad de ese billete entonces salir
+            if (avalibleCuantity === 0) {
+                continue
+            }
+
+            // calcular cuántos billetes se pueden quitar
+            let subCuantity = Math.min(avalibleCuantity, neededCuantity)
+
+            // restar al monto
+            this[cashKey] -= subCuantity
+            // añadir el valor removido
+            totalReturned = totalReturned.add(Decimal.mul(cashValue, subCuantity))
+            // anotar el dinero sacado
+            returnedMoney.push([cashKey, subCuantity])
+        }
+
+        return [returnedMoney, totalReturned.toNumber()]
+    }
+
+    /**
      * Inserta los billetes desde el mayor a menor en el monto (algoritmo por defecto)
      * 
      * IMPORTANTE: modifica el array introducido (restando el cash movido)
