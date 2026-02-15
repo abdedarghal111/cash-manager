@@ -175,7 +175,7 @@ export class Validator {
         }
         
         // limpiar string
-        const str = this.parseWhiteListString(data)
+        const str = data.trim()
 
         // si está vacía entonces no es valido
         if (str === '') {
