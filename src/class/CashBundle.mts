@@ -31,6 +31,26 @@ export class CashBundle {
     public cerouno = 0
 
     /**
+     * Devuelve un objeto AcceptedCashValues vacío
+     */
+    public static getEmptyCashArray() {
+        return {
+            cincuenta: 0,
+            veinte: 0,
+            diez: 0,
+            cinco: 0,
+            dos: 0,
+            uno: 0,
+            cerocincuenta: 0,
+            ceroveinte: 0,
+            cerodiez: 0,
+            cerocinco: 0,
+            cerodos: 0,
+            cerouno: 0,
+        } 
+    }
+
+    /**
      * Exporta a una tabla AcceptedCashValues con los valores en su interior
      */
     public exportToAcceptedCashValues(): AcceptedCashValues {
@@ -169,6 +189,13 @@ export class CashBundle {
         return this
     }
 
+    /**
+     * Devuelve una copia del monto
+     */
+    public cloneMonto(): CashBundle {
+        return CashBundle.importFromValidAcceptedCashValues(this)
+    }
+
     // /**
     //  * Suma un monto a al bundle
     //  */
@@ -240,6 +267,39 @@ export class CashBundle {
     }
 
     /**
+     * Devuelve si son dos AcceptedCashValues iguales
+     */
+    public equalsToMonto(monto: AcceptedCashValues): boolean {
+        switch (true) {
+            case this.cincuenta !== monto.cincuenta:
+                return false
+            case this.veinte !== monto.veinte:
+                return false
+            case this.diez !== monto.diez:
+                return false
+            case this.cinco !== monto.cinco:
+                return false
+            case this.dos !== monto.dos:
+                return false
+            case this.uno !== monto.uno:
+                return false
+            case this.cerocincuenta !== monto.cerocincuenta:
+                return false
+            case this.ceroveinte !== monto.ceroveinte:
+                return false
+            case this.cerodiez !== monto.cerodiez:
+                return false
+            case this.cerocinco !== monto.cerocinco:
+                return false
+            case this.cerodos !== monto.cerodos:
+                return false
+            case this.cerouno !== monto.cerouno:
+                return false
+        }
+        return true
+    }
+
+    /**
      * Sobreescribe los valores del CashBundle con los de AcceptedCashValues introducidos
      */
     public setFromValidAcceptedCashValues(object: AcceptedCashValues) {
@@ -292,6 +352,8 @@ export class CashBundle {
 
     /**
      * Copia los valores de un AcceptedCashValues a un nuevo CashBundle
+     * 
+     * Esta función es para evitar las comprobaciones y así ser más eficiente cuando estamos seguros de que el monto es válido.
      */
     public static importFromValidAcceptedCashValues(object: AcceptedCashValues) {
         let newCashBundle = new CashBundle()
