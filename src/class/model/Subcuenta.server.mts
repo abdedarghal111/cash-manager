@@ -6,6 +6,7 @@
  * 
  * Es importante considerar que en este contexto subcuenta se refiere literalmente a un monto de dinero
  * que tendrá un límite máximo especificado en la configuración.
+ * TODO: Añadir función para añadir dinero "depositMonto(monto): DepositResume" (así añadir al monto el metálico y a la ver registrarlo en la subcuenta)
  */
 import { Model, Transaction } from "sequelize"
 import { Table } from "sequelize-typescript"
@@ -83,6 +84,14 @@ export class Subcuenta extends Model {
 
         return avalible.add(this.maxMoney).sub(this.total).toNumber()
     }
+
+    /**
+     * Devuelve el total de dinero en metálico de la cuenta (hace la resta de total - totalPendiente)
+     */
+    getTotalCash(): number {
+        return new Decimal(this.total).sub(this.cashPending).toNumber()
+    }
+
     /**
      * Extrae el dinero que se le solicita del monto o lo que sea posible y guarda sus cambios
      * 
