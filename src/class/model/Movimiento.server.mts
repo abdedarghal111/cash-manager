@@ -39,7 +39,7 @@ export class Movimiento extends Model {
     /**
      * Modifica los campos de la transacción para registrarla como un gasto (va a la cuenta de gastos del usuario)
      */
-    setAsGasto(expensesAccount: Cuenta,tipoGasto: TipoGasto, gastoName: string, amount: number) {
+    setAsGasto(expensesAccount: Cuenta, tipoGasto: TipoGasto, gastoName: string, amount: number) {
         this.type = TipoMovimiento.GASTO
         this.fromCuenta = null
         this.toCuenta = expensesAccount.id
@@ -47,4 +47,16 @@ export class Movimiento extends Model {
         this.tipoGasto = tipoGasto
         this.cantidad = amount
     }
+
+    /**
+     * Modifica los campos de la transacción para registrarla como un gasto (va a la cuenta de gastos del usuario)
+     */
+    setAsExtraccion(extractionAccount: Cuenta, cuantity: number, description: string) {
+        this.type = TipoMovimiento.EXTRACCION
+        this.fromCuenta = extractionAccount.id
+        this.toCuenta = null
+        this.cantidad = cuantity
+        this.description = description
+    }
+    
 }

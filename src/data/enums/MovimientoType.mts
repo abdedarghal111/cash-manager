@@ -8,7 +8,7 @@ export enum TipoMovimiento {
     INGRESO = 'ingreso',
     // cuando va a la cuenta de gastos, dinero que se consume o está destinado a desaparecer, se rellena toCuenta, la cantidad y el tipoGasto y gastoName
     GASTO = 'gasto',
-    // dinero que desaparece del cómputo, se rellena fromCuenta y la cantidad
+    // dinero que desaparece del cómputo, se rellena fromCuenta, la cantidad y el concepto
     EXTRACCION = 'extraccion',
     // dinero que se mueve de una cuenta a la otra, se rellena fromCuenta, toCuenta y la cantidad
     MOVIMIENTO = 'movimiento'
