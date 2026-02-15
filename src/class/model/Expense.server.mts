@@ -37,7 +37,8 @@ export class Expense extends Model {
             break
         }
 
-        return amountToPay.toNumber() 
+        // dejar dos decimales
+        return amountToPay.mul(100).round().div(100).toNumber() 
     }
 
     /**
