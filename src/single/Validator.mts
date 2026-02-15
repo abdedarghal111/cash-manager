@@ -197,6 +197,38 @@ export class Validator {
     }
 
     /**
+     * Escapa los carácteres especiales de HTML para evitar ataques XSS, parecida a htmlspecialchars() de php
+     * 
+     * // TODO: optimizar el algoritmo o crear un algoritmo más eficiente
+     */
+    public static escapeHTML(str: string): string {
+        let outChars: string[] = []
+        for (let char of str) {
+            switch (char) {
+                case '&':
+                    outChars.push('&amp;')
+                    break
+                case '<':
+                    outChars.push('&lt;')
+                    break
+                case '>':
+                    outChars.push('&gt;')
+                    break
+                case '"':
+                    outChars.push('&quot;')
+                    break
+                case '\'':
+                    outChars.push('&#039;')
+                    break
+                default:
+                    outChars.push(char)
+            }
+        }
+
+        return outChars.join('')
+    }
+
+    /**
      * Comprobar si es una versión válida osea: "X.X.X" siendo X un número unsigned de máximo 3 dígitos.
      * @param version Entrada a validar.
      * @returns La cadena de texto con la versión o InvalidValidation.
