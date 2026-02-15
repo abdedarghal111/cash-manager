@@ -11,6 +11,7 @@ import { Model, Transaction } from "sequelize"
 import { Table } from "sequelize-typescript"
 import { Monto } from "@class/model/Monto.server.mts"
 import Decimal from "decimal.js"
+import { CashArrayType } from "@class/CashBundle.mjs"
 
 
 
@@ -81,6 +82,32 @@ export class Subcuenta extends Model {
         let avalible = new Decimal(0)
 
         return avalible.add(this.maxMoney).sub(this.total).toNumber()
+    }
+    /**
+     * Extrae el dinero que se le solicita del monto o lo que sea posible y guarda sus cambios
+     * 
+     * Devuelve un array con el resultado de lo extraido
+     */
+    async extractCashArray(requestedArray: CashArrayType, transaction: Transaction) {
+        // extraer lo solicitado del monto y guardar
+        let monto = await this.getMonto(transaction)
+        let [extractedResume, totalExtracted] = monto.extractCashArray(requestedArray)
+
+        // si no se ha extraido nada, devolver directamente
+        if (totalExtracted === 0) {
+            return extractedResume
+        }
+
+        await monto.save({ transaction: transaction })
+
+        // quitar al monto el dinero extraido, guardar también y devolver el dinero extraido
+        this.total = new Decimal(this.total).sub(totalExtracted).toNumber()
+        if (totalExtracted !== 0) {
+            this.isFilled = false
+        }
+        await this.save({ transaction: transaction })
+
+        return extractedResume
     }
 
     /**
