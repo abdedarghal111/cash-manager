@@ -15,7 +15,8 @@ Sus propiedades se controlan desde fuera, también el tipo.
 </script>
 
 <div class="md:flex md:items-center">
-    <label class={`block text-blue-900 font-bold md:text-right mb-1 md:mb-0 pr-4 order-${nameBefore ? 1 : 2}`} for="inline-full-name">
+    <!-- svelte-ignore a11y_label_has_associated_control -->
+    <label class={`block text-blue-900 font-bold md:text-right mb-1 md:mb-0 pr-4 order-${nameBefore ? 1 : 2}`}>
         {label}
     </label>
     <button class={
