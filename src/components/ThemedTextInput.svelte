@@ -15,7 +15,8 @@ Responsive:
 
 <div class="md:flex md:items-center">
     <div class="md:w-1/3">
-        <label class="block text-blue-900 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
+        <!-- svelte-ignore a11y_label_has_associated_control -->
+        <label class="block text-blue-900 font-bold md:text-right mb-1 md:mb-0 pr-4">
             {label}
         </label>
     </div>
