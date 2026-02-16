@@ -28,7 +28,7 @@ Si se usase border-separate entonces podrías manipular los bordes e la tabla pe
                             {AcceptedCashEquivalent[key]!.toFixed(2)}:
                         </td>
                         <td class={`p-1.5 font-semibold text-left text-${value > 0 ? 'green' : 'red'}-600`}>
-                            {value > 0 ? "+" : "-"} {value}
+                            {value > 0 ? "+" : "-"} {Math.abs(value)}
                         </td>
                     </tr>
                 {/if}
