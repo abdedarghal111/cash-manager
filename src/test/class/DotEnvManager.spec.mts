@@ -26,7 +26,7 @@ describe("DotEnv reader tests", () => {
     it("Checks if alerts when file not exists", async () => {
         let testFilePath = resolve(FILES_PATH, 'notExistsFile.env')
 
-        expect(() => new DotEnvManager(testFilePath)).toThrow(new Error('Fatal: No se encontró el archivo .env'))
+        expect(() => new DotEnvManager(testFilePath)).toThrow(new Error('FATAL: No se encontró el archivo .env'))
     })
 
     it("Checks that reads file correctly", async () => {
