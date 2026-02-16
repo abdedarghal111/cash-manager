@@ -8,7 +8,6 @@ import { User } from '@class/model/User.server.mjs'
 import { Cuenta } from '@class/model/Cuenta.server.mjs'
 import { Subcuenta } from '@class/model/Subcuenta.server.mjs'
 import { AcceptedCashValues } from '@data/enums/AcceptedCashEquivalent.mjs'
-import { Op } from 'sequelize'
 
 // obtener las estadisticas (get)
 export namespace GETBalancesType {
@@ -79,13 +78,7 @@ router.get('/balances', asyncErrorHandler(async (req, res, next) => {
     outSummary.cashPendingName = user.getPendingCashName()
 
     // recoger todas las cuentas
-    let accounts = await Cuenta.findAll({
-        where: {
-            id: {
-                [Op.not]: pendingAccount.id
-            }
-        }
-    })
+    let accounts = await Cuenta.findAll({ where: { owner: user.id } })
     // añadir cuentas normales
     outSummary.cuentas = []
     for (let account of accounts) { 
@@ -103,11 +96,7 @@ router.get('/balances', asyncErrorHandler(async (req, res, next) => {
         })
 
         // obtener subcuentas
-        let subaccounts = await Subcuenta.findAll({
-            where: {
-                cuenta: account.id,
-            },
-        })
+        let subaccounts = await Subcuenta.findAll({ where: { cuenta: account.id } })
 
         // añadir subcuentas
         for (let subaccount of subaccounts) {
