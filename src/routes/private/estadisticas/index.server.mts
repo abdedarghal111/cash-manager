@@ -31,9 +31,9 @@ export namespace GETEstadisticasType {
 const router = express.Router()
 
 router.get('/estadisticas', asyncErrorHandler(async (req, res, next) => {
-    // @ts-ignore
-    const user = req.locals.user as User
+    const user = req.locals.user
 
+    // recoger cuentas
     const cuentas = await Cuenta.findAll({
         where: {
             owner: user.id,
@@ -41,8 +41,11 @@ router.get('/estadisticas', asyncErrorHandler(async (req, res, next) => {
         }
     })
 
-    const cuentasStats: GETEstadisticasType.CuentaStats[] = []
+    // tambien la cuenta de pendiente
+    cuentas.push(await user.getExpensesAccount())
 
+    // preparar la información a devolver
+    const cuentasStats: GETEstadisticasType.CuentaStats[] = []
     for (const cuenta of cuentas) {
         const subcuentas = await Subcuenta.findAll({
             where: {
@@ -55,7 +58,7 @@ router.get('/estadisticas', asyncErrorHandler(async (req, res, next) => {
         const subcuentasStats: GETEstadisticasType.SubcuentaStats[] = subcuentas.map(sub => ({
             id: sub.id,
             nombre: sub.name,
-            total: sub.total || 0
+            total: sub.total
         }))
 
         cuentasStats.push({
@@ -70,6 +73,7 @@ router.get('/estadisticas', asyncErrorHandler(async (req, res, next) => {
         cuentas: cuentasStats
     }
 
+    // devolver información formada
     return res.status(200).json(response)
 }))
 
