@@ -20,7 +20,11 @@ export class User extends Model {
      */
     declare pendingMonto: number
 
-    // cuenta /dev/null (a donde van los gastos)
+    /**
+     * cuenta /dev/null (a donde van los gastos)
+     * 
+     * Esta cuenta generalmente no tiene owner para no mezclarla con el resto de cuentas del usuario.
+     */
     declare nullAccount: number
 
     /**
