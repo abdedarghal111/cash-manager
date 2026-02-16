@@ -8,6 +8,7 @@ entonces se muestra el boton de cerrar sesion y acceder las funcionalidades.
 En caso contrario se muestra el botón para iniciar sesión o registrarse y se limpia el "registrado"
 
 TODO: Añadir el detectar cuando un servidor tiene certificado inseguro o sale algún error de certificado inseguro y de esta manera notificar al usuario.
+TODO: implementar vista de ver transacciones pasadas.
 -->
 <script module lang='ts'>
     let status = $state("")
