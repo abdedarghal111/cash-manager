@@ -57,6 +57,7 @@ try {
     HttpController.addPrivateRouter((await import('@routes/private/estadisticas/index.server.mjs')).default)
     HttpController.addPrivateRouter((await import('@routes/private/ingresarMonto/index.server.mjs')).default)
     HttpController.addPrivateRouter((await import('@routes/private/balances/index.server.mjs')).default)
+    HttpController.addPrivateRouter((await import('@routes/private/extraccion/index.server.mjs')).default)
 
     Logger.success('Endpoints desplegados', 2)
 
