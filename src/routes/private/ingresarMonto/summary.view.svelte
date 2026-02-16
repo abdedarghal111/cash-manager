@@ -10,6 +10,7 @@ Vista resumen de los cambios que se han hecho, muestra que billetes hay que reti
     import { type AcceptedCashValues } from "@data/enums/AcceptedCashEquivalent.mjs"
     import { CashBundle } from "@class/CashBundle.mjs"
     import CashBundleDiff from "@components/CashBundleDiff.svelte"
+    import TransactionIdDisplay from "@components/TransactionIdDisplay.svelte";
 
     // rescatar argumentos
     const params = ViewsController.getParameters()
@@ -31,9 +32,6 @@ Vista resumen de los cambios que se han hecho, muestra que billetes hay que reti
             <h2 class="text-3xl text-blue-900 font-bold text-center">Resumen de la Transacción</h2>
 
             <div class="bg-white rounded-lg shadow-sm border border-slate-200 pb-4">
-                <div class="p-4 border-b border-slate-200 flex flex-col items-center justify-between text-center">
-                    <p class="text-base font-normal text-blue-800 break-all"> {summary.transactionUuid}</p>
-                </div>
 
                 {#if summary.cuentasBundleDiff.length !== 0}
                     <h4 class="text-lg text-blue-800 font-bold mt-4">Movimientos en Cuentas</h4>
@@ -75,6 +73,9 @@ Vista resumen de los cambios que se han hecho, muestra que billetes hay que reti
                         extraClass="mx-auto mt-2" 
                     />
                 {/if}
+
+                <TransactionIdDisplay uuid={summary.transactionUuid} extraClass="m-4 mb-2" />
+                
             </div>
 
             <Themedbutton label="Volver" onclick={() => ViewsController.setDefaultCurrentView(LandingView)} />
