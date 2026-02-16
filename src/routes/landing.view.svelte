@@ -32,6 +32,7 @@ TODO: Añadir el detectar cuando un servidor tiene certificado inseguro o sale a
     import BalancesView from "@routes/private/balances/index.view.svelte"
     import EstadisticasView from "@routes/private/estadisticas/index.view.svelte"
     import ExpensesIndexView from "@routes/private/expenses/index.view.svelte"
+    import ExtraccionView from "@routes/private/extraccion/index.view.svelte"
 
     let showOperarPopup = $state(false)
     let showConfigurarModal = $state(false)
@@ -123,6 +124,9 @@ TODO: Añadir el detectar cuando un servidor tiene certificado inseguro o sale a
         <div class="flex flex-col gap-2">
             <Themedbutton label="Ingresar Monto" onclick={() => {
                 ViewsController.setCurrentView(IngresarMontoView)
+            }} />
+            <Themedbutton label="Extracción" onclick={() => {
+                ViewsController.setCurrentView(ExtraccionView)
             }} />
             <Themedbutton label="Cerrar" onclick={() => {
                 showOperarPopup = false
