@@ -14,9 +14,7 @@ Vista resumen de los cambios que se han hecho, muestra que billetes hay que reti
 
     // rescatar argumentos
     const params = ViewsController.getParameters()
-    const summary = $state(params.get('summary')) as POSTIngresarMontoType.server["summary"] | null
-
-    console.log(summary)
+    const summary = $state(params.get('summary')) as POSTIngresarMontoType.server["summary"]
 
     if (!summary) {
         throw new Error("FATAL: Se requiere un ID de cuenta para esta vista.")
