@@ -6,6 +6,7 @@
 <script lang="ts">
     import DefaultView from "@components/DefaultView.svelte"
     import Themedbutton from "@components/Themedbutton.svelte"
+    import ThemedCardSelector from "@components/ThemedCardSelector.svelte"
     import { ViewsController } from "@single/ViewsController.client.mjs"
     import LandingView from "@routes/landing.view.svelte"
     import { onMount } from "svelte"
@@ -53,19 +54,15 @@
                         No tienes cuentas disponibles con saldo.
                     </div>
                 {:else}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {#each accounts as account}
-                            <button 
-                                class="p-4 rounded-lg border-2 text-left transition-all duration-200 shadow-sm flex flex-col justify-center h-24 gap-1 {selectedAccount === account ? 'bg-blue-50 border-blue-500 transform scale-[1.02]' : 'bg-white border-slate-200 hover:bg-slate-50'}"
-                                onclick={() => selectedAccount = account}
-                            >
-                                <div class="font-bold text-lg text-slate-800">{account.name}</div>
-                                <div class="text-sm text-slate-500 font-medium">
-                                    Saldo: <span class="text-slate-800 font-bold">{account.total.toFixed(2)}€</span>
-                                </div>
-                            </button>
-                        {/each}
-                    </div>
+                    <ThemedCardSelector 
+                        bind:value={selectedAccount}
+                        options={accounts.map(acc => ({
+                            value: acc,
+                            label: acc.name,
+                            subLabel: `Saldo: ${acc.total.toFixed(2)}€`,
+                        }))}
+                        disabled={true}
+                    />
                 {/if}
             </div>
 
