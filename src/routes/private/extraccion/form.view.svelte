@@ -74,7 +74,6 @@
                     bind:value={description}
                     disabled={processing}
                     placeholder="Ej. Compra semanal"
-                    rows={2}
                 />
 
                 <!-- Selector de Efectivo -->
