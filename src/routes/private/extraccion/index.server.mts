@@ -32,12 +32,12 @@ export namespace POSTExtraccionType {
         cash: AcceptedCashValues
     }
     export interface server {
-        extractedCash: CashBundle // dinero sacado
+        extractedCash: AcceptedCashValues // dinero sacado
         transactionUuid: string // uuid de la transacción
         accountName: string // nombre de la cuenta
         ConsultedSubAccounts: { // codigo subcuenta y cantidad sacada
             subAccountCode: string
-            extractedCash: CashBundle
+            extractedCash: AcceptedCashValues
         }[]
     }
 }
@@ -45,7 +45,6 @@ export namespace POSTExtraccionType {
 const router = express.Router()
 
 router.get('/extraccion/cuentas', asyncErrorHandler(async (req, res) => {
-    // @ts-ignore
     const user = req.locals.user as User
     
     // recoger cuentas
@@ -150,12 +149,14 @@ router.post('/extraccion', asyncErrorHandler(async (req, res) => {
         await transaction.commit()
 
         res.json({
-            extractedCash: extractedResume.extractedCash,
+            extractedCash: extractedResume.extractedCash.exportToAcceptedCashValues(),
             transactionUuid: transactionGroup.uuid,
             accountName: account.name,
-            ConsultedSubAccounts: extractedResume.ConsultedSubAccounts,
+            ConsultedSubAccounts: extractedResume.ConsultedSubAccounts.map(sub => ({
+                subAccountCode: sub.subAccountCode,
+                extractedCash: sub.extractedCash.exportToAcceptedCashValues()
+            })),
         } as POSTExtraccionType.server)
-
     } catch (error) {
         await transaction.rollback()
         res.status(400).json({ message: "Error al realizar la extracción." })
