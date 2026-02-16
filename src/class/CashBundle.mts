@@ -3,8 +3,9 @@
  * Está creada con el propósito de facilitar las operaciones con montos en metálico
  * 
  * IMPORTANTE: considerar que está pensada para que también el monto pueda quedar negativo pero NO se puede ni debe guardar siendo negativo
- */
-import { AcceptedCashEquivalent, validCashValues, validCashStrings, AcceptedCashValues } from "@data/enums/AcceptedCashEquivalent.mjs"
+ * TODO: convertir a una clase meramente estática para hacer operaciones con objetos AcceptedCashValues (así ahorrar crear clases etc)
+*/
+import { AcceptedCashEquivalent, validCashValues, validCashStrings, AcceptedCashValues, AcceptedCashIterable } from "@data/enums/AcceptedCashEquivalent.mjs"
 import { Validator } from "@single/Validator.mjs"
 import Decimal from "decimal.js"
 
@@ -130,15 +131,15 @@ export class CashBundle {
     }
 
     /**
-     * Devuelve el valor total del monto
+     * Devuelve el total de un bundle
      */
-    public getTotal(): number {
+    public static getBundleTotal(bundle: AcceptedCashValues) {
         // contar todo el cash
         let total = new Decimal(0)
 
-        for (let [cashKey, cashValue] of Object.entries(AcceptedCashEquivalent) as [keyof AcceptedCashValues, number][]) {
+        for (let [cashKey, cashValue] of AcceptedCashIterable) {
             // sacar cantidad de billetes
-            let cashCuantity = this[cashKey]
+            let cashCuantity = bundle[cashKey]
             // multiplicar cantidad por valor
             let totalValue = new Decimal(cashValue).mul(cashCuantity)
             // sumar al total
@@ -147,6 +148,13 @@ export class CashBundle {
 
         // devolver el total de todo
         return total.toNumber()
+    }
+
+    /**
+     * Devuelve el valor total del monto
+     */
+    public getTotal(): number {
+        return CashBundle.getBundleTotal(this)
     }
 
     /**
@@ -221,7 +229,7 @@ export class CashBundle {
         // convertir 
         let keyValueArray = [] as CashArrayType
 
-        for (let [cashKey, cashValue] of Object.entries(AcceptedCashEquivalent) as [keyof AcceptedCashValues, number][]) {
+        for (let [cashKey, cashValue] of AcceptedCashIterable) {
             // sacar cantidad de billetes
             let cashCuantity = this[cashKey]
             // si la cantidad no es 0 entonces añadir al array
