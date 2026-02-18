@@ -283,6 +283,20 @@ export const VersionController = {
     },
 
     /**
+     * Marca la instalación como completada en caso de nueva instalación
+     * 
+     * Este método existe porque si se asigna directamente la versión en checkAndApplyVersions() 
+     * y algo falla más adelante se habría marcado como instalado cuando todavía hay componentes sin inicializarse.
+     * De esta manera solo se marcará como instalado (en otro lugar del programa) cuando el último elemento se ha instalado correctamente.
+     */
+    markAsInstalled: () => {
+        Logger.info(`Asignando versión actual al sistema: ${VERSION}`, 2)
+        ServerConfig.set('SYSTEM_VERSION', VERSION)
+    },
+
+    
+
+    /**
      * Revisa y ejecuta las funciones en orden para ejecutar version por version las modificaciones pendientes
      * para no romper la aplicación con nuevas o cambios en funcionalidades
      */
@@ -295,8 +309,7 @@ export const VersionController = {
             // la instalación es nueva, no hay datos ni de versión.
             // Se establece la actual como versión del sistema
             Logger.warn(`Nueva instalación detectada`, 2)
-            Logger.info(`Asignando versión actual: ${targetVersion}`, 2)
-            ServerConfig.set('SYSTEM_VERSION', targetVersion)
+            // avisar de que es una nueva instalación
             return 'newInstall'
         }
 

@@ -43,6 +43,8 @@ try {
         Logger.log(`Creando la base de datos...`, 1)
         await DatabaseController.sync()
         Logger.success('Base de datos creada correctamente', 2)
+        // marcar como instalado (todo se ha instalado correctamente)
+        VersionController.markAsInstalled()
     }
 
     const { HttpController } = await import('@single/HttpController.server.mjs')
