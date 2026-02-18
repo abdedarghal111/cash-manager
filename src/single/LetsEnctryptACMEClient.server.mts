@@ -5,15 +5,16 @@
  */
 import { getGlobalDotEnvInstance } from '@class/DotEnvManager.server.mjs'
 import { Logger } from '@class/Logger.server.mjs'
-import { SERVER_CRT_FILE_PATH, SERVER_KEY_FILE_PATH } from '@data/paths.mjs'
+import { LOCAL_DATA_PATH, SERVER_CRT_FILE_PATH, SERVER_KEY_FILE_PATH } from '@data/paths.mjs'
 import crypto from 'crypto'
 import express from 'express'
 import http from 'http'
 import https from 'https'
 import axios from 'axios'
 import forge from 'node-forge'
-import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { ServerConfig } from './ServerConfig.server.mts'
+import { resolve } from 'path'
 
 // SOLO para testing
 const USE_INSECURE_AND_TESTING_MODE = false
@@ -395,6 +396,13 @@ export const LetsEnctryptACMEClient = {
         Logger.info("Certificado descargado correctamente", 3)
         
         Logger.log("Finalizando...", 2)
+
+        // crear carpeta HTTPS si no existe
+        let httpsDir = resolve(LOCAL_DATA_PATH, 'https')
+        if (!existsSync(httpsDir)) {   
+            mkdirSync(httpsDir, { recursive: true })
+        }
+
         // guardar los certificados
         // público
         writeFileSync(SERVER_CRT_FILE_PATH, certResult.data, 'utf-8')
