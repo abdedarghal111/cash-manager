@@ -200,6 +200,7 @@ export class Validator {
      * Escapa los carácteres especiales de HTML para evitar ataques XSS, parecida a htmlspecialchars() de php
      * 
      * // TODO: optimizar el algoritmo o crear un algoritmo más eficiente
+     * // TODO: añadir filtrar los datos recibidos por el usuario en todas las demás partes del programa
      */
     public static escapeHTML(str: string): string {
         let outChars: string[] = []
