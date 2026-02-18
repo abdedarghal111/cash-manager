@@ -61,7 +61,6 @@
                             label: acc.name,
                             subLabel: `Saldo: ${acc.total.toFixed(2)}€`,
                         }))}
-                        disabled={true}
                     />
                 {/if}
             </div>
