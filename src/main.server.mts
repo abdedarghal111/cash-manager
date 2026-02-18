@@ -40,7 +40,9 @@ try {
     await DatabaseController.updateShowLogsFromEnvVar()
     // ya no es necesario sincronizar, hay que hacerlo vía updates @see src\data\versionFixes.server.mts
     if (updateState === 'newInstall') {
+        Logger.log(`Creando la base de datos...`, 1)
         await DatabaseController.sync()
+        Logger.success('Base de datos creada correctamente', 2)
     }
 
     const { HttpController } = await import('@single/HttpController.server.mjs')
