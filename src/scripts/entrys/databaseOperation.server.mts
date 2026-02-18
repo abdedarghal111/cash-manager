@@ -6,7 +6,6 @@ import { type EntryType, prompt } from '../main.server.mts'
 import 'colors'
 import { Monto } from '@class/model/Monto.server.mjs'
 import { CashBundle } from '@class/CashBundle.mjs'
-import { Validator } from '@single/Validator.mjs'
 import { Subcuenta } from '@class/model/Subcuenta.server.mjs'
 import { User } from '@class/model/User.server.mjs'
 import { validIndexNumber as validIndexEntry } from '../scriptUtils.server.mts'
@@ -15,7 +14,7 @@ import { TransactionsGroup } from '@class/model/TransactionGroup.server.mjs'
 import { Movimiento } from '@class/model/Movimiento.server.mjs'
 
 let actions = [
-    ['Poner a cero los montos', async (rl) => {
+    ['Poner a cero las cuentas y montos', async (rl) => {
         await Monto.update(
             new CashBundle().exportToAcceptedCashValues(), // genera una tabla con ceros todos para que actualice todo a 0
             { where: {} }
